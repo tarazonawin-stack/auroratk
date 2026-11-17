@@ -41,7 +41,7 @@ Where a rule says nothing per level, it applies equally to all three.
 - **Source:** NIST SP 800-218 (SSDF) PO.1, PW.1.
 
 **R02 · Small and readable**
-- **Requires:** one PR is one idea, targeting ~200 changed lines with a hard cap of 400, excluding generated, lock and third-party files (those in `third_party/` registered under R07). Code files of at most 400 lines. Functions with cyclomatic complexity ≤ 10.
+- **Requires:** one PR is one idea, targeting ~200 changed lines with a hard cap of 400, excluding generated, lock and third-party files (`third_party/` and `LICENSES/`, registered under R07). Code files of at most 400 lines. Functions with cyclomatic complexity ≤ 10.
 - **Checked by:** CI; change-size and file-size script, plus complexity analysis.
 - **Why:** small things get understood, reviewed and reverted. Big things get accepted blindly.
 - **Source:** Google Engineering Practices, *Small CLs*.

@@ -41,7 +41,7 @@ Donde una regla no dice nada por nivel, aplica igual en los tres.
 - **Fuente:** NIST SP 800-218 (SSDF) PO.1, PW.1.
 
 **R02 · Pequeño y legible**
-- **Exige:** un PR es una sola idea, con una meta de ~200 líneas cambiadas y un tope de 400, sin contar archivos generados, de bloqueo ni de terceros (los de `third_party/` registrados según R07). Archivos de código de máximo 400 líneas. Funciones de complejidad ciclomática ≤ 10.
+- **Exige:** un PR es una sola idea, con una meta de ~200 líneas cambiadas y un tope de 400, sin contar archivos generados, de bloqueo ni de terceros (`third_party/` y `LICENSES/`, registrados según R07). Archivos de código de máximo 400 líneas. Funciones de complejidad ciclomática ≤ 10.
 - **Se comprueba:** CI; script de tamaño del cambio y del archivo, y análisis de complejidad.
 - **Por qué:** lo pequeño se entiende, se revisa y se revierte. Lo grande se acepta a ciegas.
 - **Fuente:** Google Engineering Practices, *Small CLs*.
