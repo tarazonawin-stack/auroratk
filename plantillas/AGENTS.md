@@ -5,7 +5,7 @@
 
 ## Kernel
 
-- **Estándar:** AuroraTK Kernel **v1.0.0** — copia en `docs/kernel/KERNEL.md`.
+- **Estándar:** AuroraTK Kernel **v1.0.1** — copia en `docs/kernel/KERNEL.md`.
 - **Nivel:** Ligero | Estándar | Estricto  ← deja uno · *keep one*
 - **Perfiles:** `stack-<…>` + `tipo-<…>`
 - Si una petición choca con una regla del kernel, gana la regla: explícalo en una línea y propone la alternativa.

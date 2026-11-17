@@ -49,7 +49,7 @@ CHANGELOG.md                 kernel version history
 
 ## Status
 
-**Version 1.0.0.** Rules, profiles and templates are complete. Ready-to-copy CI configurations are added per profile the first time each one is used in a real project (first up: GPEXT, with Python/Django + web).
+**Version 1.0.1.** Rules, profiles and templates are complete. Ready-to-copy CI configurations are added per profile the first time each one is used in a real project (first up: GPEXT, with Python/Django + web).
 
 ## Authorship and license
 

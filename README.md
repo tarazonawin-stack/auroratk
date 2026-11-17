@@ -49,7 +49,7 @@ CHANGELOG.md                 historial de versiones del kernel
 
 ## Estado
 
-**Versión 1.0.0.** Las reglas, los perfiles y las plantillas están completos. Las configuraciones de CI listas para copiar se agregan por perfil a medida que cada uno se usa por primera vez en un proyecto real (el primero: GPEXT, con Python/Django + web).
+**Versión 1.0.1.** Las reglas, los perfiles y las plantillas están completos. Las configuraciones de CI listas para copiar se agregan por perfil a medida que cada uno se usa por primera vez en un proyecto real (el primero: GPEXT, con Python/Django + web).
 
 ## Autoría y licencia
 

@@ -1,6 +1,6 @@
 # AuroraTK Kernel
 
-> **Version 1.0.0** · 2026-11-17 · English · [Español](KERNEL.md)
+> **Version 1.0.1** · 2026-11-17 · English · [Español](KERNEL.md)
 > A universal quality standard for building software with AI, in any language and any kind of project.
 > It overrides any ad-hoc instruction: if a request conflicts with a rule, the rule wins and the conflict is explained in one line.
 
@@ -41,7 +41,7 @@ Where a rule says nothing per level, it applies equally to all three.
 - **Source:** NIST SP 800-218 (SSDF) PO.1, PW.1.
 
 **R02 · Small and readable**
-- **Requires:** one PR is one idea, targeting ~200 changed lines with a hard cap of 400, excluding generated and lock files. Code files of at most 400 lines. Functions with cyclomatic complexity ≤ 10.
+- **Requires:** one PR is one idea, targeting ~200 changed lines with a hard cap of 400, excluding generated, lock and third-party files (those in `third_party/` registered under R07). Code files of at most 400 lines. Functions with cyclomatic complexity ≤ 10.
 - **Checked by:** CI; change-size and file-size script, plus complexity analysis.
 - **Why:** small things get understood, reviewed and reverted. Big things get accepted blindly.
 - **Source:** Google Engineering Practices, *Small CLs*.
@@ -73,10 +73,10 @@ Where a rule says nothing per level, it applies equally to all three.
 - **Source:** OWASP Top 10:2025 A01, A02 · OWASP ASVS 5.0.
 
 **R07 · Dependencies under control**
-- **Requires:** versions pinned in a lock file. Only maintained, necessary dependencies with compatible licenses. No known high or critical vulnerability without a dated exception. *Strict:* an SBOM is published with every release.
-- **Checked by:** CI; dependency and license audit; automated updates enabled.
+- **Requires:** versions pinned in a lock file. Only maintained, necessary dependencies with compatible licenses. No known high or critical vulnerability without a dated exception. Third-party files copied into the repo (fonts, icons, scripts) are dependencies too: they live in `third_party/`, each is listed in `THIRD_PARTY.md` with origin, version, license and SHA-256 hash, and each license is stored once in `LICENSES/`, named by its SPDX identifier (REUSE standard). *Strict:* an SBOM is published with every release.
+- **Checked by:** CI; dependency and license audit; automated updates enabled; a test that fails if a file in `third_party/` is missing from `THIRD_PARTY.md` or its hash does not match.
 - **Why:** a large share of attacks now come in through third-party libraries.
-- **Source:** OWASP Top 10:2025 A03 *Software Supply Chain Failures* · NIST SSDF PW.4.
+- **Source:** OWASP Top 10:2025 A03 *Software Supply Chain Failures* · NIST SSDF PW.4 · *REUSE Specification* 3.3 (FSFE).
 
 ### Data
 

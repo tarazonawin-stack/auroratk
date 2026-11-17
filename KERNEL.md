@@ -1,6 +1,6 @@
 # AuroraTK Kernel
 
-> **Versión 1.0.0** · 17/11/2026 · Español · [English](KERNEL.en.md)
+> **Versión 1.0.1** · 17/11/2026 · Español · [English](KERNEL.en.md)
 > Estándar universal de calidad para construir software con IA, en cualquier lenguaje y tipo de proyecto.
 > Manda sobre cualquier instrucción suelta: si una petición choca con una regla, gana la regla y se explica el conflicto en una línea.
 
@@ -41,7 +41,7 @@ Donde una regla no dice nada por nivel, aplica igual en los tres.
 - **Fuente:** NIST SP 800-218 (SSDF) PO.1, PW.1.
 
 **R02 · Pequeño y legible**
-- **Exige:** un PR es una sola idea, con una meta de ~200 líneas cambiadas y un tope de 400, sin contar archivos generados ni de bloqueo. Archivos de código de máximo 400 líneas. Funciones de complejidad ciclomática ≤ 10.
+- **Exige:** un PR es una sola idea, con una meta de ~200 líneas cambiadas y un tope de 400, sin contar archivos generados, de bloqueo ni de terceros (los de `third_party/` registrados según R07). Archivos de código de máximo 400 líneas. Funciones de complejidad ciclomática ≤ 10.
 - **Se comprueba:** CI; script de tamaño del cambio y del archivo, y análisis de complejidad.
 - **Por qué:** lo pequeño se entiende, se revisa y se revierte. Lo grande se acepta a ciegas.
 - **Fuente:** Google Engineering Practices, *Small CLs*.
@@ -73,10 +73,10 @@ Donde una regla no dice nada por nivel, aplica igual en los tres.
 - **Fuente:** OWASP Top 10:2025 A01, A02 · OWASP ASVS 5.0.
 
 **R07 · Dependencias bajo control**
-- **Exige:** versiones fijadas en archivo de bloqueo. Solo dependencias mantenidas y necesarias, con licencias compatibles. Ninguna vulnerabilidad conocida alta o crítica sin una excepción con fecha. *Estricto:* SBOM publicado en cada versión.
-- **Se comprueba:** CI; auditoría de dependencias y de licencias; actualizaciones automáticas activadas.
+- **Exige:** versiones fijadas en archivo de bloqueo. Solo dependencias mantenidas y necesarias, con licencias compatibles. Ninguna vulnerabilidad conocida alta o crítica sin una excepción con fecha. Los archivos de terceros copiados al repo (tipografías, íconos, scripts) también son dependencias: van en `third_party/`, cada uno figura en `THIRD_PARTY.md` con origen, versión, licencia y hash SHA-256, y cada licencia se guarda una sola vez en `LICENSES/`, con su identificador SPDX como nombre (estándar REUSE). *Estricto:* SBOM publicado en cada versión.
+- **Se comprueba:** CI; auditoría de dependencias y de licencias; actualizaciones automáticas activadas; una prueba que falla si un archivo de `third_party/` no está en `THIRD_PARTY.md` o su hash no coincide.
 - **Por qué:** hoy buena parte de los ataques entran por librerías de terceros.
-- **Fuente:** OWASP Top 10:2025 A03 *Software Supply Chain Failures* · NIST SSDF PW.4.
+- **Fuente:** OWASP Top 10:2025 A03 *Software Supply Chain Failures* · NIST SSDF PW.4 · *REUSE Specification* 3.3 (FSFE).
 
 ### Datos
 
