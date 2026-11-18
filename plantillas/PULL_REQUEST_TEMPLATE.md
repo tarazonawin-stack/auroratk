@@ -19,7 +19,7 @@
 - [ ] R03 Cada criterio tiene una prueba que verifica el resultado; los arreglos traen una prueba que fallaba antes
 - [ ] R07 Dependencias nuevas: nombre exacto comprobado en el registro oficial, mantenida y aprobada; o ninguna
 - [ ] R08 Migraciones reversibles y listas sin consultas N+1, o N/A
-- [ ] R09 Sin datos reales de personas; datos personales nuevos justificados en la spec
+- [ ] R09 Sin datos reales de personas; datos personales nuevos justificados en la spec y cubiertos por el perfil de país
 - [ ] R10 Probado con teclado y en celular, o N/A
 - [ ] R11 Textos nuevos en ES y EN, o N/A
 - [ ] R14 Las acciones críticas nuevas dejan registro, sin datos personales, o N/A

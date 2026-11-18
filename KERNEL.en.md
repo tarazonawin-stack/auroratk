@@ -16,7 +16,7 @@ Each rule has a **fixed ID**, what it **requires**, how it **is checked**, and t
 - **CI:** a machine checks it on every change. If it fails, the change does not get in.
 - **Review:** a person or an independent AI session checks it, through a checkbox in the PR template.
 
-The concrete tools for each language live in [`perfiles/`](https://github.com/tarazonawin-stack/auroratk/blob/main/perfiles/). This file names no tools: it states what is required.
+The concrete tools for each language, and what each country's law requires, live in [`perfiles/`](https://github.com/tarazonawin-stack/auroratk/blob/main/perfiles/). This file names no tools: it states what is required.
 
 Working in a chat with no repository (for example, Google AI Studio)? Use the short version: [`KERNEL-CHAT.en.md`](https://github.com/tarazonawin-stack/auroratk/blob/main/KERNEL-CHAT.en.md).
 
@@ -106,10 +106,10 @@ Whatever is not active yet is noted in `docs/ESTADO.md`.
 - **Source:** NIST SSDF PW.9 · Django documentation, *Database access optimization*.
 
 **R09 · Personal data handled with care**
-- **Requires:** outside production, only made-up data. Store the minimum, with a written purpose and retention period, and a way to delete it when it expires. Role-based access. No personal data in logs. *Strict:* consent where applicable and a review of the country's regulations before release (in Peru, Law No. 29733 and its Regulation).
-- **Checked by:** review; checkbox in the PR template. CI: secret scanner and seed review.
-- **Why:** people's data is not yours; the law requires care, and so does trust.
-- **Source:** Peru Law No. 29733 and Supreme Decree No. 016-2024-JUS · OWASP ASVS 5.0.
+- **Requires:** outside production, only made-up data. Store the minimum, with a written purpose and retention period, and a way to delete it when it expires. Role-based access. No personal data in logs. People can view, correct, export and request deletion of their data. A data breach has a written procedure to notify the authority and affected people within the legal deadline. The project declares in `AGENTS.md` the **countries** where it has users and applies each one's profile (`perfiles/pais-*.md`); if a country has no profile, one is created before production. *Strict:* consent where applicable, and the country profile validated by a lawyer before release.
+- **Checked by:** review; checkbox in the PR template and a current country profile (reviewed less than 12 months ago). CI: secret scanner and seed review.
+- **Why:** people's data is not yours; the law requires care, and so does trust. Laws differ by country, but their principles are the same almost everywhere.
+- **Source:** ISO/IEC 29100 (privacy framework) · OECD Privacy Principles · OWASP ASVS 5.0 · country profiles (Peru: Law No. 29733 and Supreme Decree No. 016-2024-JUS).
 
 ### People
 

@@ -12,7 +12,7 @@ Versión MAYOR porque varias reglas se vuelven más exigentes (R01, R02, R03, R0
 - **R08:** prohibidas las consultas N+1 en listas; en Estándar, respaldo automático y una restauración probada antes de la primera salida a producción. · *No N+1 queries; Standard needs a tested restore before first release.*
 - **R12:** el humano escribe en una línea qué hace el cambio antes de aprobar; `docs/ESTADO.md` obligatorio; si algo se rompe, primero se revierte al último CI en verde. *Por qué:* aprobar sin entender debilita justo la habilidad de detectar errores. · *One-line understanding before approval; state file; revert first.*
 - **R13:** `AGENTS.md` corto (meta 150 líneas) con sección de errores frecuentes de la IA. *Por qué:* las instrucciones innecesarias bajan el éxito de los agentes y suben su costo. · *Short AGENTS.md with frequent AI mistakes.*
-- **R09:** plazo de conservación escrito y forma de borrar los datos al vencer. · *Written retention period and deletion.*
+- **R09:** plazo de conservación escrito y forma de borrar los datos al vencer; derechos de la persona (ver, corregir, exportar, borrar); procedimiento ante filtraciones; perfiles de país obligatorios. *Por qué:* las leyes cambian por país, pero sus principios (ISO/IEC 29100, OCDE) son comunes. · *Retention, data-subject rights, breach procedure, mandatory country profiles.*
 - **R01:** pregunta de abuso en cada spec (con vía rápida para cambios triviales). · *Abuse question in every spec (with a trivial-change path).*
 - **R02:** alerta a las 300 líneas por archivo. · *File warning at 300 lines.*
 - **R05:** `.env.example` y ninguna clave secreta en el navegador. · *`.env.example`; no secrets in the browser.*
@@ -29,6 +29,7 @@ Versión MAYOR porque varias reglas se vuelven más exigentes (R01, R02, R03, R0
 - Activación por etapas que ubica todas las reglas. · *Staged activation covering every rule.*
 - `perfiles/ci/python-django.yml` y `mutation_threshold.py`: CI listo para copiar. · *Ready-to-copy CI.*
 - `plantillas/claude-settings.json`: permisos mínimos del agente. · *Least-privilege agent settings.*
+- `perfiles/pais-peru.md`: primer perfil de país (Ley 29733 y Reglamento 2024). · *First country profile.*
 - Principio "Aprende construyendo". · *"Learn by building" principle.*
 - `KERNEL-CHAT.md` / `.en.md`: versión corta para chats sin repositorio. · *Short chat version.*
 - `plantillas/ESTADO.md` y `ejemplos/SPEC-ejemplo.md`. · *State template and spec example.*

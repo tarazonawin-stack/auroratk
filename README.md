@@ -28,7 +28,7 @@ La IA escribe rápido, pero se equivoca con total seguridad. Este kernel existe 
 ## Cómo se usa en un proyecto nuevo
 
 1. **Elige el nivel:** Ligero, Estándar o Estricto (ver [KERNEL.md](KERNEL.md#niveles)).
-2. **Elige dos perfiles:** uno de stack y uno de tipo, en [`perfiles/`](perfiles/).
+2. **Elige tus perfiles** en [`perfiles/`](perfiles/): uno de stack, uno de tipo y uno por cada país donde tendrás usuarios.
 3. **Copia las plantillas** al proyecto:
    - `plantillas/AGENTS.md` → `AGENTS.md` (raíz), y complétalo.
    - `plantillas/CLAUDE.md` → `CLAUDE.md` (raíz).
@@ -48,7 +48,7 @@ La IA escribe rápido, pero se equivoca con total seguridad. Este kernel existe 
 ```
 KERNEL.md / KERNEL.en.md     el estándar (15 reglas, niveles, excepciones, versiones)
 KERNEL-CHAT.md / .en.md      versión corta para pegar en un chat sin repositorio
-perfiles/                    reglas → herramientas por stack y por tipo de proyecto
+perfiles/                    reglas → herramientas por stack, tipo de proyecto y país
 plantillas/                  archivos para copiar a cada proyecto
 ejemplos/                    ejemplos de cómo se ve bien hecho
 CHANGELOG.md                 historial de versiones del kernel

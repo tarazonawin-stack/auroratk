@@ -10,6 +10,14 @@ Un perfil traduce las reglas del kernel a herramientas concretas. Cada proyecto 
 | [Java](stack-java.md) | [Librería y CLI · Library & CLI](tipo-libreria-cli.md) |
 | [C++](stack-cpp.md) | [Automatización y agentes · Automation & agents](tipo-automatizacion.md) |
 
+**País · Country (R09):** cada proyecto declara los países donde tiene usuarios. · *Each project declares the countries where it has users.*
+
+| País · Country | Perfil · Profile |
+|---|---|
+| Perú · Peru | [pais-peru.md](pais-peru.md) |
+
+¿Otro país? Crea `pais-<nombre>.md` copiando el de Perú, con fecha de revisión y fuentes oficiales, y valídalo con un abogado local. · *Another country? Copy the Peru profile, with a review date and official sources, and validate it with a local lawyer.*
+
 **Comunes a todos los stacks · Common to every stack:**
 
 | Regla · Rule | Herramienta · Tool |

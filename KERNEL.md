@@ -16,7 +16,7 @@ Cada regla tiene un **ID fijo**, lo que **exige**, cómo **se comprueba** y la *
 - **CI:** lo comprueba una máquina en cada cambio. Si falla, el cambio no entra.
 - **Revisión:** lo comprueba una persona o una sesión de IA independiente, con una casilla de la plantilla de PR.
 
-Las herramientas concretas de cada lenguaje están en [`perfiles/`](https://github.com/tarazonawin-stack/auroratk/blob/main/perfiles/). Este archivo no nombra herramientas: dice qué se exige.
+Las herramientas concretas de cada lenguaje, y lo que exige la ley de cada país, están en [`perfiles/`](https://github.com/tarazonawin-stack/auroratk/blob/main/perfiles/). Este archivo no nombra herramientas: dice qué se exige.
 
 ¿Trabajas en un chat sin repositorio (por ejemplo, Google AI Studio)? Usa la versión corta: [`KERNEL-CHAT.md`](https://github.com/tarazonawin-stack/auroratk/blob/main/KERNEL-CHAT.md).
 
@@ -106,10 +106,10 @@ Lo que aún no está activo se anota en `docs/ESTADO.md`.
 - **Fuente:** NIST SSDF PW.9 · Documentación de Django, *Database access optimization*.
 
 **R09 · Datos personales con cuidado**
-- **Exige:** fuera de producción, solo datos inventados. Se guarda lo mínimo, con una finalidad y un plazo de conservación escritos, y una forma de borrarlo al vencer. Acceso por rol. Ningún dato personal en logs. *Estricto:* consentimiento cuando aplique y revisión de la normativa del país antes de publicar (en Perú, Ley N.º 29733 y su Reglamento).
-- **Se comprueba:** revisión; casilla en la plantilla de PR. CI: escáner de secretos y revisión de semillas.
-- **Por qué:** los datos de las personas no son tuyos; la ley lo exige y la confianza también.
-- **Fuente:** Ley N.º 29733 y D.S. N.º 016-2024-JUS · OWASP ASVS 5.0.
+- **Exige:** fuera de producción, solo datos inventados. Se guarda lo mínimo, con una finalidad y un plazo de conservación escritos, y una forma de borrarlo al vencer. Acceso por rol. Ningún dato personal en logs. La persona puede ver, corregir, exportar y pedir que se borren sus datos. Una filtración de datos tiene un procedimiento escrito para avisar a la autoridad y a los afectados en el plazo de ley. El proyecto declara en `AGENTS.md` los **países** donde tiene usuarios y aplica el perfil de cada uno (`perfiles/pais-*.md`); si un país no tiene perfil, se crea antes de producción. *Estricto:* consentimiento cuando aplique y validación del perfil de país con un abogado antes de publicar.
+- **Se comprueba:** revisión; casilla en la plantilla de PR y perfil de país vigente (con fecha de revisión de menos de 12 meses). CI: escáner de secretos y revisión de semillas.
+- **Por qué:** los datos de las personas no son tuyos; la ley lo exige y la confianza también. Las leyes cambian por país, pero sus principios son los mismos en casi todo el mundo.
+- **Fuente:** ISO/IEC 29100 (marco de privacidad) · Principios de privacidad de la OCDE · OWASP ASVS 5.0 · perfiles de país (Perú: Ley N.º 29733 y D.S. N.º 016-2024-JUS).
 
 ### Personas
 
@@ -201,4 +201,6 @@ Este kernel no certifica nada ni sustituye una auditoría de seguridad, una revi
 - Game Accessibility Guidelines — https://gameaccessibilityguidelines.com/
 - AGENTS.md — https://agents.md/
 - Semantic Versioning — https://semver.org/
+- ISO/IEC 29100:2024, *Privacy framework* — https://www.iso.org/standard/85938.html
+- OCDE, *Privacy Guidelines* — https://www.oecd.org/en/topics/privacy.html
 - Ley N.º 29733 y Reglamento — https://www.gob.pe/institucion/minjus/noticias/1067368-ejecutivo-aprueba-nuevo-reglamento-de-la-ley-de-proteccion-de-datos-personales

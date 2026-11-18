@@ -8,6 +8,7 @@
 - **Estándar:** AuroraTK Kernel **v2.0.0** — copia en `docs/kernel/KERNEL.md`.
 - **Nivel:** Ligero | Estándar | Estricto  ← deja uno · *keep one*
 - **Perfiles:** `stack-<…>` + `tipo-<…>`
+- **Países con usuarios (R09) · Countries with users:** `pais-<…>`
 - **Módulos de negocio (R03, mutación) · Business modules:** <carpetas · folders>
 - **Límite de gasto · Spending cap (R13):** IA <…> · CI <…> minutos/mes · *minutes/month*
 - Si una petición choca con una regla del kernel, gana la regla: explícalo en una línea y propone la alternativa.

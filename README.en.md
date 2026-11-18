@@ -28,7 +28,7 @@ AI writes fast, but it is wrong with full confidence. This kernel exists so that
 ## How to use it in a new project
 
 1. **Pick the level:** Light, Standard or Strict (see [KERNEL.en.md](KERNEL.en.md#levels)).
-2. **Pick two profiles:** one stack and one type, in [`perfiles/`](perfiles/).
+2. **Pick your profiles** in [`perfiles/`](perfiles/): one stack, one type, and one per country where you will have users.
 3. **Copy the templates** into the project:
    - `plantillas/AGENTS.md` → `AGENTS.md` (root), then fill it in.
    - `plantillas/CLAUDE.md` → `CLAUDE.md` (root).
@@ -48,7 +48,7 @@ AI writes fast, but it is wrong with full confidence. This kernel exists so that
 ```
 KERNEL.md / KERNEL.en.md     the standard (15 rules, levels, exceptions, versions)
 KERNEL-CHAT.md / .en.md      short version to paste into a chat with no repository
-perfiles/                    rules → tools per stack and project type
+perfiles/                    rules → tools per stack, project type and country
 plantillas/                  files to copy into each project
 ejemplos/                    examples of what done right looks like
 CHANGELOG.md                 kernel version history
