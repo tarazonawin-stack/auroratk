@@ -1,0 +1,54 @@
+# AuroraTK Kernel v2.0.0 · Base configuration for the Python / Django profile.
+# Merge these sections into your project's pyproject.toml.
+# Replace "config" with your Django project package and "tickets" with your business apps.
+
+[dependency-groups]
+dev = [
+    "ruff",
+    "mypy",
+    "django-stubs[compatible-mypy]",
+    "pytest",
+    "pytest-django",
+    "pytest-cov",
+    "mutmut",
+    "pip-audit",
+]
+
+# R02 complexity + R04 strict lint (BLE001, S110 and E722 forbid swallowed errors)
+[tool.ruff]
+line-length = 100
+extend-exclude = ["mutants"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "S", "BLE", "C90", "UP"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/**" = ["S101"]
+"**/test_*.py" = ["S101"]
+"**/migrations/**" = ["E501"]
+
+# R04 strict types for Django
+[tool.mypy]
+strict = true
+plugins = ["mypy_django_plugin.main"]
+exclude = ["migrations/", "mutants/"]
+
+[tool.django-stubs]
+django_settings_module = "config.settings"
+
+# R03 tests and coverage
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings"
+python_files = ["test_*.py"]
+
+[tool.coverage.run]
+source = ["."]
+omit = ["*/migrations/*", "manage.py", "config/*", "mutants/*"]
+
+# R03 mutation testing: paths_to_mutate are the business modules declared in AGENTS.md
+[tool.mutmut]
+paths_to_mutate = ["tickets/"]
+also_copy = ["config/", "manage.py"]
