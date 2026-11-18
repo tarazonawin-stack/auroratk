@@ -201,6 +201,6 @@ Este kernel no certifica nada ni sustituye una auditoría de seguridad, una revi
 - Game Accessibility Guidelines — https://gameaccessibilityguidelines.com/
 - AGENTS.md — https://agents.md/
 - Semantic Versioning — https://semver.org/
-- ISO/IEC 29100:2024, *Privacy framework* — https://www.iso.org/standard/85938.html
-- OCDE, *Privacy Guidelines* — https://www.oecd.org/en/topics/privacy.html
+- ISO/IEC 29100:2024, *Privacy framework* (ISO/IEC JTC 1/SC 27).
+- OCDE, *Guidelines on the Protection of Privacy and Transborder Flows of Personal Data*.
 - Ley N.º 29733 y Reglamento — https://www.gob.pe/institucion/minjus/noticias/1067368-ejecutivo-aprueba-nuevo-reglamento-de-la-ley-de-proteccion-de-datos-personales
