@@ -32,7 +32,7 @@ Versión MAYOR porque varias reglas se vuelven más exigentes. Revisada por tres
 - `KERNEL-CHAT.md` / `.en.md`: versión corta para chats sin repositorio. · *Short chat version.*
 - `plantillas/ESTADO.md` y `ejemplos/SPEC-ejemplo.md`. · *State template and spec example.*
 - Perfiles: umbrales exactos (complejidad 10, aviso 300, tope 400), mutación con umbral, N+1 y registros por stack; `django-stubs` y `pytest-django`; TBT en lugar de INP en laboratorio. · *Profiles updated.*
-- Incluye la aclaración de la 1.0.1 (archivos de terceros en `third_party/` con su inventario `THIRD_PARTY.md`), que también aplica el script de tamaño. · *Includes the 1.0.1 third-party clarification.*
+- Incluye la aclaración de la 1.0.1 (archivos de terceros en `third_party/` con su inventario `THIRD_PARTY.md`), que también aplica el script de tamaño; y R02 tampoco cuenta los archivos de traducción de la interfaz (`.po`, `.mo`), que revisa la prueba de paridad de R11. · *Includes the 1.0.1 third-party clarification; R02 also skips UI translation files.*
 - Enlaces del kernel fijados a la etiqueta `v2.0.0`. · *Kernel links pinned to the `v2.0.0` tag.*
 
 ## [1.0.1] · 2026-11-17
