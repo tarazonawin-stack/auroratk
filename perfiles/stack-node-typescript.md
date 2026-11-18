@@ -2,9 +2,9 @@
 
 | Regla · Rule | Herramienta · Tool | Comando en CI · CI command |
 |---|---|---|
-| R02 Tamaño · Size | ESLint (`complexity`, `max-lines`) | `npx eslint .` |
+| R02 Tamaño · Size | ESLint `complexity: ["error", 10]` + script de tamaño (aviso 300, tope 400) | `npx eslint .` |
 | R03 Pruebas · Tests | Vitest (o Jest) + cobertura | `npx vitest run --coverage` |
-| R03 Mutación · Mutation | StrykerJS sobre los módulos de negocio · *on business modules* | `npx stryker run` (≥ 60 % Estándar, ≥ 75 % Estricto) |
+| R03 Mutación · Mutation | StrykerJS sobre los módulos de negocio · *on business modules* | Semanal · *Weekly*: `npx stryker run` con `thresholds.break` = 60 (Estándar) o 75 (Estricto) |
 | R04 Estricto · Strict | `tsc --strict` + ESLint (typescript-eslint) + Prettier; prohibido `any` explícito y `catch` vacío | `npx tsc --noEmit && npx eslint . && npx prettier --check .` |
 | R06 Seguridad · Security | Librería de autenticación mantenida, validación con esquemas (p. ej. Zod), Helmet en Express · *Maintained auth library, schema validation (e.g. Zod), Helmet on Express* | `semgrep` + pruebas de permisos por rol |
 | R07 Dependencias · Dependencies | `package-lock.json` + `npm audit` | `npm ci && npm audit --audit-level=high` |

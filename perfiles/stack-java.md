@@ -2,9 +2,9 @@
 
 | Regla · Rule | Herramienta · Tool | Comando en CI · CI command |
 |---|---|---|
-| R02 Tamaño · Size | PMD (complejidad · complexity) | `mvn pmd:check` |
+| R02 Tamaño · Size | PMD `CyclomaticComplexity` con `methodReportLevel` = 10 + script de tamaño (aviso 300, tope 400) | `mvn pmd:check` |
 | R03 Pruebas · Tests | JUnit 5 + JaCoCo | `mvn verify` (JaCoCo con mínimo 80 % · *min 80 %*) |
-| R03 Mutación · Mutation | PIT (pitest) sobre los módulos de negocio · *on business modules* | `mvn org.pitest:pitest-maven:mutationCoverage` |
+| R03 Mutación · Mutation | PIT (pitest) sobre los módulos de negocio · *on business modules* | Semanal · *Weekly*: `mvn org.pitest:pitest-maven:mutationCoverage` con `mutationThreshold` = 60 o 75 |
 | R04 Estricto · Strict | Compilador con `-Werror`, Checkstyle, SpotBugs | `mvn checkstyle:check spotbugs:check` |
 | R06 Seguridad · Security | Spring Security | `semgrep` + pruebas de permisos por rol |
 | R07 Dependencias · Dependencies | Versiones fijadas + OWASP Dependency-Check | `mvn org.owasp:dependency-check-maven:check` |

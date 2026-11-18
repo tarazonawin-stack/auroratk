@@ -2,10 +2,10 @@
 
 | Regla · Rule | Herramienta · Tool | Comando en CI · CI command |
 |---|---|---|
-| R02 Tamaño · Size | `ruff` (C901) + script de tamaño | `ruff check --select C901` |
-| R03 Pruebas · Tests | `pytest` + `pytest-cov` | `pytest --cov --cov-fail-under=80` |
-| R03 Mutación · Mutation | `mutmut` sobre los módulos de negocio · *on business modules* | `mutmut run` (≥ 60 % Estándar, ≥ 75 % Estricto) |
-| R04 Estricto · Strict | `ruff` (lint + format) + `mypy --strict` | `ruff check . && ruff format --check . && mypy .` |
+| R02 Tamaño · Size | `ruff` (C901 con `max-complexity = 10`) + script de tamaño (aviso 300, tope 400) | `ruff check --select C901` |
+| R03 Pruebas · Tests | `pytest` + `pytest-django` + `pytest-cov` | `pytest --cov --cov-fail-under=80` |
+| R03 Mutación · Mutation | `mutmut` sobre los módulos de negocio listados en `AGENTS.md` · *on the business modules listed in `AGENTS.md`* | Semanal · *Weekly*: `mutmut run`, luego `mutmut export-cicd-stats` y un script que falla bajo el umbral (60 % Estándar, 75 % Estricto) |
+| R04 Estricto · Strict | `ruff` (lint + format) + `mypy --strict` con `django-stubs` · *with `django-stubs`* | `ruff check . && ruff format --check . && mypy .` |
 | R06 Seguridad · Security | Auth, permisos y CSRF de Django · Django auth, permissions & CSRF | `python manage.py check --deploy --fail-level WARNING` |
 | R07 Dependencias · Dependencies | `uv` (lock) + `pip-audit` | `uv lock --check && pip-audit` |
 | R08 Datos · Data | Migraciones de Django · Django migrations | `python manage.py makemigrations --check --dry-run` |
@@ -16,4 +16,6 @@
 
 **Notas · Notes**
 - Base de datos recomendada: PostgreSQL. *Recommended database: PostgreSQL.*
+- `mutmut` no funciona en Windows: en la PC se usa con WSL (Linux dentro de Windows); en el CI corre en Linux sin problema. *`mutmut` doesn't run on Windows: use WSL locally; CI runs it on Linux.*
+- CI listo para copiar · Ready-to-copy CI: [`ci/python-django.yml`](ci/python-django.yml).
 - Prohibido · Forbidden: `except:` vacío, `except Exception: pass` (`ruff` BLE001, S110, E722).

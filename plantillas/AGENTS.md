@@ -8,6 +8,8 @@
 - **Estándar:** AuroraTK Kernel **v2.0.0** — copia en `docs/kernel/KERNEL.md`.
 - **Nivel:** Ligero | Estándar | Estricto  ← deja uno · *keep one*
 - **Perfiles:** `stack-<…>` + `tipo-<…>`
+- **Módulos de negocio (R03, mutación) · Business modules:** <carpetas · folders>
+- **Límite de gasto · Spending cap (R13):** IA <…> · CI <…> minutos/mes · *minutes/month*
 - Si una petición choca con una regla del kernel, gana la regla: explícalo en una línea y propone la alternativa.
   *If a request conflicts with a kernel rule, the rule wins: explain it in one line and propose an alternative.*
 
@@ -34,7 +36,7 @@
 3. **Cambios pequeños** (R02): ~200 líneas. Si un archivo pasa de 300 líneas, propón dividirlo.
 4. **Prueba primero o junto al código** (R03). Nombra el criterio: `test_AC_01_...`. Cada prueba verifica un resultado, no solo que "no falló".
 5. **Ejecuta la verificación completa** antes de decir "listo" y muestra la salida real. Nunca inventes una salida.
-6. **Explica cada cambio en 5 líneas** para alguien que no programa a diario: qué, por qué y cómo probarlo.
+6. **Explica cada cambio** para alguien que no programa a diario: **Qué hice** (2-3 líneas), **Por qué así** (2-3 líneas) y **Cómo lo pruebo** (pasos).
 7. **No apruebas tu propio trabajo** (R12): otra sesión revisa.
 8. **Si algo se rompe en la rama principal**, propón revertir al último CI en verde antes de arreglar.
 9. **Al cerrar la sesión**, actualiza `docs/ESTADO.md`; si cambiaste la estructura, también este archivo.

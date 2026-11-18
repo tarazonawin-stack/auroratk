@@ -11,6 +11,9 @@
 - Ejecución de CI · CI run: <enlace · link>
 
 ## Lista del kernel · Kernel checklist
+> Haz merge solo con el CI en verde y todas las casillas marcadas: en un repo privado gratuito nada lo bloquea por ti (R12).
+> *Merge only with green CI and every box checked: on a free private repo nothing blocks it for you (R12).*
+
 - [ ] R01 Enlaza su spec (con cómo se podría abusar), es `trivial`, o tiene objetivo / fuera de alcance / cómo se prueba (nivel Ligero)
 - [ ] R02 Una sola idea; ≤ 400 líneas; ningún archivo pasa de 400
 - [ ] R03 Cada criterio tiene una prueba que verifica el resultado; los arreglos traen una prueba que fallaba antes
@@ -23,5 +26,5 @@
 - [ ] R15 Estados de carga, vacío y error; flujo principal validado con una persona usuaria real (Estándar), o N/A
 - [ ] R12 `AGENTS.md`, `docs/decisiones/` y `docs/ESTADO.md` al día
 - [ ] R12 Revisado por una sesión distinta a la que escribió el código: <quién o qué · who or what>
-- [ ] R13 Sin permisos nuevos para agentes; sin skills ni plugins nuevos sin aprobar
+- [ ] R13 Sin permisos nuevos para agentes; sin skills ni plugins nuevos sin aprobar; `AGENTS.md` ≤ 150 líneas
 - [ ] Excepciones nuevas registradas con fecha, o ninguna · *New exceptions recorded with a date, or none*

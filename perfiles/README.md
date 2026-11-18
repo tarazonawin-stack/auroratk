@@ -19,7 +19,7 @@ Un perfil traduce las reglas del kernel a herramientas concretas. Cada proyecto 
 | R07 Dependencias · Dependencies | `osv-scanner` + Dependabot o Renovate |
 | R07 Dependencias nuevas · New dependencies | Comprobar el nombre exacto en el registro oficial (PyPI, npm, Maven Central) antes de instalar · *Check the exact name in the official registry before installing* |
 | R14 Alertas · Alerts | Alertas del hosting o un servicio de errores (p. ej. Sentry, plan gratuito) · *Hosting alerts or an error service (e.g. Sentry free tier)* |
-| R12 Gobierno · Governance | Protección de rama · Branch protection + [plantilla de PR](../plantillas/PULL_REQUEST_TEMPLATE.md) |
+| R12 Gobierno · Governance | Protección de rama si el plan la permite; en repo privado gratuito, merge manual solo con CI en verde · *Branch protection if the plan allows it; on a free private repo, manual merge only with green CI* + [plantilla de PR](../plantillas/PULL_REQUEST_TEMPLATE.md) |
 
 ¿Falta tu stack? Crea `stack-<nombre>.md` copiando la tabla de uno existente: cada regla debe tener una herramienta o un "N/A" con su motivo.
 *Missing your stack? Create `stack-<name>.md` by copying an existing table: every rule needs a tool or an "N/A" with a reason.*

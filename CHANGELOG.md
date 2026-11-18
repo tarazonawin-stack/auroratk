@@ -4,7 +4,7 @@ Formato basado en *Keep a Changelog*; versionado semántico. · *Based on Keep a
 
 ## [2.0.0] · 2026-11-18
 
-Versión MAYOR porque R03 y R07 se vuelven más exigentes. · *MAJOR because R03 and R07 become stricter.*
+Versión MAYOR porque varias reglas se vuelven más exigentes (R01, R02, R03, R05, R07, R08, R09, R12 y R13). Revisada por una sesión independiente antes de integrar. · *MAJOR because several rules become stricter. Reviewed by an independent session before merging.*
 
 ### Más exigente · Stricter
 - **R03:** pruebas de mutación en los módulos de negocio (≥ 60 % Estándar, ≥ 75 % Estricto); cada arreglo trae una prueba que fallaba antes; no valen pruebas sin verificación real. *Por qué:* las pruebas escritas por IA suelen pasar sin verificar nada y la cobertura no lo detecta. · *Mutation testing; regression test per fix; no assertion-free tests.*
@@ -12,19 +12,27 @@ Versión MAYOR porque R03 y R07 se vuelven más exigentes. · *MAJOR because R03
 - **R08:** prohibidas las consultas N+1 en listas; en Estándar, respaldo automático y una restauración probada antes de la primera salida a producción. · *No N+1 queries; Standard needs a tested restore before first release.*
 - **R12:** el humano escribe en una línea qué hace el cambio antes de aprobar; `docs/ESTADO.md` obligatorio; si algo se rompe, primero se revierte al último CI en verde. *Por qué:* aprobar sin entender debilita justo la habilidad de detectar errores. · *One-line understanding before approval; state file; revert first.*
 - **R13:** `AGENTS.md` corto (meta 150 líneas) con sección de errores frecuentes de la IA. *Por qué:* las instrucciones innecesarias bajan el éxito de los agentes y suben su costo. · *Short AGENTS.md with frequent AI mistakes.*
-- **R09 / Niveles:** guardar datos de personas reales exige nivel Estricto como mínimo. · *Real personal data means Strict at minimum.*
+- **R09:** plazo de conservación escrito y forma de borrar los datos al vencer. · *Written retention period and deletion.*
+- **R01:** pregunta de abuso en cada spec (con vía rápida para cambios triviales). · *Abuse question in every spec (with a trivial-change path).*
+- **R02:** alerta a las 300 líneas por archivo. · *File warning at 300 lines.*
+- **R05:** `.env.example` y ninguna clave secreta en el navegador. · *`.env.example`; no secrets in the browser.*
+- **R08:** plan de vuelta atrás antes de migraciones irreversibles; la restauración se prueba en un entorno aislado que cuenta como producción. · *Rollback plan for irreversible migrations; restore tested in an isolated production-grade environment.*
+- **R13:** límite de gasto de IA y de minutos de CI en `AGENTS.md`. · *AI and CI spending cap.*
 
 ### Añadido · Added
 - **R14 · Registros que avisan** (OWASP A09:2025). · *Logs that alert.*
 - **R15 · Claro para quien lo usa:** estados de carga, vacío y error; sistema de diseño; validación con una persona usuaria real. · *Clear for the people who use it.*
-- **R01:** pregunta de abuso en cada spec y vía rápida para cambios triviales. · *Abuse question and trivial-change path.*
-- **R02:** alerta a las 300 líneas por archivo. · *File warning at 300 lines.*
-- **R05:** `.env.example` y ninguna clave secreta en el navegador. · *`.env.example`; no secrets in the browser.*
-- Activación por etapas de las comprobaciones de CI. · *Staged CI activation.*
+- Niveles aclarados: Estricto es para datos sensibles, clientes externos o dinero; datos de trabajadores para uso interno quedan en Estándar con R09. · *Levels clarified.*
+- *Ligero* marcado N/A donde no aplica (R10, R11, R12, R15). · *Light marked N/A where it does not apply.*
+- R06 separado en núcleo sin excepciones y verificación ASVS (con excepciones con fecha). · *R06 split into a no-exception core and ASVS verification.*
+- R12 aplicable en un repo privado del plan gratuito de GitHub: el merge del dueño es la aprobación. · *R12 workable on GitHub's free private plan.*
+- Activación por etapas que ubica todas las reglas. · *Staged activation covering every rule.*
+- `perfiles/ci/python-django.yml` y `mutation_threshold.py`: CI listo para copiar. · *Ready-to-copy CI.*
+- `plantillas/claude-settings.json`: permisos mínimos del agente. · *Least-privilege agent settings.*
 - Principio "Aprende construyendo". · *"Learn by building" principle.*
 - `KERNEL-CHAT.md` / `.en.md`: versión corta para chats sin repositorio. · *Short chat version.*
 - `plantillas/ESTADO.md` y `ejemplos/SPEC-ejemplo.md`. · *State template and spec example.*
-- Perfiles: herramientas de mutación, N+1 y registros por stack; estados, diseño y claves en el navegador en `tipo-web`. · *Profiles updated.*
+- Perfiles: umbrales exactos (complejidad 10, aviso 300, tope 400), mutación semanal con umbral, N+1 y registros por stack; `django-stubs` y `pytest-django`; TBT en lugar de INP en laboratorio. · *Profiles updated.*
 
 ## [1.0.0] · 2026-11-17
 
