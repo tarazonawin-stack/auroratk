@@ -12,7 +12,7 @@ AI writes fast, but it is wrong with full confidence. This kernel exists so that
 
 | It is | It isn't |
 |---|---|
-| 13 checkable rules, each with its reason and official source. | An application or a service. |
+| 15 checkable rules, each with its reason and official source. | An application or a service. |
 | Profiles that map the rules to tools per language and project type. | A certification or an audit. |
 | Templates ready to copy into every new project. | A replacement for experienced professionals. |
 | AI-agnostic: works with Claude, other AIs, or people. | Something that forces you to use paid tools. |
@@ -34,22 +34,27 @@ AI writes fast, but it is wrong with full confidence. This kernel exists so that
    - `plantillas/CLAUDE.md` → `CLAUDE.md` (root).
    - `plantillas/PULL_REQUEST_TEMPLATE.md` → `.github/PULL_REQUEST_TEMPLATE.md`.
    - `KERNEL.md` → `docs/kernel/KERNEL.md`.
+   - `plantillas/ESTADO.md` → `docs/ESTADO.md`.
    - Create `docs/specs/`, `docs/decisiones/` and `docs/excepciones.md` (from `plantillas/EXCEPCIONES.md`).
-4. **Set up CI** with your profiles' commands and turn on main-branch protection.
-5. **Work like this, every time:** spec → small change with its test → CI → independent review → your approval.
+4. **Set up CI in stages** with your profiles' commands (see *Staged activation* in the kernel) and turn on main-branch protection.
+5. **Work like this, every time:** spec → small change with its test → CI → independent review → you write one line on what it does → your approval → `docs/ESTADO.md` up to date.
+
+**No repository?** In a chat such as Google AI Studio, paste [`KERNEL-CHAT.en.md`](KERNEL-CHAT.en.md) into the system instructions.
 
 ## Layout
 
 ```
-KERNEL.md / KERNEL.en.md     the standard (13 rules, levels, exceptions, versions)
+KERNEL.md / KERNEL.en.md     the standard (15 rules, levels, exceptions, versions)
+KERNEL-CHAT.md / .en.md      short version to paste into a chat with no repository
 perfiles/                    rules → tools per stack and project type
 plantillas/                  files to copy into each project
+ejemplos/                    examples of what done right looks like
 CHANGELOG.md                 kernel version history
 ```
 
 ## Status
 
-**Version 1.0.0.** Rules, profiles and templates are complete. Ready-to-copy CI configurations are added per profile the first time each one is used in a real project (first up: GPEXT, with Python/Django + web).
+**Version 2.0.0.** Rules, profiles and templates are complete. Ready-to-copy CI configurations are added per profile the first time each one is used in a real project (first up: GPEXT, with Python/Django + web).
 
 ## Authorship and license
 

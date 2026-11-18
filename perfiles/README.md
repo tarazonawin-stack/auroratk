@@ -17,6 +17,8 @@ Un perfil traduce las reglas del kernel a herramientas concretas. Cada proyecto 
 | R05 Secretos · Secrets | `gitleaks` |
 | R06 Análisis de seguridad · Security analysis | `semgrep` |
 | R07 Dependencias · Dependencies | `osv-scanner` + Dependabot o Renovate |
+| R07 Dependencias nuevas · New dependencies | Comprobar el nombre exacto en el registro oficial (PyPI, npm, Maven Central) antes de instalar · *Check the exact name in the official registry before installing* |
+| R14 Alertas · Alerts | Alertas del hosting o un servicio de errores (p. ej. Sentry, plan gratuito) · *Hosting alerts or an error service (e.g. Sentry free tier)* |
 | R12 Gobierno · Governance | Protección de rama · Branch protection + [plantilla de PR](../plantillas/PULL_REQUEST_TEMPLATE.md) |
 
 ¿Falta tu stack? Crea `stack-<nombre>.md` copiando la tabla de uno existente: cada regla debe tener una herramienta o un "N/A" con su motivo.

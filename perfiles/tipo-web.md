@@ -7,3 +7,6 @@
 | R11 Idiomas · Languages | `lang` correcto en el HTML; textos en archivos de traducción · *Correct `lang`; strings in translation files* | Prueba de paridad ES/EN · *ES/EN parity test* |
 | Rendimiento · Performance (*Estándar · Standard*) | Core Web Vitals: LCP ≤ 2,5 s · INP ≤ 200 ms · CLS ≤ 0,1 | Lighthouse CI en las pantallas principales · *on key screens* |
 | R06 Cabeceras · Headers | CSP, HSTS (en producción · *in production*), `X-Content-Type-Options`, cookies `Secure`/`HttpOnly`/`SameSite` | Prueba automática de cabeceras · *Automated header test* |
+| R15 Estados · States | Carga (esqueleto, no solo un ícono girando), vacío y error en cada pantalla principal · *Loading (skeleton), empty and error on every key screen* | Pruebas de componentes de los tres estados · *Component tests for the three states* |
+| R15 Diseño · Design (*Estándar · Standard*) | Colores, tipografías y espacios como tokens en un solo archivo · *Colors, type and spacing as tokens in one file* | Revisión; linter de CSS sin colores sueltos · *Review; CSS linter with no stray colors* |
+| R05 Navegador · Browser | Ninguna clave secreta en el código del cliente; las llamadas a APIs con clave pasan por el servidor · *No secret key in client code; keyed API calls go through the server* | `gitleaks` + revisión del bundle · *bundle review* |
