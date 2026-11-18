@@ -53,7 +53,7 @@ Whatever is not active yet is noted in `docs/ESTADO.md`. In the profiles' CI, th
 - **Source:** NIST SP 800-218 (SSDF) PO.1, PW.1 · OWASP Top 10:2025 A06 *Insecure Design*.
 
 **R02 · Small and readable**
-- **Requires:** one PR is one idea, targeting ~200 changed lines with a hard cap of 400, excluding generated, lock and third-party files (`third_party/` and `LICENSES/`, registered under R07). Code files with a **warning at 300 lines** (the AI proposes a split) and a cap of 400. Functions with cyclomatic complexity ≤ 10.
+- **Requires:** one PR is one idea, targeting ~200 changed lines with a hard cap of 400, excluding generated, lock and third-party files (`third_party/` and `LICENSES/`, registered under R07), nor UI translation files (such as `.po` and `.mo`), because R11's ES/EN parity test checks them. Code files with a **warning at 300 lines** (the AI proposes a split) and a cap of 400. Functions with cyclomatic complexity ≤ 10.
 - **Checked by:** CI; change-size and file-size script (`perfiles/ci/size_check.py`, works for any language), plus complexity analysis.
 - **Why:** small things get understood, reviewed and reverted. Past 400 lines, review finds fewer and fewer defects.
 - **Source:** Google Engineering Practices, *Small CLs* · SmartBear and Cisco code review study (200–400 lines per review).

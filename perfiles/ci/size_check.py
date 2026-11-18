@@ -3,7 +3,7 @@
 Usage: python size_check.py <base-ref>     e.g. python size_check.py origin/main
 - Changed lines in the PR: warning above 200, failure above 400.
 - Code files: warning above 300 lines, failure above 400.
-Lock files, migrations, generated files and third-party files (third_party/, LICENSES/) are excluded.
+Lock files, migrations, generated files and third-party files (third_party/, LICENSES/) and UI translation files (.po, .mo) are excluded.
 """
 
 import subprocess
@@ -14,13 +14,15 @@ CODE_SUFFIXES = {".py", ".js", ".jsx", ".ts", ".tsx", ".java", ".c", ".h", ".cpp
                  ".cs", ".go", ".rs", ".html", ".css", ".scss", ".vue", ".svelte", ".gd"}
 EXCLUDED_PARTS = {"migrations", "node_modules", "dist", "build", "vendor", "generated",
                   "third_party", "LICENSES"}  # vendored files are inventoried under R07
+EXCLUDED_SUFFIXES = {".po", ".mo"}  # UI translations, checked by the R11 parity test
 EXCLUDED_NAMES = {"uv.lock", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "poetry.lock"}
 CHANGE_TARGET, CHANGE_CAP, FILE_WARN, FILE_CAP = 200, 400, 300, 400
 
 
 def is_excluded(path: Path) -> bool:
     """Skip lock files, migrations and generated folders."""
-    return path.name in EXCLUDED_NAMES or bool(EXCLUDED_PARTS & set(path.parts))
+    return (path.name in EXCLUDED_NAMES or path.suffix in EXCLUDED_SUFFIXES
+            or bool(EXCLUDED_PARTS & set(path.parts)))
 
 
 def git_lines(*args: str) -> list[str]:
