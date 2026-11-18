@@ -32,7 +32,17 @@ Versión MAYOR porque varias reglas se vuelven más exigentes. Revisada por tres
 - `KERNEL-CHAT.md` / `.en.md`: versión corta para chats sin repositorio. · *Short chat version.*
 - `plantillas/ESTADO.md` y `ejemplos/SPEC-ejemplo.md`. · *State template and spec example.*
 - Perfiles: umbrales exactos (complejidad 10, aviso 300, tope 400), mutación con umbral, N+1 y registros por stack; `django-stubs` y `pytest-django`; TBT en lugar de INP en laboratorio. · *Profiles updated.*
+- Incluye la aclaración de la 1.0.1 (archivos de terceros en `third_party/` con su inventario `THIRD_PARTY.md`), que también aplica el script de tamaño. · *Includes the 1.0.1 third-party clarification.*
 - Enlaces del kernel fijados a la etiqueta `v2.0.0`. · *Kernel links pinned to the `v2.0.0` tag.*
+
+## [1.0.1] · 2026-11-17
+
+### Aclarado · Clarified
+- R07: los archivos de terceros copiados al repo (tipografías, íconos, scripts) son dependencias. Van en `third_party/`, con un glosario `THIRD_PARTY.md` (origen, versión, licencia, hash SHA-256) y cada licencia una sola vez en `LICENSES/` (estándar REUSE). Una prueba de CI comprueba el glosario y los hashes. · *R07: vendored third-party files are dependencies: `third_party/`, a `THIRD_PARTY.md` inventory with hashes, licenses once in `LICENSES/` (REUSE), checked in CI.*
+- R02: los archivos registrados de `third_party/` y los textos de `LICENSES/` no cuentan para el tamaño del PR. · *R02: registered `third_party/` files and `LICENSES/` texts do not count toward PR size.*
+
+### Por qué · Why
+- Las tipografías de GPEXT (SPEC-002) sumaban líneas a R02 sin ser código propio, y no había un lugar fijo para su origen y licencia. Se publica como PARCHE porque R07 ya exigía licencias compatibles: esto dice cómo cumplirlo con archivos copiados. · *GPEXT's fonts counted toward R02 without being our code. Released as a PATCH because R07 already required compatible licenses.*
 
 ## [1.0.0] · 2026-11-17
 
