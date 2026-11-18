@@ -53,7 +53,7 @@ Whatever is not active yet is noted in `docs/ESTADO.md`. In the profiles' CI, th
 - **Source:** NIST SP 800-218 (SSDF) PO.1, PW.1 · OWASP Top 10:2025 A06 *Insecure Design*.
 
 **R02 · Small and readable**
-- **Requires:** one PR is one idea, targeting ~200 changed lines with a hard cap of 400, excluding generated and lock files. Code files with a **warning at 300 lines** (the AI proposes a split) and a cap of 400. Functions with cyclomatic complexity ≤ 10.
+- **Requires:** one PR is one idea, targeting ~200 changed lines with a hard cap of 400, excluding generated, lock and third-party files (`third_party/` and `LICENSES/`, registered under R07). Code files with a **warning at 300 lines** (the AI proposes a split) and a cap of 400. Functions with cyclomatic complexity ≤ 10.
 - **Checked by:** CI; change-size and file-size script (`perfiles/ci/size_check.py`, works for any language), plus complexity analysis.
 - **Why:** small things get understood, reviewed and reverted. Past 400 lines, review finds fewer and fewer defects.
 - **Source:** Google Engineering Practices, *Small CLs* · SmartBear and Cisco code review study (200–400 lines per review).
@@ -86,10 +86,10 @@ Whatever is not active yet is noted in `docs/ESTADO.md`. In the profiles' CI, th
 - **Source:** OWASP Top 10:2025 A01, A02 · OWASP ASVS 5.0 · Veracode, *GenAI Code Security Report* 2025 and 2026.
 
 **R07 · Dependencies under control**
-- **Requires:** versions pinned in a lock file. Only maintained, necessary dependencies with compatible licenses. **Before adding a new dependency**, check that it exists in the official registry under that exact name and has real maintenance and usage history, and a human approves it in the PR. Never install a name suggested by an AI without that check. No known high or critical vulnerability without a dated exception. *Strict:* an SBOM is published with every release.
-- **Checked by:** CI; vulnerability audit (a dated exception is applied by ignoring that one vulnerability in the audit command); automated updates enabled (`plantillas/dependabot.yml`). Review: licenses, and the new-dependency checkbox with its check.
+- **Requires:** versions pinned in a lock file. Only maintained, necessary dependencies with compatible licenses. **Before adding a new dependency**, check that it exists in the official registry under that exact name and has real maintenance and usage history, and a human approves it in the PR. Never install a name suggested by an AI without that check. Third-party files copied into the repo (fonts, icons, scripts) are dependencies too: they live in `third_party/`, each is listed in `THIRD_PARTY.md` with origin, version, license and SHA-256 hash, and each license is stored once in `LICENSES/`, named by its SPDX identifier (REUSE standard). No known high or critical vulnerability without a dated exception. *Strict:* an SBOM is published with every release.
+- **Checked by:** CI; vulnerability audit (a dated exception is applied by ignoring that one vulnerability in the audit command); automated updates enabled (`plantillas/dependabot.yml`); a test that fails if a file in `third_party/` is missing from `THIRD_PARTY.md` or its hash does not match. Review: licenses, and the new-dependency checkbox with its check.
 - **Why:** a large share of attacks come in through third-party libraries, and AIs invent library names that attackers then publish with malicious code (*slopsquatting*).
-- **Source:** OWASP Top 10:2025 A03 *Software Supply Chain Failures* · NIST SSDF PW.4 · Spracklen et al., *We Have a Package for You!*, USENIX Security 2025.
+- **Source:** OWASP Top 10:2025 A03 *Software Supply Chain Failures* · NIST SSDF PW.4 · *REUSE Specification* 3.3 (FSFE) · Spracklen et al., *We Have a Package for You!*, USENIX Security 2025.
 
 **R14 · Logs that alert**
 - **Requires:** important events are logged with time, who (the user's internal ID, never their name, ID number or email) and outcome, in a machine-readable format: errors, failed logins, permission changes and critical actions (closures, payments, sends, deletions). Logs contain no personal data or secrets (R05, R09). In production, a serious error raises an **alert** that reaches a person. *Light:* errors are visible in the console or a file.
