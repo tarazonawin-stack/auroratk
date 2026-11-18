@@ -5,11 +5,11 @@
 
 ## Kernel
 
-- **Estándar:** AuroraTK Kernel **v2.0.0** — copia en `docs/kernel/KERNEL.md`.
+- **Estándar:** AuroraTK Kernel **v2.0.0** — copia en `docs/kernel/` junto con los perfiles elegidos · *copy in `docs/kernel/` with the chosen profiles*.
 - **Nivel:** Ligero | Estándar | Estricto  ← deja uno · *keep one*
 - **Perfiles:** `stack-<…>` + `tipo-<…>`
 - **Países con usuarios (R09) · Countries with users:** `pais-<…>`
-- **Módulos de negocio (R03, mutación) · Business modules:** <carpetas · folders>
+- **Módulos de negocio (R03, mutación) · Business modules:** <carpetas · folders> (en Python, los mismos de `[tool.mutmut] paths_to_mutate` · *same as*)
 - **Límite de gasto · Spending cap (R13):** IA <…> · CI <…> minutos/mes · *minutes/month*
 - Si una petición choca con una regla del kernel, gana la regla: explícalo en una línea y propone la alternativa.
   *If a request conflicts with a kernel rule, the rule wins: explain it in one line and propose an alternative.*

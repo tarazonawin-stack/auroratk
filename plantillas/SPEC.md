@@ -3,7 +3,7 @@
 - **ID:** SPEC-<NNN> · **Fecha · Date:** <AAAA-MM-DD> · **Estado · Status:** borrador | aprobada · draft | approved
 - **Responsable · Owner:** <nombre>
 
-> Ejemplo de spec buena y mala · Good and bad spec example: [`ejemplos/SPEC-ejemplo.md`](https://github.com/tarazonawin-stack/auroratk/blob/main/ejemplos/SPEC-ejemplo.md)
+> Ejemplo de spec buena y mala · Good and bad spec example: [`ejemplos/SPEC-ejemplo.md`](https://github.com/tarazonawin-stack/auroratk/blob/v2.0.0/ejemplos/SPEC-ejemplo.md)
 
 ## Objetivo · Goal
 <Qué problema resuelve y para quién, en 2–3 frases. · What problem it solves and for whom.>

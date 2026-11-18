@@ -33,10 +33,11 @@ La IA escribe rápido, pero se equivoca con total seguridad. Este kernel existe 
    - `plantillas/AGENTS.md` → `AGENTS.md` (raíz), y complétalo.
    - `plantillas/CLAUDE.md` → `CLAUDE.md` (raíz).
    - `plantillas/PULL_REQUEST_TEMPLATE.md` → `.github/PULL_REQUEST_TEMPLATE.md`.
-   - `KERNEL.md` → `docs/kernel/KERNEL.md`.
+   - `KERNEL.md` y los perfiles elegidos → `docs/kernel/`, para que la IA los vea.
+   - `plantillas/dependabot.yml` → `.github/dependabot.yml`.
    - `plantillas/ESTADO.md` → `docs/ESTADO.md`.
    - `plantillas/claude-settings.json` → `.claude/settings.json` (permisos mínimos del agente, R13).
-   - El CI de tu perfil, si existe (p. ej. `perfiles/ci/python-django.yml` → `.github/workflows/ci.yml`).
+   - El CI de tu perfil, si existe (p. ej. `perfiles/ci/python-django.yml` → `.github/workflows/ci.yml`, y los scripts de `perfiles/ci/` → `scripts/`).
    - Crea `docs/specs/`, `docs/decisiones/` y `docs/excepciones.md` (desde `plantillas/EXCEPCIONES.md`).
 4. **Configura el CI por etapas** con los comandos de tus perfiles (ver *Activación por etapas* en el kernel) y activa la protección de la rama principal si tu plan de GitHub lo permite (en un repo privado gratuito no: haz merge solo con el CI en verde).
 5. **Trabaja así, cada vez:** spec → cambio pequeño con su prueba → CI → revisión independiente → escribes en una línea qué hace → tu aprobación → `docs/ESTADO.md` al día.

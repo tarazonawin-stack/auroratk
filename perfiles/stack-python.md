@@ -17,5 +17,6 @@
 **Notas · Notes**
 - Base de datos recomendada: PostgreSQL. *Recommended database: PostgreSQL.*
 - `mutmut` no funciona en Windows: en la PC se usa con WSL (Linux dentro de Windows); en el CI corre en Linux sin problema. *`mutmut` doesn't run on Windows: use WSL locally; CI runs it on Linux.*
-- CI listo para copiar · Ready-to-copy CI: [`ci/python-django.yml`](ci/python-django.yml).
+- CI listo para copiar · Ready-to-copy CI: [`ci/python-django.yml`](ci/python-django.yml) + configuración base · *base config* [`ci/pyproject-django.toml`](ci/pyproject-django.toml) + scripts en [`ci/`](ci/).
+- Antes de la etapa 1, crea una primera prueba simple: sin pruebas, `pytest` termina con código 5 y el CI falla. · *Create a first simple test before stage 1.*
 - Prohibido · Forbidden: `except:` vacío, `except Exception: pass` (`ruff` BLE001, S110, E722).

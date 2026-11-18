@@ -24,7 +24,10 @@ Un perfil traduce las reglas del kernel a herramientas concretas. Cada proyecto 
 |---|---|
 | R05 Secretos · Secrets | `gitleaks` |
 | R06 Análisis de seguridad · Security analysis | `semgrep` |
-| R07 Dependencias · Dependencies | `osv-scanner` + Dependabot o Renovate |
+| R07 Dependencias · Dependencies | `osv-scanner` + Dependabot ([plantilla](../plantillas/dependabot.yml)) o Renovate |
+| R02 Tamaño · Size | [`ci/size_check.py`](ci/size_check.py) (cualquier lenguaje · *any language*) |
+| R06 Lista corta · Short checklist | [`asvs-corto.md`](asvs-corto.md) |
+| R12 Descripción del PR · PR description | [`ci/pr_check.py`](ci/pr_check.py) |
 | R07 Dependencias nuevas · New dependencies | Comprobar el nombre exacto en el registro oficial (PyPI, npm, Maven Central) antes de instalar · *Check the exact name in the official registry before installing* |
 | R14 Alertas · Alerts | Alertas del hosting o un servicio de errores (p. ej. Sentry, plan gratuito) · *Hosting alerts or an error service (e.g. Sentry free tier)* |
 | R12 Gobierno · Governance | Protección de rama si el plan la permite; en repo privado gratuito, merge manual solo con CI en verde · *Branch protection if the plan allows it; on a free private repo, manual merge only with green CI* + [plantilla de PR](../plantillas/PULL_REQUEST_TEMPLATE.md) |

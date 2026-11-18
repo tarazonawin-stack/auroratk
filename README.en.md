@@ -33,10 +33,11 @@ AI writes fast, but it is wrong with full confidence. This kernel exists so that
    - `plantillas/AGENTS.md` → `AGENTS.md` (root), then fill it in.
    - `plantillas/CLAUDE.md` → `CLAUDE.md` (root).
    - `plantillas/PULL_REQUEST_TEMPLATE.md` → `.github/PULL_REQUEST_TEMPLATE.md`.
-   - `KERNEL.md` → `docs/kernel/KERNEL.md`.
+   - `KERNEL.md` and the chosen profiles → `docs/kernel/`, so the AI can see them.
+   - `plantillas/dependabot.yml` → `.github/dependabot.yml`.
    - `plantillas/ESTADO.md` → `docs/ESTADO.md`.
    - `plantillas/claude-settings.json` → `.claude/settings.json` (least-privilege agent permissions, R13).
-   - Your profile's CI, if any (e.g. `perfiles/ci/python-django.yml` → `.github/workflows/ci.yml`).
+   - Your profile's CI, if any (e.g. `perfiles/ci/python-django.yml` → `.github/workflows/ci.yml`, and the scripts in `perfiles/ci/` → `scripts/`).
    - Create `docs/specs/`, `docs/decisiones/` and `docs/excepciones.md` (from `plantillas/EXCEPCIONES.md`).
 4. **Set up CI in stages** with your profiles' commands (see *Staged activation* in the kernel) and turn on main-branch protection if your GitHub plan allows it (a free private repo does not: merge only with green CI).
 5. **Work like this, every time:** spec → small change with its test → CI → independent review → you write one line on what it does → your approval → `docs/ESTADO.md` up to date.
