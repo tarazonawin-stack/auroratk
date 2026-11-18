@@ -10,6 +10,8 @@ Un perfil traduce las reglas del kernel a herramientas concretas. Cada proyecto 
 | [Java](stack-java.md) | [Librería y CLI · Library & CLI](tipo-libreria-cli.md) |
 | [C++](stack-cpp.md) | [Automatización y agentes · Automation & agents](tipo-automatizacion.md) |
 
+**Público u open source · Public or open source:** si el repositorio es público, suma además [tipo-publico.md](tipo-publico.md) (OSPS Baseline nivel 1, archivos de gobierno y CI seguro). · *If the repository is public, also add tipo-publico.md (OSPS Baseline level 1, governance files and safe CI).*
+
 **País · Country (R09):** cada proyecto declara los países donde tiene usuarios. · *Each project declares the countries where it has users.*
 
 | País · Country | Perfil · Profile |
