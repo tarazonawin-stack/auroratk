@@ -18,6 +18,7 @@ Versión MAYOR porque varias reglas se vuelven más exigentes. Revisada por tres
 - **R13:** `AGENTS.md` corto (meta 150 líneas) con errores frecuentes de la IA; límite de gasto de IA y de CI; permisos mínimos del agente, aclarando que reducen el riesgo pero no son un candado. *Por qué:* las instrucciones innecesarias bajan el éxito de los agentes y suben su costo. · *Short AGENTS.md, spending cap, least-privilege settings.*
 
 ### Añadido · Added
+- **Perfil `tipo-publico.md`** para repos públicos u open source: los 24 controles del nivel 1 de OpenSSF OSPS Baseline como casillas, archivos de gobierno (LICENSE, CONTRIBUTING, CODE_OF_CONDUCT, SECURITY, MAINTAINERS, DCO), CI seguro ante PRs externos y OpenSSF Scorecard; advierte que la licencia del kernel es de uso interno. Sin cambios en las reglas. · *Public/open-source profile: OSPS Baseline level 1, governance files, safe CI, Scorecard; warns the kernel license is internal. No rule changes.*
 - **R14 · Registros que avisan** (OWASP A09:2025), con el ID interno del usuario, nunca datos personales. · *Logs that alert, with internal user IDs.*
 - **R15 · Claro para quien lo usa:** estados de carga, vacío y error; sistema de diseño; validación con una persona usuaria real. · *Clear for the people who use it.*
 - Niveles aclarados: Estricto es para datos sensibles, clientes externos o dinero; contratistas dentro de tu sistema y el número de DNI de trabajadores quedan en Estándar. · *Levels clarified.*
