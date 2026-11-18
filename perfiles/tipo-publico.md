@@ -7,7 +7,9 @@ Se suma al perfil de tipo del proyecto (web, juego, librería…) cuando el repo
 > **Fuente · Source:** [OpenSSF OSPS Baseline 2026.08.28](https://baseline.openssf.org/versions/2026-08-28)
 
 > ⚠️ **Licencia del kernel · Kernel license.** La [LICENSE](../LICENSE) de AuroraTK es de **uso interno**. No copies `KERNEL.md`, `KERNEL-CHAT.md`, perfiles ni plantillas a un repo público: enlázalos o resume las reglas con tus palabras en el `CONTRIBUTING.md` del proyecto, o pide permiso escrito al autor. Tu propio código sí puede llevar la licencia abierta que elijas.
+> **Plantillas y scripts (`plantillas/`, `perfiles/ci/*.py`):** en un repo público, escríbelos de nuevo con tus palabras o espera a que el autor los libere con licencia abierta (p. ej. MIT). Si quien publica es el propio autor, puede incluirlos, pero esas copias deben llevar una licencia abierta y la decisión se anota en `docs/decisiones/` (R12).
 > *AuroraTK's LICENSE is **internal use**. Do not copy `KERNEL.md`, `KERNEL-CHAT.md`, profiles or templates into a public repo: link to them or summarize the rules in your own words in the project's `CONTRIBUTING.md`, or ask the author for written permission. Your own code may carry any open license you choose.*
+> *Templates and scripts: in a public repo, rewrite them in your own words or wait until the author releases them under an open license (e.g. MIT). The author may include them, but those copies must carry an open license, recorded in `docs/decisiones/` (R12).*
 
 ## 1. OSPS Baseline nivel 1 · Level 1 (24 controles · *controls*)
 
