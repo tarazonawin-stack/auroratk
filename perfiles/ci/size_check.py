@@ -3,7 +3,7 @@
 Usage: python size_check.py <base-ref>     e.g. python size_check.py origin/main
 - Changed lines in the PR: warning above 200, failure above 400.
 - Code files: warning above 300 lines, failure above 400.
-Lock files, migrations and generated files are excluded.
+Lock files, migrations, generated files and third-party files (third_party/, LICENSES/) are excluded.
 """
 
 import subprocess
@@ -12,7 +12,8 @@ from pathlib import Path
 
 CODE_SUFFIXES = {".py", ".js", ".jsx", ".ts", ".tsx", ".java", ".c", ".h", ".cpp", ".hpp",
                  ".cs", ".go", ".rs", ".html", ".css", ".scss", ".vue", ".svelte", ".gd"}
-EXCLUDED_PARTS = {"migrations", "node_modules", "dist", "build", "vendor", "generated"}
+EXCLUDED_PARTS = {"migrations", "node_modules", "dist", "build", "vendor", "generated",
+                  "third_party", "LICENSES"}  # vendored files are inventoried under R07
 EXCLUDED_NAMES = {"uv.lock", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "poetry.lock"}
 CHANGE_TARGET, CHANGE_CAP, FILE_WARN, FILE_CAP = 200, 400, 300, 400
 
