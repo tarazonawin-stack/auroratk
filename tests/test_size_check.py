@@ -93,6 +93,25 @@ class ChangeSizeTests(unittest.TestCase):
             self.assertEqual(code, 1)
             self.assertIn("Changed lines: 402", out)
 
+    def test_change_exactly_at_cap_passes(self) -> None:
+        with in_temp_dir():
+            start_repo()
+            write_lines("app/a.py", 200)
+            write_lines("app/b.py", 200)
+            commit_all()
+            code, out = run_main()
+            self.assertEqual(code, 0)
+            self.assertIn("Changed lines: 400", out)
+
+    def test_change_exactly_at_target_does_not_warn(self) -> None:
+        with in_temp_dir():
+            start_repo()
+            write_lines("app/a.py", 200)
+            commit_all()
+            code, out = run_main()
+            self.assertEqual(code, 0)
+            self.assertNotIn("above the 200-line target", out)
+
     def test_change_between_target_and_cap_warns_but_passes(self) -> None:
         with in_temp_dir():
             start_repo()
@@ -107,12 +126,14 @@ class FileSizeTests(unittest.TestCase):
     def test_file_over_cap_fails_and_over_warning_warns(self) -> None:
         with in_temp_dir():
             start_repo()
-            for name, count in [("big.py", 401), ("medium.py", 301), ("small.py", 300)]:
+            for name, count in [("big.py", 401), ("at_cap.py", 400), ("medium.py", 301),
+                                ("small.py", 300)]:
                 write_lines(name, count)
             commit_all()
             warnings, failures = size_check.oversized_files()
             self.assertEqual(failures, ["big.py: 401 lines (cap 400)"])
-            self.assertEqual(warnings, ["medium.py: 301 lines (split it before 400)"])
+            self.assertEqual(sorted(warnings), ["at_cap.py: 400 lines (split it before 400)",
+                                                "medium.py: 301 lines (split it before 400)"])
 
     def test_non_code_files_are_ignored(self) -> None:
         with in_temp_dir():

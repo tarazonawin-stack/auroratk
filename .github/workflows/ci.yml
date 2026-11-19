@@ -23,4 +23,6 @@ jobs:
         run: python3 -m unittest discover -s tests -v
       - name: R02 change and file size
         if: github.event_name == 'pull_request'
-        run: python3 perfiles/ci/size_check.py "origin/${{ github.base_ref }}"
+        env:
+          BASE_REF: ${{ github.base_ref }}  # via env, never pasted into the script
+        run: python3 perfiles/ci/size_check.py "origin/$BASE_REF"
