@@ -188,7 +188,7 @@ def changes_from_git(base: str, head: str = "HEAD") -> list[FileChange]:
 
 def safe(text: str) -> str:
     """One printable line: a file name from the PR must never start a line in the CI log."""
-    return text.encode("unicode_escape").decode("ascii")
+    return "".join(f"\\x{ord(c):02x}" if ord(c) < 32 or 127 <= ord(c) < 160 else c for c in text)
 
 
 def main(argv: list[str]) -> int:

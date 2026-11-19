@@ -100,7 +100,8 @@ class LogSafetyTests(unittest.TestCase):
     def test_file_names_cannot_start_a_log_line(self) -> None:
         name = "a\n::error::fake\r.py"
         self.assertNotIn("\n", risk.safe(name))
-        self.assertTrue(risk.safe(name).startswith("a\\n::error::"))
+        self.assertTrue(risk.safe(name).startswith("a\\x0a::error::"))
+        self.assertEqual(risk.safe("ruta crítica · añadir"), "ruta crítica · añadir")
 
 
 class KernelRiskFileTests(unittest.TestCase):
