@@ -44,7 +44,24 @@ class WorkflowShapeTests(unittest.TestCase):
     def test_event_values_only_go_through_env(self) -> None:
         for line in WORKFLOW.splitlines():
             if "${{" in line and not line.lstrip().startswith("#"):
+                if line.strip().startswith("group: "):
+                    self.assertEqual(line.strip(), "group: pr-description-${{ github.event.pull_request.number }}")
+                    continue
                 self.assertRegex(line, r"^\s+[A-Z_]+: \$\{\{ [^}]+ \}\}$", line)
+
+    def test_only_the_reviewed_steps_exist(self) -> None:
+        steps = re.findall(r"^      - (?:name|uses): (.*)$", WORKFLOW, re.MULTILINE)
+        self.assertEqual(steps, [
+            "actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0",
+            "Fetch the PR commits as data (never checked out or run)",
+            "R12 · Riesgo calculado (diff completo desde el merge-base)",
+            "R12 · Descripción del PR",
+        ], "a new step must be reviewed for security first (see the header of the workflow)")
+        self.assertEqual(len(re.findall(r"^        run:", WORKFLOW, re.MULTILINE)), 3)  # step-level runs only
+
+    def test_latest_run_wins_and_bash_uses_pipefail(self) -> None:
+        self.assertIn("cancel-in-progress: true", WORKFLOW)
+        self.assertIn("shell: bash", WORKFLOW)
 
     def test_django_ci_no_longer_runs_the_prs_pr_check(self) -> None:
         self.assertNotIn("pr_check.py", (helpers.CI_DIR / "python-django.yml").read_text(encoding="utf-8")
@@ -90,6 +107,18 @@ class RiskStepTests(unittest.TestCase):
             (repo / ".github" / "riesgo.txt").write_text("1 app.py\n")
             (repo / "app.py").write_text("x = eval(input())\n")
         self.assertEqual(self.run_step(cheat), "COMPUTED_RISK=3\n")
+
+    def test_the_attacks_of_the_review_get_risk_3(self) -> None:
+        def spaced(repo: Path) -> None:
+            (repo / "dir con espacio").mkdir()
+            (repo / "dir con espacio" / "a b.py").write_text("@csrf_exempt\ndef v(r):\n    return r\n")
+        def executable(repo: Path) -> None:
+            (repo / "tool").write_text("#!/bin/sh\necho hi\n")
+            (repo / "tool").chmod(0o755)
+        for name, attack in [("espacio + csrf_exempt", spaced), ("ejecutable nuevo", executable),
+                             ("csrf_exempt", lambda r: (r / "app.py").write_text("@csrf_exempt\nx = 1\n")),
+                             ("eval con espacio", lambda r: (r / "app.py").write_text("x = eval (y)\n"))]:
+            self.assertEqual(self.run_step(attack), "COMPUTED_RISK=3\n", name)
 
     def test_a_normal_change_is_risk_2(self) -> None:
         self.assertEqual(self.run_step(lambda repo: (repo / "app.py").write_text("x = 2\n")),

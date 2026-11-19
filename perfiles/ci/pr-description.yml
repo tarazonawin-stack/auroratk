@@ -8,6 +8,8 @@
 # checks out, installs or runs anything from the PR: its commits are fetched as data and read
 # with git diff. Never add a step that runs code from the PR, and never paste ${{ }} values
 # into a script: they go through env.
+# Stacked PRs: pull_request_target takes the workflow and scripts from the PR's BASE branch. When
+# the base is a work branch, not main, they come from that branch.
 # Note: on a free private repo, a red check does not block the merge (branch protection is not
 # available); the owner merges only with green CI.
 
@@ -20,6 +22,14 @@ on:
 permissions:
   contents: read
   pull-requests: read
+
+concurrency:  # only the latest run of a PR counts
+  group: pr-description-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash  # GitHub runs it as bash -eo pipefail
 
 jobs:
   pr-description:
