@@ -33,7 +33,7 @@ La IA escribe rápido, pero se equivoca con total seguridad. Este kernel existe 
    - `plantillas/AGENTS.md` → `AGENTS.md` (raíz), y complétalo.
    - `plantillas/CLAUDE.md` → `CLAUDE.md` (raíz).
    - `plantillas/PULL_REQUEST_TEMPLATE.md` → `.github/PULL_REQUEST_TEMPLATE.md`.
-   - `KERNEL.md` y los perfiles elegidos → `docs/kernel/`, para que la IA los vea.
+   - `KERNEL.md`, `KERNEL.en.md` y `SHA256SUMS` → `docs/kernel/`, y **todos** los perfiles (`perfiles/*.md`) → `docs/kernel/perfiles/`, para que la IA los vea (los que usa el proyecto se declaran en `AGENTS.md`). Cópialos sin editar y sin agregar nada: el CI del perfil falla si falta, sobra o cambió algún archivo respecto de `SHA256SUMS`.
    - `plantillas/dependabot.yml` → `.github/dependabot.yml`.
    - `plantillas/ESTADO.md` → `docs/ESTADO.md`.
    - `plantillas/claude-settings.json` → `.claude/settings.json` (permisos mínimos del agente, R13).
@@ -52,12 +52,21 @@ KERNEL-CHAT.md / .en.md      versión corta para pegar en un chat sin repositori
 perfiles/                    reglas → herramientas por stack, tipo de proyecto y país
 plantillas/                  archivos para copiar a cada proyecto
 ejemplos/                    ejemplos de cómo se ve bien hecho
+tests/                       pruebas de los scripts de CI y de la coherencia del kernel
+SHA256SUMS                   huellas de los archivos que se copian a docs/kernel/
 CHANGELOG.md                 historial de versiones del kernel
 ```
 
 ## Estado
 
-**Versión 2.0.0.** Las reglas, los perfiles y las plantillas están completos. Las configuraciones de CI listas para copiar se agregan por perfil a medida que cada uno se usa por primera vez en un proyecto real (el primero: GPEXT, con Python/Django + web).
+**Versión 2.1.0.** Las reglas, los perfiles y las plantillas están completos. Las configuraciones de CI listas para copiar se agregan por perfil a medida que cada uno se usa por primera vez en un proyecto real (el primero: GPEXT, con Python/Django + web).
+
+## Publicar una versión
+
+1. Anota el cambio en `CHANGELOG.md` y sube la versión en todos los archivos (las pruebas avisan si falta alguno).
+2. Regenera las huellas: `sha256sum KERNEL.md KERNEL.en.md perfiles/*.md > SHA256SUMS`.
+3. Verifica: `python3 -m unittest discover -s tests -v` (lo mismo que corre el CI).
+4. Después del merge, crea la etiqueta **`vX.Y.Z`, sin punto después de la v** (por ejemplo `v2.1.0`): los enlaces del kernel apuntan a ese nombre exacto.
 
 ## Autoría y licencia
 

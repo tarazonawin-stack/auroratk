@@ -25,6 +25,6 @@
 - [ ] R14 Las acciones críticas nuevas dejan registro, sin datos personales, o N/A
 - [ ] R15 Estados de carga, vacío y error; flujo principal validado con una persona usuaria real (Estándar, desde la etapa 3), o N/A
 - [ ] R12 `AGENTS.md`, `docs/decisiones/` y `docs/ESTADO.md` al día
-- [ ] R12 Revisado por una sesión distinta a la que escribió el código: <quién o qué · who or what>
+- [ ] R12 Revisado por una sesión distinta a la que escribió el código: <qué modelo o herramienta · which model or tool>
 - [ ] R13 Sin permisos nuevos para agentes; sin skills ni plugins nuevos sin aprobar; `AGENTS.md` cerca de la meta de 150 líneas
 - [ ] Excepciones nuevas registradas con fecha, o ninguna · *New exceptions recorded with a date, or none*

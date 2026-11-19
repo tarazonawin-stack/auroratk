@@ -3,7 +3,7 @@
 > Se actualiza al cerrar cada sesión de trabajo (R12). Es lo primero que lee una sesión nueva.
 > *Updated at the end of every work session (R12). It is the first thing a new session reads.*
 
-- **Fecha · Date:** <AAAA-MM-DD> · **Kernel:** v2.0.0 · **Nivel · Level:** <…>
+- **Fecha · Date:** <AAAA-MM-DD> · **Kernel:** v2.1.0 · **Nivel · Level:** <…>
 
 ## Hecho y verificado · Done and verified
 - <SPEC-001 · qué funciona · enlace al PR o CI · what works · link>

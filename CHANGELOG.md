@@ -2,6 +2,23 @@
 
 Formato basado en *Keep a Changelog*; versionado semántico. · *Based on Keep a Changelog; semantic versioning.*
 
+## [2.1.0] · 2026-11-19
+
+Versión MENOR: el texto de ninguna regla se vuelve más exigente; se agregan herramientas de perfil y una recomendación. Ojo: el CI de Django gana una comprobación nueva (copia del kernel) que hace fallar a un proyecto con la copia editada; se trata como herramienta de perfil, no como regla más exigente. Si se prefiere leerlo como regla más exigente, la versión correcta sería 3.0.0: decisión del dueño. · *MINOR: no rule text becomes stricter. The Django CI gains a kernel-copy check that fails projects with an edited copy; treated as profile tooling. Read as a stricter rule, it would be 3.0.0: the owner's call.*
+
+### Corregido · Fixed
+- **Enlaces rotos:** la etiqueta de la 2.0.0 se publicó como `v.2.0.0` y el kernel enlazaba a `v2.0.0`, así que todos sus enlaces fijados daban 404. Desde la 2.1.0 la etiqueta se escribe `vX.Y.Z` y una prueba revisa el formato. Para que los enlaces de la 2.0.0 también funcionen, se recomienda crear la etiqueta `v2.0.0` sobre el mismo commit que `v.2.0.0`. · *Broken links: the 2.0.0 tag was published as `v.2.0.0`; tags are now `vX.Y.Z`, checked by a test.*
+- **Perfiles copiables:** `perfiles/README.md` y `stack-python.md` usaban enlaces relativos a `ci/` y `../plantillas/` que se rompen al copiarlos a `docs/kernel/` de un proyecto; ahora son enlaces absolutos fijados a la versión. · *Profiles used relative links that broke once copied; now pinned absolute links.*
+
+### Añadido · Added
+- **El kernel cumple lo que exige:** pruebas de sus scripts de CI (`tests/`, solo biblioteca estándar) y un CI propio (`.github/workflows/ci.yml`). *Por qué:* un fallo en `pr_check.py` aprobaría PRs incompletos en todos los proyectos a la vez. · *The kernel now tests its own CI scripts and has its own CI.*
+- **`SHA256SUMS`** y un paso en el CI de Django que compara la copia de `docs/kernel/` con esas huellas: falla si un archivo falta, sobra, está en otra carpeta o cambió (una prueba corre ese paso contra copias rotas a propósito). El proyecto copia **todos** los perfiles. Límite: quien edite la copia puede regenerar `SHA256SUMS`; protege contra ediciones accidentales, no contra ediciones deliberadas. *Por qué:* la copia de GPEXT ya se había editado a mano en 4 archivos sin que nadie lo notara. · *Checksums and a CI step that catches hand-edited kernel copies.*
+- **R12, recomendación:** que algunas revisiones las haga un modelo o herramienta distinta del que escribió el código, y que el PR diga cuál. *Por qué:* dos sesiones del mismo modelo comparten puntos ciegos. · *Recommend reviews by a different model or tool.*
+- README: pasos para publicar una versión. · *Release steps in the README.*
+
+### Cambiado · Changed
+- CI de Django: acciones de GitHub fijadas a su commit exacto (mismas versiones que antes), con una prueba que lo exige. *Por qué:* una etiqueta se puede mover a otro código; un commit no (R07). · *Actions pinned to commit SHAs.*
+
 ## [2.0.0] · 2026-11-18
 
 Versión MAYOR porque varias reglas se vuelven más exigentes. Revisada por tres sesiones independientes antes de integrar. · *MAJOR because several rules become stricter. Reviewed by three independent sessions before merging.*

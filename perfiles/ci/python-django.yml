@@ -1,4 +1,4 @@
-# AuroraTK Kernel v2.0.0 · CI for the Python / Django profile.
+# AuroraTK Kernel v2.1.0 · CI for the Python / Django profile.
 # Copy to .github/workflows/ci.yml, and size_check.py, pr_check.py and
 # mutation_threshold.py to scripts/. Merge pyproject-django.toml into pyproject.toml.
 #
@@ -7,6 +7,10 @@
 # Stage 1 needs at least one test (pytest exits with code 5 when there are none).
 # Stage 2 needs production settings at config/settings/production.py.
 # MUTATION_THRESHOLD: 60 (Standard) or 75 (Strict). Mutation runs weekly, not per PR.
+# R07: actions are pinned to a full commit SHA (a tag can be moved to other code);
+# the comment keeps the readable version, and Dependabot (github-actions) updates both.
+# The kernel-copy step needs docs/kernel/ exactly as the kernel README says: KERNEL.md,
+# KERNEL.en.md, SHA256SUMS and every profile in docs/kernel/perfiles/, unedited.
 
 name: CI
 
@@ -31,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: R12 understanding line and checkboxes
         run: python3 scripts/pr_check.py
         env:
@@ -57,19 +61,22 @@ jobs:
     env:
       DATABASE_URL: postgres://ci:ci@localhost:5432/ci
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           fetch-depth: 0
       - name: R05 throwaway secret key (never a real one)
         run: echo "DJANGO_SECRET_KEY=$(python3 -c 'import secrets; print(secrets.token_urlsafe(64))')" >> "$GITHUB_ENV"
-      - uses: astral-sh/setup-uv@v5
+      - uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5.4.2
       - name: Install (locked)
         run: uv sync --locked
       # --- Stage 1 ---
       - name: R05 secret scan
-        uses: gitleaks/gitleaks-action@v2
+        uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2.3.9
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Kernel copy in docs/kernel unchanged (every file present, unedited, none extra)
+        working-directory: docs/kernel
+        run: sha256sum --check --strict --quiet SHA256SUMS && diff <(cut -c67- SHA256SUMS | sort) <(find . -type f ! -name SHA256SUMS | sed 's|^\./||' | sort)
       - name: R04 format, lint and types
         run: |
           uv run ruff format --check .
@@ -84,7 +91,9 @@ jobs:
         run: uv run pytest --cov --cov-fail-under=80
       - name: R02 change and file size
         if: env.STAGE >= 2 && github.event_name == 'pull_request'
-        run: python3 scripts/size_check.py "origin/${{ github.base_ref }}"
+        env:
+          BASE_REF: ${{ github.base_ref }}  # via env, never pasted into the script
+        run: python3 scripts/size_check.py "origin/$BASE_REF"
       - name: R08 migrations up to date
         if: env.STAGE >= 2
         run: uv run python manage.py makemigrations --check --dry-run
@@ -124,10 +133,10 @@ jobs:
     env:
       DATABASE_URL: postgres://ci:ci@localhost:5432/ci
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: R05 throwaway secret key (never a real one)
         run: echo "DJANGO_SECRET_KEY=$(python3 -c 'import secrets; print(secrets.token_urlsafe(64))')" >> "$GITHUB_ENV"
-      - uses: astral-sh/setup-uv@v5
+      - uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5.4.2
       - name: Install (locked)
         run: uv sync --locked
       - name: R03 mutation testing (stage 3)
