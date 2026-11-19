@@ -27,7 +27,8 @@ IF_IT_FAILS = "si sale mal que pasaria"
 APPROVAL_WORDS = {"ok", "okay", "si", "listo", "acepto", "aprobado", "lo entiendo", "entendido", "vale",
                   "dale", "de acuerdo", "conforme"}
 RISK = re.compile(r"^\s*-?\s*\*\*Riesgo[^*]*?\*\*\s*:?\s*([123])(?!\d)", re.MULTILINE | re.IGNORECASE)
-UNCHECKED = re.compile(r"^\s*-\s\[\s\]", re.MULTILINE)
+UNCHECKED = re.compile(r"^\s*[-*+]\s\[\s\]", re.MULTILINE)
+LEVELS = {"ligero", "estandar", "estricto"}
 EMPTY_LINE = "Falta decir qué cambia; con pocas palabras basta. No importa la redacción ni la ortografía."
 
 
@@ -48,6 +49,11 @@ def sections(body: str) -> dict[str, str]:
     return found
 
 
+def titles(body: str) -> list[str]:
+    """Every '## Title' of the body, plain, duplicates included."""
+    return [plain(t) for t in re.findall(r"^##(?!#)[ \t]*(.*)$", body.replace("\r\n", "\n"), re.MULTILINE)]
+
+
 def section(body: str, *starts: str) -> str | None:
     """The first section whose plain title starts with one of `starts`."""
     for title, text in sections(body).items():
@@ -57,15 +63,15 @@ def section(body: str, *starts: str) -> str | None:
 
 
 def written(text: str) -> bool:
-    """Not empty and not a <template placeholder>."""
+    """Not empty and not a <template placeholder> (anything that starts with '<')."""
     text = text.strip()
-    return bool(text) and not (text.startswith("<") and text.endswith(">"))
+    return bool(text) and not text.startswith("<")
 
 
 def items(text: str) -> dict[str, str]:
-    """'- **Label · EN:** value' lines, keyed by the plain label in Spanish."""
+    """'- **Label · EN:** value' lines (also with '*' or '+'), keyed by the plain label in Spanish."""
     found = {}
-    for match in re.finditer(r"^\s*-\s*\*\*(.+?)\*\*(.*)$", text, re.MULTILINE):
+    for match in re.finditer(r"^\s*[-*+]\s*\*\*(.+?)\*\*(.*)$", text, re.MULTILINE):
         label = plain(match.group(1).split("·")[0])
         found.setdefault(label, match.group(2).strip().lstrip(":").strip())
     return found
@@ -116,6 +122,9 @@ def problems(body: str, computed: int, level: str = "estandar") -> list[str]:
                      "Puede subir, nunca bajar.")
     risk = max(declared, computed)
     asks_owner = risk == 3 if level == "ligero" else risk >= 2
+    owner_titles = [t for t in titles(body) if any(t.startswith(s) for s in OWNER_TITLES)]
+    if len(owner_titles) > 1:
+        found.append("Hay más de un título «Con tus palabras» o «Lo entiendo»: deja solo el de la plantilla.")
     if asks_owner:
         missing = missing_items(section(body, OWNER_REPORT), OWNER_ITEMS)
         if missing:
@@ -140,6 +149,9 @@ def main() -> int:
         print("::error::COMPUTED_RISK debe ser 1, 2 o 3 (lo calcula risk.py en el CI).")
         return 1
     level = plain(os.environ.get("KERNEL_LEVEL", "estandar")) or "estandar"
+    if level not in LEVELS:
+        print(f"::error::KERNEL_LEVEL desconocido ({level}): usa ligero, estandar o estricto.")
+        return 1
     found = problems(os.environ.get("PR_BODY", ""), int(computed_text), level)
     print(f"Riesgo calculado: {computed_text} · nivel del proyecto: {level}")
     for problem in found:
