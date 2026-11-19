@@ -5,7 +5,7 @@ Formato basado en *Keep a Changelog*; versionado semántico. · *Based on Keep a
 ## [Sin publicar] · Unreleased
 
 ### Añadido · Added
-- **Guía «Lo entiendo»** (`guias/lo-entiendo.md`, EN `guias/lo-entiendo.en.md`): qué escribir, prueba rápida de 3 preguntas, ejemplos buenos y malos, cómo pedir la explicación y qué debe hacer la IA. Enlazada desde el README, la plantilla de PR y la de `AGENTS.md`. No cambia ninguna regla ni los archivos de `SHA256SUMS`. *Por qué:* un dueño que no programa a diario se trababa sin saber qué escribir ni si podía firmar para avanzar. · *Guide for the understanding line; no rule or checksummed file changes.*
+- **Guía «Lo entiendo»** (`guias/lo-entiendo.md`, EN `guias/lo-entiendo.en.md`): qué escribir, prueba rápida de 3 preguntas, ejemplos buenos y malos, cómo pedir la explicación y qué debe hacer la IA (puede dar un ejemplo, pero el dueño escribe su frase o la cambia a sus palabras). Enlazada desde el README, la plantilla de PR y la de `AGENTS.md`. No cambia ninguna regla ni los archivos de `SHA256SUMS`. *Por qué:* un dueño que no programa a diario se trababa sin saber qué escribir ni si podía firmar para avanzar. · *Guide for the understanding line; no rule or checksummed file changes.*
 
 ## [2.1.0] · 2026-11-19
 
