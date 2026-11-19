@@ -52,12 +52,21 @@ KERNEL-CHAT.md / .en.md      short version to paste into a chat with no reposito
 perfiles/                    rules → tools per stack, project type and country
 plantillas/                  files to copy into each project
 ejemplos/                    examples of what done right looks like
+tests/                       tests of the CI scripts and of the kernel's consistency
+SHA256SUMS                   checksums of the files copied into docs/kernel/
 CHANGELOG.md                 kernel version history
 ```
 
 ## Status
 
-**Version 2.0.0.** Rules, profiles and templates are complete. Ready-to-copy CI configurations are added per profile the first time each one is used in a real project (first up: GPEXT, with Python/Django + web).
+**Version 2.1.0.** Rules, profiles and templates are complete. Ready-to-copy CI configurations are added per profile the first time each one is used in a real project (first up: GPEXT, with Python/Django + web).
+
+## Publishing a version
+
+1. Record the change in `CHANGELOG.md` and bump the version in every file (the tests warn if one is missing).
+2. Regenerate the checksums: `sha256sum KERNEL.md KERNEL.en.md perfiles/*.md > SHA256SUMS`.
+3. Verify: `python3 -m unittest discover -s tests -v` (the same as CI).
+4. After merging, create the tag **`vX.Y.Z`, with no dot after the v** (for example `v2.1.0`): the kernel links point to that exact name.
 
 ## Authorship and license
 

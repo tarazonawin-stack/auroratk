@@ -1,4 +1,4 @@
-# AuroraTK Kernel · versión para chat (v2.0.0)
+# AuroraTK Kernel · versión para chat (v2.1.0)
 
 > Pega esto en las instrucciones del sistema de un chat sin repositorio (Google AI Studio, otro asistente). Resume el [kernel completo](KERNEL.md); si chocan, manda el kernel.
 

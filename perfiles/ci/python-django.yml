@@ -1,4 +1,4 @@
-# AuroraTK Kernel v2.0.0 · CI for the Python / Django profile.
+# AuroraTK Kernel v2.1.0 · CI for the Python / Django profile.
 # Copy to .github/workflows/ci.yml, and size_check.py, pr_check.py and
 # mutation_threshold.py to scripts/. Merge pyproject-django.toml into pyproject.toml.
 #
