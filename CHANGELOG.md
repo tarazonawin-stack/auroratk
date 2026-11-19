@@ -2,6 +2,11 @@
 
 Formato basado en *Keep a Changelog*; versionado semántico. · *Based on Keep a Changelog; semantic versioning.*
 
+## [Sin publicar] · Unreleased
+
+### Añadido · Added
+- **Guía «Lo entiendo»** (`guias/lo-entiendo.md`, EN `guias/lo-entiendo.en.md`): qué escribir, prueba rápida de 3 preguntas, ejemplos buenos y malos, cómo pedir la explicación y qué debe hacer la IA (puede dar un ejemplo, pero el dueño escribe su frase o la cambia a sus palabras). Enlazada desde el README, la plantilla de PR y la de `AGENTS.md`. No cambia ninguna regla ni los archivos de `SHA256SUMS`. *Por qué:* un dueño que no programa a diario se trababa sin saber qué escribir ni si podía firmar para avanzar. · *Guide for the understanding line; no rule or checksummed file changes.*
+
 ## [2.1.0] · 2026-11-19
 
 Versión MENOR: el texto de ninguna regla se vuelve más exigente; se agregan herramientas de perfil y una recomendación. Ojo: el CI de Django gana una comprobación nueva (copia del kernel) que hace fallar a un proyecto con la copia editada; se trata como herramienta de perfil, no como regla más exigente. Si se prefiere leerlo como regla más exigente, la versión correcta sería 3.0.0: decisión del dueño. · *MINOR: no rule text becomes stricter. The Django CI gains a kernel-copy check that fails projects with an edited copy; treated as profile tooling. Read as a stricter rule, it would be 3.0.0: the owner's call.*

@@ -6,6 +6,7 @@
 ## Lo entiendo · I understand it (R12)
 <El humano escribe aquí, en una línea y con sus palabras, qué hace este cambio. Si no puede, pide la explicación antes de aprobar.>
 <The human writes here, in one line and in their own words, what this change does. If they can't, they ask for an explanation before approving.>
+<¿Dudas? Guía «Lo entiendo» del kernel AuroraTK: guias/lo-entiendo.md · Doubts? AuroraTK guide: guias/lo-entiendo.en.md>
 
 ## Evidencia · Evidence (R12)
 - Ejecución de CI · CI run: <enlace · link>
