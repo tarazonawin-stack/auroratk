@@ -33,7 +33,7 @@ La IA escribe rápido, pero se equivoca con total seguridad. Este kernel existe 
    - `plantillas/AGENTS.md` → `AGENTS.md` (raíz), y complétalo.
    - `plantillas/CLAUDE.md` → `CLAUDE.md` (raíz).
    - `plantillas/PULL_REQUEST_TEMPLATE.md` → `.github/PULL_REQUEST_TEMPLATE.md`.
-   - `KERNEL.md` y los perfiles elegidos → `docs/kernel/`, para que la IA los vea.
+   - `KERNEL.md`, `KERNEL.en.md` y `SHA256SUMS` → `docs/kernel/`, y los perfiles elegidos → `docs/kernel/perfiles/`, para que la IA los vea. Cópialos sin editar: el CI del perfil compara cada archivo con `SHA256SUMS` y falla si alguno cambió.
    - `plantillas/dependabot.yml` → `.github/dependabot.yml`.
    - `plantillas/ESTADO.md` → `docs/ESTADO.md`.
    - `plantillas/claude-settings.json` → `.claude/settings.json` (permisos mínimos del agente, R13).

@@ -33,7 +33,7 @@ AI writes fast, but it is wrong with full confidence. This kernel exists so that
    - `plantillas/AGENTS.md` → `AGENTS.md` (root), then fill it in.
    - `plantillas/CLAUDE.md` → `CLAUDE.md` (root).
    - `plantillas/PULL_REQUEST_TEMPLATE.md` → `.github/PULL_REQUEST_TEMPLATE.md`.
-   - `KERNEL.md` and the chosen profiles → `docs/kernel/`, so the AI can see them.
+   - `KERNEL.md`, `KERNEL.en.md` and `SHA256SUMS` → `docs/kernel/`, and the chosen profiles → `docs/kernel/perfiles/`, so the AI can see them. Copy them unedited: the profile's CI compares each file with `SHA256SUMS` and fails if any changed.
    - `plantillas/dependabot.yml` → `.github/dependabot.yml`.
    - `plantillas/ESTADO.md` → `docs/ESTADO.md`.
    - `plantillas/claude-settings.json` → `.claude/settings.json` (least-privilege agent permissions, R13).

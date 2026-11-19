@@ -70,6 +70,9 @@ jobs:
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Kernel copy in docs/kernel unchanged (SHA256SUMS from the kernel release)
+        working-directory: docs/kernel
+        run: test -f KERNEL.md && sha256sum --check --strict --ignore-missing --quiet SHA256SUMS
       - name: R04 format, lint and types
         run: |
           uv run ruff format --check .
