@@ -16,23 +16,30 @@ from pathlib import Path, PurePosixPath
 
 RISK_FILE = ".github/riesgo.txt"
 
-ROUTINE = ["docs/ESTADO.md", "CHANGELOG.md", "docs/evidencia/**"]
+ROUTINE = ["docs/ESTADO.md", "CHANGELOG.md"] + [f"docs/evidencia/**/*{ext}" for ext in (".md", ".txt", ".log")]
+ROUTINE_IMAGES = [f"docs/evidencia/**/*{ext}" for ext in (".png", ".jpg", ".jpeg")]  # binary, still routine
 
 CRITICAL_PATHS = [
-    ".github/**", "scripts/**", "Dockerfile", "**/Dockerfile", "compose*.y*ml", "docker-compose*.y*ml",
-    "pyproject.toml", "uv.lock", "poetry.lock", "requirements*.txt", "package.json", "package-lock.json",
-    "pnpm-lock.yaml", "yarn.lock", "docs/kernel/**", "docs/excepciones.md", "AGENTS.md", "CLAUDE.md",
-    ".claude/**", "config/settings*", "**/settings.py", "**/settings/**", ".env.example", "**/wsgi.py",
-    "**/asgi.py", RISK_FILE,
+    ".github/**", "scripts/**", "**/Dockerfile", "**/compose*.y*ml", "**/docker-compose*.y*ml",
+    "**/pyproject.toml", "**/uv.lock", "**/poetry.lock", "**/requirements*.txt", "**/requirements/**",
+    "**/Pipfile*", "**/setup.py", "**/setup.cfg", "**/tox.ini", "**/.coveragerc", "**/conftest.py",
+    "**/manage.py", "**/package.json", "**/package-lock.json", "**/pnpm-lock.yaml", "**/yarn.lock",
+    "**/Makefile", ".gitmodules", "**/.gitattributes", "CODEOWNERS", "docs/CODEOWNERS", "Jenkinsfile",
+    ".gitlab-ci.yml", "docs/kernel/**", "docs/excepciones.md", "AGENTS.md", "**/AGENTS.md", "CLAUDE.md",
+    "**/CLAUDE.md", ".claude/**", "config/settings*", "**/settings.py", "**/settings/**", ".env.example",
+    "**/wsgi.py", "**/asgi.py", RISK_FILE,
 ]
 
 # Removing or changing these lines weakens access control: Django profile.
 PERMISSION_WORDS = ["csrf_exempt", ".raw(", "RawSQL", ".extra(", "login_required", "permission_required",
-                    "has_perm", "LoginRequiredMixin", "PermissionRequiredMixin", "UserPassesTestMixin"]
+                    "has_perm", "LoginRequiredMixin", "PermissionRequiredMixin", "UserPassesTestMixin",
+                    "IsAuthenticated", "AllowAny"]
+# Adding these lines opens access or raw SQL: risk 3 too.
+OPENING_WORDS = ["csrf_exempt", ".raw(", "RawSQL", ".extra(", "AllowAny"]
 
 # Added lines containing these raise an alarm (risk 3). An alarm, not a lock.
-ALARM_WORDS = ["eval(", "exec(", "pytest.mark.skip", "xfail", "shell=True", "verify=False", "|safe",
-               "mark_safe"]
+ALARM_WORDS = ["eval(", "exec(", "pytest.mark.skip", "skipif", "skip(", "xfail", "shell=True", "verify=False",
+               "|safe", "mark_safe", "os.system(", "pickle.loads(", "yaml.load("]
 
 # Migration operations that delete, rename, change or transform data.
 DESTRUCTIVE_MIGRATION = ["RemoveField", "DeleteModel", "RenameField", "RenameModel", "AlterField",
@@ -40,8 +47,10 @@ DESTRUCTIVE_MIGRATION = ["RemoveField", "DeleteModel", "RenameField", "RenameMod
                          "AlterUniqueTogether"]
 
 CODE_SUFFIXES = {".py", ".js", ".mjs", ".ts", ".tsx", ".jsx", ".html", ".jinja", ".j2", ".sh", ".java",
-                 ".cpp", ".cc", ".c", ".h", ".hpp", ".go", ".rb", ".php", ".vue", ".svelte"}
-SYMLINK, EXECUTABLE = "120000", "100755"
+                 ".cpp", ".cc", ".c", ".h", ".hpp", ".go", ".rb", ".php", ".vue", ".svelte", ".cs", ".rs",
+                 ".kt", ".ps1", ".bat", ".sql", ""}  # "" = no extension, such as a script with a shebang
+SYMLINK, EXECUTABLE, SUBMODULE = "120000", "100755", "160000"
+TEST_DEFINITION = re.compile(r"^\s*(?:async\s+)?def\s+test|^\s*(?:it|test)\s*\(|@Test\b")
 
 
 @dataclass
@@ -77,16 +86,19 @@ def matches(path: str, patterns: list[str]) -> bool:
 
 
 def contains_word(line: str, word: str) -> bool:
-    """Whole-word search: no letter, digit or '_' glued before or (for plain words) after it."""
+    """Whole-word search, tolerant of spaces: 'eval (x)', 'shell = True' and '| safe' still count."""
     before = r"(?<![A-Za-z0-9_])" if word[0].isalnum() or word[0] == "_" else ""
     after = r"(?![A-Za-z0-9_])" if word[-1].isalnum() or word[-1] == "_" else ""
-    return re.search(before + re.escape(word) + after, line) is not None
+    body = re.escape(word).replace(r"\(", r"\s*\(").replace("=", r"\s*=\s*").replace(r"\|", r"\|\s*")
+    return re.search(before + body + after, line) is not None
 
 
 def is_test_file(path: str) -> bool:
-    name = PurePosixPath(path).name
-    return (matches(path, ["tests/**", "**/tests/**", "test/**", "**/test/**"])
-            or name.startswith("test_") or name.endswith(("_test.py", ".test.js", ".test.ts", ".spec.ts")))
+    """A code file in a test folder, or a file named like a test. tests/disabled.txt is not a test."""
+    name, suffix = PurePosixPath(path).name, PurePosixPath(path).suffix
+    in_test_folder = matches(path, ["tests/**", "**/tests/**", "test/**", "**/test/**"])
+    return ((in_test_folder and suffix in CODE_SUFFIXES - {""}) or name.startswith("test_")
+            or name.endswith(("_test.py", ".test.js", ".test.ts", ".spec.ts", ".spec.js")))
 
 
 def load_project_rules(text: str) -> tuple[list[str], list[str]]:
@@ -104,14 +116,21 @@ def load_project_rules(text: str) -> tuple[list[str], list[str]]:
 def file_risk(change: FileChange, critical: list[str], alarms: list[str]) -> tuple[int, str]:
     """Risk of one file and why. Every path of a rename counts."""
     paths = [p for p in (change.old_path, change.path) if p]
-    if SYMLINK in (change.old_mode, change.new_mode):
+    modes = (change.old_mode, change.new_mode)
+    if SYMLINK in modes:
         return 3, "enlace simbólico · symlink"
-    if change.new_mode == EXECUTABLE and change.old_mode not in ("", EXECUTABLE):
-        return 3, "pasa a ejecutable · becomes executable"
+    if SUBMODULE in modes:
+        return 3, "submódulo · submodule"
+    if change.new_mode == EXECUTABLE and change.old_mode != EXECUTABLE:
+        return 3, "ejecutable nuevo · new executable"
     if any(matches(p, critical) for p in paths):
         return 3, "ruta crítica · critical path"
-    if change.status == "D" and any(is_test_file(p) for p in paths):
-        return 3, "borra pruebas · deletes tests"
+    if any(is_test_file(p) for p in paths):
+        if change.status == "D" or (change.status == "R" and not is_test_file(change.path)):
+            return 3, "borra o desactiva pruebas · deletes or disables tests"
+        removed = sum(bool(TEST_DEFINITION.search(line)) for line in change.removed)
+        if removed > sum(bool(TEST_DEFINITION.search(line)) for line in change.added):
+            return 3, "quita pruebas · removes tests"
     if any(matches(p, ["**/migrations/*.py"]) and not p.endswith("__init__.py") for p in paths):
         if change.status == "D" or any(contains_word(line, op) for line in change.added
                                        for op in DESTRUCTIVE_MIGRATION):
@@ -121,13 +140,14 @@ def file_risk(change: FileChange, critical: list[str], alarms: list[str]) -> tup
             if any(contains_word(line, w) for w in PERMISSION_WORDS):
                 return 3, f"quita o cambia permisos · removes or changes access control: {line.strip()[:60]}"
         for line in change.added:
-            word = next((w for w in alarms if contains_word(line, w)), None)
+            word = next((w for w in OPENING_WORDS + alarms if contains_word(line, w)), None)
             if word:
                 return 3, f"alarma «{word}» · alarm word"
-    if all(matches(p, ROUTINE) for p in paths):
-        return 1, "rutina · routine"
-    if change.binary and not any(p.endswith(".mo") for p in paths):
+    if change.binary and not all(matches(p, ROUTINE_IMAGES) for p in paths) \
+            and not any(p.endswith(".mo") for p in paths):
         return 3, "binario · binary"
+    if all(matches(p, ROUTINE + ROUTINE_IMAGES) for p in paths):
+        return 1, "rutina · routine"
     return 2, "normal"
 
 
@@ -168,21 +188,21 @@ def changes_from_git(base: str, head: str = "HEAD") -> list[FileChange]:
             i += 3
         if added == "-" and name in changes:
             changes[name].binary = True
-    by_any_path = {p: c for c in changes.values() for p in (c.path, c.old_path) if p}
-    current: FileChange | None = None
-    old_side = ""
-    for line in git("diff", "-U0", "-M", "--no-color", "--no-prefix", span).splitlines():
-        if line.startswith("diff --git"):
-            current, old_side = None, ""
-        elif line.startswith("--- ") and current is None:
-            old_side = line[4:]
-        elif line.startswith("+++ ") and current is None:
-            target = line[4:] if line[4:] != "/dev/null" else old_side
-            current = by_any_path.get(target)
-        elif current and line.startswith("+"):
-            current.added.append(line[1:])
-        elif current and line.startswith("-"):
-            current.removed.append(line[1:])
+    for change in changes.values():
+        if change.binary or SUBMODULE in (change.old_mode, change.new_mode):
+            continue
+        pathspec = [p for p in (change.old_path, change.path) if p]
+        in_hunk = False  # headers come before the first @@; after it every +/- line is content
+        for line in git("--literal-pathspecs", "diff", "-U0", "-M", "--no-color", "--no-ext-diff", "--no-textconv", span, "--",
+                        *pathspec).splitlines():
+            if line.startswith("@@"):
+                in_hunk = True
+            elif line.startswith("diff --git"):
+                in_hunk = False
+            elif in_hunk and line.startswith("+"):
+                change.added.append(line[1:])
+            elif in_hunk and line.startswith("-"):
+                change.removed.append(line[1:])
     return list(changes.values())
 
 
@@ -196,7 +216,11 @@ def main(argv: list[str]) -> int:
         print(__doc__.strip().splitlines()[-1])
         return 2
     rules = Path(RISK_FILE).read_text(encoding="utf-8") if Path(RISK_FILE).exists() else ""
-    risk, reasons = compute(changes_from_git(*argv[1:]), rules)
+    changes = changes_from_git(*argv[1:])
+    if not changes:
+        print("Error: el diff está vacío; revisa la base del PR · empty diff: check the PR base")
+        return 1
+    risk, reasons = compute(changes, rules)
     print(f"Riesgo {risk}")
     for path, level, why in reasons:
         if level > 1:

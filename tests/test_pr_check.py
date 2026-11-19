@@ -125,6 +125,29 @@ class OwnerLineFilterTests(unittest.TestCase):
         self.assertEqual(problems(filled(3).replace("\n", "\r\n"), computed=3), [])
 
 
+class ReviewFindingsTests(unittest.TestCase):
+    """Minor findings of the independent review of #14."""
+
+    def test_a_second_owner_title_is_an_error(self) -> None:
+        body = "## Con tus palabras: ¿qué cambia?\nlo escribió la IA aquí\n\n" + filled(2, line="")
+        self.assertTrue(any("más de un título" in p for p in problems(body, computed=2)))
+
+    def test_star_bullets_count(self) -> None:
+        body = filled(2).replace("- **", "* **")
+        self.assertEqual(problems(body, computed=2), [])
+
+    def test_star_checkbox_counts_as_unchecked(self) -> None:
+        self.assertTrue(any("casilla" in p for p in problems(filled(2) + "\n* [ ] otra\n", computed=2)))
+
+    def test_anything_starting_with_angle_bracket_is_template(self) -> None:
+        self.assertIn(pr_check.EMPTY_LINE, problems(filled(2, line="<texto"), computed=2))
+
+    def test_unknown_level_is_an_error(self) -> None:
+        code, out = run(filled(2), computed="2", level="estrico")
+        self.assertEqual(code, 1)
+        self.assertIn("KERNEL_LEVEL desconocido", out)
+
+
 class TechnicalReportTests(unittest.TestCase):
     def test_every_risk_needs_the_technical_report(self) -> None:
         body = filled(1).replace("- **No verificado · Not verified:** Escrito: https://ci.example/run/1",

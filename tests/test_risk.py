@@ -60,8 +60,9 @@ class FileKindTests(unittest.TestCase):
         self.assertEqual(level(FileChange("link", "A", new_mode="120000")), 3)
         self.assertEqual(level(FileChange("app/x.py", "M", old_mode="100644", new_mode="100755")), 3)
 
-    def test_new_executable_file_is_not_a_mode_change(self) -> None:
-        self.assertEqual(level(FileChange("app/run.py", "A", new_mode="100755")), 2)
+    def test_new_executable_file_is_critical_too(self) -> None:
+        self.assertEqual(level(FileChange("bin/run", "A", new_mode="100755")), 3)
+        self.assertEqual(level(FileChange("app/x.py", "M", old_mode="100755", new_mode="100755")), 2)
 
     def test_binary_is_critical_except_compiled_translations(self) -> None:
         self.assertEqual(level(FileChange("app/blob.bin", "A", binary=True)), 3)
@@ -117,9 +118,9 @@ class AlarmTests(unittest.TestCase):
         self.assertEqual(level(FileChange("docs/seguridad.md", added=["nunca uses eval("])), 2)
 
     def test_project_can_add_alarm_words(self) -> None:
-        change = FileChange("app/x.py", added=["os.system(cmd)"])
+        change = FileChange("app/x.py", added=["subprocess.Popen(cmd)"])
         self.assertEqual(level(change), 2)
-        self.assertEqual(level(change, rules="alarma os.system(\n"), 3)
+        self.assertEqual(level(change, rules="alarma subprocess.Popen(\n"), 3)
 
     def test_reasons_name_the_file_and_the_word(self) -> None:
         _, reasons = risk.compute([FileChange("app/x.py", added=["eval(s)"])])
