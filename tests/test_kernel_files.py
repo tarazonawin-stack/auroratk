@@ -76,6 +76,17 @@ class VersionTests(unittest.TestCase):
                 self.assertEqual(ref, tag, f"{name} links to {ref}")
 
 
+class WorkflowTests(unittest.TestCase):
+    def test_every_action_is_pinned_to_a_full_commit_sha(self) -> None:
+        uses = re.compile(r"uses:\s*([^\s#]+)")
+        found = 0
+        for path in ROOT.rglob("*.yml"):
+            for ref in uses.findall(path.read_text(encoding="utf-8")):
+                found += 1
+                self.assertRegex(ref, r"@[0-9a-f]{40}$", f"{path.name}: pin {ref} to a commit SHA")
+        self.assertGreater(found, 0)
+
+
 class CopyableProfilesTests(unittest.TestCase):
     def test_profiles_have_no_relative_links_that_break_once_copied(self) -> None:
         for path in (ROOT / "perfiles").glob("*.md"):
