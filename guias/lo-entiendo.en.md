@@ -34,7 +34,7 @@ If any answer is "I don't know", **don't write the line yet: ask.** That's not a
 | "Update dependencies" | Repeats the title | "Bumps Django to a version that fixes a security bug." |
 | "Fix the bug" | Doesn't say which one | "A ticket can no longer be closed without its materials." |
 
-It can be short and informal. What matters is that it's **yours** and says **what changes**.
+It can be short and informal. What matters is that it's **yours** and says **what changes**. If the AI gives you an example, don't copy it: say it your way.
 
 ## How to ask for an explanation
 
@@ -51,6 +51,7 @@ If you don't understand it, ask the AI or whoever made the change. These questio
 - Explain **with examples and a clear conclusion**: "you can relax because…" or "this is a concern because…, I recommend…". Don't leave the person in doubt.
 - If an earlier explanation was wrong, **say so and correct it**.
 - **Never write the line for the owner** or push them to move faster. If the owner dictates their sentence, paste it **as is**.
+- It may offer **an example** to show what is asked, but the owner **writes their own sentence or rewrites the example in their own words**. If they answer "use that one", the AI asks them to say it their way: copying the example doesn't prove they understood.
 - If the owner writes only "I understand it", calmly explain that it still needs to say **what** changes.
 
 ## If CI fails

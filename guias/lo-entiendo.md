@@ -34,7 +34,7 @@ Si alguna respuesta es «no sé», **no escribas la línea todavía: pregunta.**
 | «Actualiza dependencias» | Repite el título | «Sube Django a una versión que corrige un fallo de seguridad.» |
 | «Arregla el bug» | No dice cuál | «El ticket ya no se cierra si faltan los materiales.» |
 
-Puede ser corta e informal. Lo importante es que sea **tuya** y diga **qué cambia**.
+Puede ser corta e informal. Lo importante es que sea **tuya** y diga **qué cambia**. Si la IA te da un ejemplo, no lo copies: dilo a tu manera.
 
 ## Cómo pedir la explicación
 
@@ -51,6 +51,7 @@ Si no lo entiendes, pídeselo a la IA o a quien hizo el cambio. Estas preguntas 
 - Explicar **con ejemplos y con una conclusión clara**: «puedes estar tranquilo porque…» o «esto sí preocupa porque…, recomiendo…». No dejar a la persona con dudas.
 - Si se equivocó en una explicación anterior, **decirlo y corregirlo**.
 - **Nunca escribir la línea por el dueño** ni presionar para avanzar. Si el dueño le dicta su frase, la pega **tal cual**.
+- Puede dar **un ejemplo** para mostrar qué se pide, pero el dueño **escribe su propia frase o cambia el ejemplo a sus palabras**. Si responde «usa esa», la IA le pide que la diga a su manera: copiar el ejemplo no prueba que lo entendió.
 - Si el dueño escribe solo «Lo entiendo», explicarle con calma que falta decir **qué** cambia.
 
 ## Si el CI falla
