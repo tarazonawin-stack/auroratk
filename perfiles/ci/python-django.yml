@@ -9,7 +9,8 @@
 # MUTATION_THRESHOLD: 60 (Standard) or 75 (Strict). Mutation runs weekly, not per PR.
 # R07: actions are pinned to a full commit SHA (a tag can be moved to other code);
 # the comment keeps the readable version, and Dependabot (github-actions) updates both.
-# The kernel-copy step needs SHA256SUMS in docs/kernel/ (see the kernel README).
+# The kernel-copy step needs docs/kernel/ exactly as the kernel README says: KERNEL.md,
+# KERNEL.en.md, SHA256SUMS and every profile in docs/kernel/perfiles/, unedited.
 
 name: CI
 
@@ -73,9 +74,9 @@ jobs:
         uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2.3.9
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Kernel copy in docs/kernel unchanged (SHA256SUMS from the kernel release)
+      - name: Kernel copy in docs/kernel unchanged (every file present, unedited, none extra)
         working-directory: docs/kernel
-        run: test -f KERNEL.md && sha256sum --check --strict --ignore-missing --quiet SHA256SUMS
+        run: sha256sum --check --strict --quiet SHA256SUMS && diff <(cut -c67- SHA256SUMS | sort) <(find . -type f ! -name SHA256SUMS | sed 's|^\./||' | sort)
       - name: R04 format, lint and types
         run: |
           uv run ruff format --check .
@@ -90,7 +91,9 @@ jobs:
         run: uv run pytest --cov --cov-fail-under=80
       - name: R02 change and file size
         if: env.STAGE >= 2 && github.event_name == 'pull_request'
-        run: python3 scripts/size_check.py "origin/${{ github.base_ref }}"
+        env:
+          BASE_REF: ${{ github.base_ref }}  # via env, never pasted into the script
+        run: python3 scripts/size_check.py "origin/$BASE_REF"
       - name: R08 migrations up to date
         if: env.STAGE >= 2
         run: uv run python manage.py makemigrations --check --dry-run

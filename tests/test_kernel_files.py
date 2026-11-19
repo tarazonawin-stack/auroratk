@@ -2,7 +2,11 @@
 
 import hashlib
 import re
+import shutil
+import subprocess
+import tempfile
 import unittest
+from pathlib import Path
 
 from helpers import ROOT
 
@@ -80,11 +84,63 @@ class WorkflowTests(unittest.TestCase):
     def test_every_action_is_pinned_to_a_full_commit_sha(self) -> None:
         uses = re.compile(r"uses:\s*([^\s#]+)")
         found = 0
-        for path in ROOT.rglob("*.yml"):
+        for path in [*ROOT.rglob("*.yml"), *ROOT.rglob("*.yaml")]:
             for ref in uses.findall(path.read_text(encoding="utf-8")):
                 found += 1
                 self.assertRegex(ref, r"@[0-9a-f]{40}$", f"{path.name}: pin {ref} to a commit SHA")
         self.assertGreater(found, 0)
+
+
+def kernel_copy_step() -> str:
+    """The exact shell command of the kernel-copy step in the Django CI template."""
+    text = read("perfiles/ci/python-django.yml")
+    match = re.search(r"- name: Kernel copy.*?\n\s+run: (.+)", text, re.DOTALL)
+    assert match is not None, "the kernel-copy step is missing from python-django.yml"
+    return match.group(1).splitlines()[0]
+
+
+class KernelCopyStepTests(unittest.TestCase):
+    """Run the real CI step against good and broken copies of docs/kernel/."""
+
+    def run_step(self, prepare: object = None) -> int:
+        with tempfile.TemporaryDirectory() as folder:
+            copy = Path(folder)
+            for name in kernel_files():
+                (copy / name).parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy(ROOT / name, copy / name)
+            shutil.copy(SUMS, copy / "SHA256SUMS")
+            if callable(prepare):
+                prepare(copy)
+            result = subprocess.run(["bash", "-eo", "pipefail", "-c", kernel_copy_step()],
+                                    cwd=copy, capture_output=True)
+            return result.returncode
+
+    def test_exact_copy_passes(self) -> None:
+        self.assertEqual(self.run_step(), 0)
+
+    def test_edited_file_fails(self) -> None:
+        def edit(copy: Path) -> None:
+            with (copy / "KERNEL.en.md").open("a", encoding="utf-8") as f:
+                f.write("edited\n")
+        self.assertNotEqual(self.run_step(edit), 0)
+
+    def test_missing_profile_fails(self) -> None:
+        self.assertNotEqual(self.run_step(lambda c: (c / "perfiles/pais-peru.md").unlink()), 0)
+
+    def test_missing_english_kernel_fails(self) -> None:
+        self.assertNotEqual(self.run_step(lambda c: (c / "KERNEL.en.md").unlink()), 0)
+
+    def test_extra_file_fails(self) -> None:
+        self.assertNotEqual(self.run_step(lambda c: (c / "perfiles/nuevo.md").write_text("x")), 0)
+
+    def test_profiles_in_the_wrong_folder_fail(self) -> None:
+        def flatten(copy: Path) -> None:
+            for path in (copy / "perfiles").glob("*.md"):
+                path.rename(copy / path.name)
+        self.assertNotEqual(self.run_step(flatten), 0)
+
+    def test_missing_checksum_file_fails(self) -> None:
+        self.assertNotEqual(self.run_step(lambda c: (c / "SHA256SUMS").unlink()), 0)
 
 
 class CopyableProfilesTests(unittest.TestCase):
