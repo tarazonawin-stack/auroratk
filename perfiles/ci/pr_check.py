@@ -16,6 +16,8 @@ SECTION = re.compile(r"^##\s+Lo entiendo.*?$(.*?)(?=^##\s|\Z)", re.MULTILINE | r
 REPORT = re.compile(r"^##\s+Informe para el dueño.*?$(.*?)(?=^##\s|\Z)", re.MULTILINE | re.DOTALL)
 TECHNICAL = re.compile(r"^##\s+Informe técnico.*?$(.*?)(?=^##\s|\Z)", re.MULTILINE | re.DOTALL)
 TECHNICAL_ITEMS = ["Cambios", "Verificado", "No verificado", "Limitaciones"]
+# Items that must carry a link (to the CI run or to a command's output), per R12.
+NEEDS_LINK = {"Pruebas"}
 LEVEL = re.compile(r"^\s*\*\*Nivel[^*]*:\*\*\s*([123])\b", re.MULTILINE)
 UNCHECKED = re.compile(r"^\s*-\s\[\s\]", re.MULTILINE)
 
@@ -42,12 +44,14 @@ def understanding_written(body: str) -> bool:
 
 
 def missing_items(section: str, labels: list[str]) -> list[str]:
-    """Labels whose "- **Label …:** text" line is absent or not written."""
+    """Labels whose "- **Label …:** text" line is absent, not written or lacks a required link."""
     missing = []
     for label in labels:
-        item = re.search(rf"^\s*-\s*\*\*{re.escape(label)}[^*]*:\*\*(.*)$", section, re.MULTILINE)
+        item = re.search(rf"^\s*-\s*\*\*{re.escape(label)}[^*]*(?::\*\*|\*\*\s*:)(.*)$", section, re.MULTILINE)
         if item is None or not written(item.group(1)):
             missing.append(label)
+        elif label in NEEDS_LINK and "http" not in item.group(1):
+            missing.append(f"{label} (with a link)")
     return missing
 
 

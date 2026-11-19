@@ -56,6 +56,6 @@ If you don't understand it, ask the AI or whoever made the change. These questio
 
 ## If CI fails
 
-The check says: *"Write in one line, in your own words, what this change does ('Lo entiendo')"*. Edit the PR description, write your line under the «Lo entiendo» heading and save. The check re-runs on its own, without repeating the rest of CI.
+The check says: *"Write in one line, in your own words, what this change does ('Lo entiendo')"*. Edit the PR description, write your line under the «Lo entiendo» heading and save. The check re-runs on its own, without repeating the rest of CI. Since 3.0.0 it also fails when a report lacks its level or an item: read the CI message, which names what is missing, and ask whoever made the change to fill it in (you don't write the reports).
 
 Source: rule R12 of the [kernel](../KERNEL.en.md#the-15-rules).

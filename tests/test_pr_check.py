@@ -24,7 +24,7 @@ def filled(body: str, level: int = 3) -> str:
     """Template with every box checked, the report at `level` and the understanding line written."""
     body = body.replace("- [ ]", "- [x]")
     body = re.sub(r"(\*\*Nivel · Level:\*\*) <[^>]*>", rf"\g<1> {level}", body)
-    body = re.sub(r"^(- \*\*[^*]+:\*\*) <[^>]*>$", r"\1 Escrito.", body, flags=re.MULTILINE)
+    body = re.sub(r"^(- \*\*[^*]+:\*\*) <[^>]*>$", r"\1 Escrito: https://ci/run/1", body, flags=re.MULTILINE)
     return body.replace("## Lo entiendo · I understand it (R12)\n",
                         "## Lo entiendo · I understand it (R12)\nAgrega el filtro por contrata.\n")
 
@@ -44,7 +44,7 @@ def report(level: str, technical: dict[str, str] = TECHNICAL, **owner: str) -> s
                       "", "## Lo entiendo", "Hace algo.", ""])
 
 
-LEVEL_1 = {"Qué hace": "a", "Pruebas": "b", "Cómo se deshace": "c"}
+LEVEL_1 = {"Qué hace": "a", "Pruebas": "OK: https://ci/run/1", "Cómo se deshace": "c"}
 LEVEL_2 = {**LEVEL_1, "Qué no hace": "d", "Riesgos": "e", "Plan B": "f"}
 
 
@@ -111,6 +111,15 @@ class ReportTests(unittest.TestCase):
 
     def test_empty_item_does_not_count(self) -> None:
         self.assertEqual(run(report("1", **{**LEVEL_1, "Pruebas": "  "}))[0], 1)
+
+    def test_tests_item_needs_a_link(self) -> None:
+        code, out = run(report("1", **{**LEVEL_1, "Pruebas": "pasaron"}))
+        self.assertEqual(code, 1)
+        self.assertIn("Pruebas (with a link)", out)
+
+    def test_colon_outside_the_bold_label_counts(self) -> None:
+        body = report("1", **LEVEL_1).replace("**Qué hace:**", "**Qué hace**:")
+        self.assertEqual(run(body)[0], 0)
 
     def test_level_outside_1_to_3_fails(self) -> None:
         self.assertIn("level: 1, 2 or 3", run(report("4", **LEVEL_2))[1])

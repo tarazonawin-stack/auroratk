@@ -56,6 +56,6 @@ Si no lo entiendes, pídeselo a la IA o a quien hizo el cambio. Estas preguntas 
 
 ## Si el CI falla
 
-El control dice: *«Write in one line, in your own words, what this change does ('Lo entiendo')»*. Edita la descripción del PR, escribe tu línea debajo del título «Lo entiendo» y guarda. El control se vuelve a ejecutar solo, sin repetir el resto del CI.
+El control dice: *«Write in one line, in your own words, what this change does ('Lo entiendo')»*. Edita la descripción del PR, escribe tu línea debajo del título «Lo entiendo» y guarda. El control se vuelve a ejecutar solo, sin repetir el resto del CI. Desde la 3.0.0 también falla si a un informe le falta su nivel o un apartado: lee el mensaje del CI, que dice cuál falta, y pídele a quien hizo el cambio que lo complete (los informes no los escribes tú).
 
 Fuente: regla R12 del [kernel](../KERNEL.md#las-15-reglas).
