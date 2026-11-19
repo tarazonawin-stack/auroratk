@@ -1,0 +1,26 @@
+# CI of the AuroraTK Kernel repository itself (R03, R02, R12 applied to the kernel).
+# Standard library only: nothing to install, nothing new to approve (R07).
+
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          fetch-depth: 0
+      - name: R03 tests of the CI scripts and kernel files
+        run: python3 -m unittest discover -s tests -v
+      - name: R02 change and file size
+        if: github.event_name == 'pull_request'
+        run: python3 perfiles/ci/size_check.py "origin/${{ github.base_ref }}"
