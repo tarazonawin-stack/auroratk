@@ -29,10 +29,18 @@ def filled(body: str, level: int = 3) -> str:
                         "## Lo entiendo · I understand it (R12)\nAgrega el filtro por contrata.\n")
 
 
-def report(level: str, **items: str) -> str:
-    """A minimal PR body: owner's report with the given level and items, plus the understanding line."""
-    lines = [f"- **{label}:** {text}" for label, text in items.items()]
-    return "\n".join(["## Informe para el dueño", f"**Nivel · Level:** {level}", *lines,
+TECHNICAL = {"Cambios": "a.py", "Verificado": "tests OK", "No verificado": "nada",
+             "Limitaciones": "ninguna conocida"}
+
+
+def items(values: dict[str, str]) -> list[str]:
+    return [f"- **{label}:** {text}" for label, text in values.items()]
+
+
+def report(level: str, technical: dict[str, str] = TECHNICAL, **owner: str) -> str:
+    """A minimal PR body: both reports and the understanding line."""
+    return "\n".join(["## Informe para el dueño", f"**Nivel · Level:** {level}", *items(owner),
+                      "", "## Informe técnico", *items(technical),
                       "", "## Lo entiendo", "Hace algo.", ""])
 
 
@@ -106,6 +114,22 @@ class ReportTests(unittest.TestCase):
 
     def test_level_outside_1_to_3_fails(self) -> None:
         self.assertIn("level: 1, 2 or 3", run(report("4", **LEVEL_2))[1])
+
+
+class TechnicalReportTests(unittest.TestCase):
+    def test_missing_technical_report_fails(self) -> None:
+        body = report("1", **LEVEL_1).replace("## Informe técnico", "## Otra cosa")
+        self.assertIn("Informe técnico", run(body)[1])
+
+    def test_not_verified_must_be_stated_even_if_nothing(self) -> None:
+        technical = {**TECHNICAL, "No verificado": "<…>"}
+        code, out = run(report("1", technical, **LEVEL_1))
+        self.assertEqual(code, 1)
+        self.assertIn("Technical report: fill in No verificado.", out)
+
+    def test_verified_and_not_verified_are_told_apart(self) -> None:
+        technical = {label: text for label, text in TECHNICAL.items() if label != "Verificado"}
+        self.assertIn("fill in Verificado.", run(report("1", technical, **LEVEL_1))[1])
 
 
 class CheckboxTests(unittest.TestCase):

@@ -2,6 +2,7 @@
 
 Fails if:
 - the owner's report has no decision level (1, 2 or 3), or misses an item that level requires;
+- the technical report misses one of its four items;
 - the "Lo entiendo" section is empty or still has the template text;
 - any kernel checkbox is left unchecked ("- [ ]").
 The PR body arrives in the PR_BODY environment variable.
@@ -13,6 +14,8 @@ import sys
 
 SECTION = re.compile(r"^##\s+Lo entiendo.*?$(.*?)(?=^##\s|\Z)", re.MULTILINE | re.DOTALL)
 REPORT = re.compile(r"^##\s+Informe para el dueño.*?$(.*?)(?=^##\s|\Z)", re.MULTILINE | re.DOTALL)
+TECHNICAL = re.compile(r"^##\s+Informe técnico.*?$(.*?)(?=^##\s|\Z)", re.MULTILINE | re.DOTALL)
+TECHNICAL_ITEMS = ["Cambios", "Verificado", "No verificado", "Limitaciones"]
 LEVEL = re.compile(r"^\s*\*\*Nivel[^*]*:\*\*\s*([123])\b", re.MULTILINE)
 UNCHECKED = re.compile(r"^\s*-\s\[\s\]", re.MULTILINE)
 
@@ -38,6 +41,25 @@ def understanding_written(body: str) -> bool:
     return any(written(line) for line in match.group(1).splitlines())
 
 
+def missing_items(section: str, labels: list[str]) -> list[str]:
+    """Labels whose "- **Label …:** text" line is absent or not written."""
+    missing = []
+    for label in labels:
+        item = re.search(rf"^\s*-\s*\*\*{re.escape(label)}[^*]*:\*\*(.*)$", section, re.MULTILINE)
+        if item is None or not written(item.group(1)):
+            missing.append(label)
+    return missing
+
+
+def technical_problems(body: str) -> list[str]:
+    """What the technical report is missing: its section or one of its items."""
+    match = TECHNICAL.search(body)
+    if match is None:
+        return ["Add the technical report ('Informe técnico')."]
+    missing = missing_items(match.group(1), TECHNICAL_ITEMS)
+    return [f"Technical report: fill in {', '.join(missing)}."] if missing else []
+
+
 def report_problems(body: str) -> list[str]:
     """What the owner's report is missing: its section, its level or a required item."""
     match = REPORT.search(body)
@@ -51,10 +73,7 @@ def report_problems(body: str) -> list[str]:
     for item_level, labels in ITEMS_BY_LEVEL.items():
         if item_level > int(level.group(1)):
             break
-        for label in labels:
-            item = re.search(rf"^\s*-\s*\*\*{re.escape(label)}[^*]*:\*\*(.*)$", report, re.MULTILINE)
-            if item is None or not written(item.group(1)):
-                missing.append(label)
+        missing += missing_items(report, labels)
     if missing:
         return [f"Owner's report, level {level.group(1)}: fill in {', '.join(missing)}."]
     return []
@@ -62,7 +81,7 @@ def report_problems(body: str) -> list[str]:
 
 def main() -> int:
     body = os.environ.get("PR_BODY", "")
-    problems = report_problems(body)
+    problems = report_problems(body) + technical_problems(body)
     if not understanding_written(body):
         problems.append("Write in one line, in your own words, what this change does ('Lo entiendo').")
     unchecked = len(UNCHECKED.findall(body))
