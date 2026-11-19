@@ -3,6 +3,7 @@
 import contextlib
 import io
 import os
+import re
 import unittest
 from unittest import mock
 
@@ -19,11 +20,24 @@ def run(body: str) -> tuple[int, str]:
     return code, out.getvalue()
 
 
-def filled(body: str) -> str:
-    """Template with every box checked and the understanding line written."""
+def filled(body: str, level: int = 3) -> str:
+    """Template with every box checked, the report at `level` and the understanding line written."""
     body = body.replace("- [ ]", "- [x]")
+    body = re.sub(r"(\*\*Nivel · Level:\*\*) <[^>]*>", rf"\g<1> {level}", body)
+    body = re.sub(r"^(- \*\*[^*]+:\*\*) <[^>]*>$", r"\1 Escrito.", body, flags=re.MULTILINE)
     return body.replace("## Lo entiendo · I understand it (R12)\n",
                         "## Lo entiendo · I understand it (R12)\nAgrega el filtro por contrata.\n")
+
+
+def report(level: str, **items: str) -> str:
+    """A minimal PR body: owner's report with the given level and items, plus the understanding line."""
+    lines = [f"- **{label}:** {text}" for label, text in items.items()]
+    return "\n".join(["## Informe para el dueño", f"**Nivel · Level:** {level}", *lines,
+                      "", "## Lo entiendo", "Hace algo.", ""])
+
+
+LEVEL_1 = {"Qué hace": "a", "Pruebas": "b", "Cómo se deshace": "c"}
+LEVEL_2 = {**LEVEL_1, "Qué no hace": "d", "Riesgos": "e", "Plan B": "f"}
 
 
 class UnderstandingTests(unittest.TestCase):
@@ -52,6 +66,46 @@ class UnderstandingTests(unittest.TestCase):
     def test_empty_body_fails(self) -> None:
         code, _ = run("")
         self.assertEqual(code, 1)
+
+
+class ReportTests(unittest.TestCase):
+    def test_untouched_template_fails_on_the_level(self) -> None:
+        self.assertIn("level: 1, 2 or 3", run(TEMPLATE)[1])
+
+    def test_missing_report_fails(self) -> None:
+        code, out = run("## Lo entiendo\nHace algo.\n")
+        self.assertEqual(code, 1)
+        self.assertIn("Informe para el dueño", out)
+
+    def test_level_1_needs_only_its_three_items(self) -> None:
+        self.assertEqual(run(report("1", **LEVEL_1))[0], 0)
+
+    def test_level_1_missing_an_item_fails_and_names_it(self) -> None:
+        items = {**LEVEL_1, "Cómo se deshace": "<…>"}
+        code, out = run(report("1", **items))
+        self.assertEqual(code, 1)
+        self.assertIn("level 1: fill in Cómo se deshace.", out)
+
+    def test_level_2_needs_risks_and_plan_b(self) -> None:
+        code, out = run(report("2", **LEVEL_1))
+        self.assertEqual(code, 1)
+        self.assertIn("Qué no hace, Riesgos, Plan B", out)
+        self.assertEqual(run(report("2", **LEVEL_2))[0], 0)
+
+    def test_level_3_needs_options_and_what_if_not_merged(self) -> None:
+        code, out = run(report("3", **LEVEL_2))
+        self.assertIn("Opciones y recomendación, Si no se integra", out)
+        self.assertEqual(code, 1)
+
+    def test_every_level_of_the_filled_template_passes(self) -> None:
+        for level in (1, 2, 3):
+            self.assertEqual(run(filled(TEMPLATE, level))[0], 0, level)
+
+    def test_empty_item_does_not_count(self) -> None:
+        self.assertEqual(run(report("1", **{**LEVEL_1, "Pruebas": "  "}))[0], 1)
+
+    def test_level_outside_1_to_3_fails(self) -> None:
+        self.assertIn("level: 1, 2 or 3", run(report("4", **LEVEL_2))[1])
 
 
 class CheckboxTests(unittest.TestCase):

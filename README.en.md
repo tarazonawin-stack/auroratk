@@ -40,7 +40,7 @@ AI writes fast, but it is wrong with full confidence. This kernel exists so that
    - Your profile's CI, if any (e.g. `perfiles/ci/python-django.yml` → `.github/workflows/ci.yml`, and the scripts in `perfiles/ci/` → `scripts/`).
    - Create `docs/specs/`, `docs/decisiones/` and `docs/excepciones.md` (from `plantillas/EXCEPCIONES.md`).
 4. **Set up CI in stages** with your profiles' commands (see *Staged activation* in the kernel) and turn on main-branch protection if your GitHub plan allows it (a free private repo does not: merge only with green CI).
-5. **Work like this, every time:** spec → small change with its test → CI → independent review → you write one line on what it does → your approval → `docs/ESTADO.md` up to date. Unsure about the «Lo entiendo» line? Read the [guide](guias/lo-entiendo.en.md).
+5. **Work like this, every time:** spec → small change with its test → CI → independent review → you read the owner's report → you write one line on what it does → your approval → `docs/ESTADO.md` up to date. Unsure about the «Lo entiendo» line? Read the [guide](guias/lo-entiendo.en.md).
 
 **No repository?** In a chat such as Google AI Studio, paste [`KERNEL-CHAT.en.md`](KERNEL-CHAT.en.md) into the system instructions.
 
@@ -60,14 +60,14 @@ CHANGELOG.md                 kernel version history
 
 ## Status
 
-**Version 2.1.0.** Rules, profiles and templates are complete. Ready-to-copy CI configurations are added per profile the first time each one is used in a real project (first up: GPEXT, with Python/Django + web).
+**Version 3.0.0.** Rules, profiles and templates are complete. Ready-to-copy CI configurations are added per profile the first time each one is used in a real project (first up: GPEXT, with Python/Django + web).
 
 ## Publishing a version
 
 1. Record the change in `CHANGELOG.md` and bump the version in every file (the tests warn if one is missing).
 2. Regenerate the checksums: `sha256sum KERNEL.md KERNEL.en.md perfiles/*.md > SHA256SUMS`.
 3. Verify: `python3 -m unittest discover -s tests -v` (the same as CI).
-4. After merging, create the tag **`vX.Y.Z`, with no dot after the v** (for example `v2.1.0`): the kernel links point to that exact name.
+4. After merging, create the tag **`vX.Y.Z`, with no dot after the v** (for example `v3.0.0`): the kernel links point to that exact name.
 
 ## Authorship and license
 

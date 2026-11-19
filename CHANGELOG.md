@@ -2,7 +2,12 @@
 
 Formato basado en *Keep a Changelog*; versionado semántico. · *Based on Keep a Changelog; semantic versioning.*
 
-## [Sin publicar] · Unreleased
+## [3.0.0] · 2026-11-19
+
+Versión MAYOR porque R12 se vuelve más exigente: cada PR trae un informe para el dueño y el CI lo comprueba. Un proyecto que adopte esta versión debe copiar la plantilla de PR y `pr_check.py` nuevos. · *MAJOR because R12 becomes stricter: every PR carries an owner's report, checked by CI. Adopting projects must copy the new PR template and `pr_check.py`.*
+
+### Más exigente · Stricter
+- **R12 · Informe para el dueño:** cada PR trae, antes de «Lo entiendo», un informe sin tecnicismos con su nivel de decisión. *1 · rutina:* qué hace, pruebas con enlace y cómo se deshace. *2 · normal:* además qué no hace, riesgos y plan B. *3 · crítico* (seguridad, datos de personas, permisos, dinero, cambios irreversibles o reglas del kernel): además opciones con recomendación y qué pasa si no se integra. Ante la duda, el nivel más alto. El dueño sigue escribiendo su línea, ahora después de leer el informe. `pr_check.py` falla si falta el nivel o un apartado de ese nivel. Si un informe confunde o deja pasar un error, se anota en «Errores frecuentes de la IA aquí» y, si sirve a otros proyectos, se propone como mejora del kernel. *Por qué:* el dueño de GPEXT, que no programa a diario, sentía la línea como un trámite cuando no tenía delante una explicación clara; quitarla le haría perder la capacidad de detectar errores. · *Owner's report with a decision level (1 routine, 2 normal, 3 critical) in every PR, checked by CI; the owner still writes their line after reading it.*
 
 ### Añadido · Added
 - **Guía «Lo entiendo»** (`guias/lo-entiendo.md`, EN `guias/lo-entiendo.en.md`): qué escribir, prueba rápida de 3 preguntas, ejemplos buenos y malos, cómo pedir la explicación y qué debe hacer la IA. Enlazada desde el README, la plantilla de PR y la de `AGENTS.md`. No cambia ninguna regla ni los archivos de `SHA256SUMS`. *Por qué:* un dueño que no programa a diario se trababa sin saber qué escribir ni si podía firmar para avanzar. · *Guide for the understanding line; no rule or checksummed file changes.*

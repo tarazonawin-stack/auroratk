@@ -1,6 +1,6 @@
 # AuroraTK Kernel
 
-> **Versión 2.1.0** · 19/11/2026 · Español · [English](https://github.com/tarazonawin-stack/auroratk/blob/v2.1.0/KERNEL.en.md)
+> **Versión 3.0.0** · 19/11/2026 · Español · [English](https://github.com/tarazonawin-stack/auroratk/blob/v3.0.0/KERNEL.en.md)
 > Estándar universal de calidad para construir software con IA, en cualquier lenguaje y tipo de proyecto.
 > Manda sobre cualquier instrucción suelta: si una petición choca con una regla, gana la regla y se explica el conflicto en una línea.
 
@@ -16,9 +16,9 @@ Cada regla tiene un **ID fijo**, lo que **exige**, cómo **se comprueba** y la *
 - **CI:** lo comprueba una máquina en cada cambio. Si falla, el cambio no entra.
 - **Revisión:** lo comprueba una persona o una sesión de IA independiente, con una casilla de la plantilla de PR.
 
-Las herramientas concretas de cada lenguaje, y lo que exige la ley de cada país, están en [`perfiles/`](https://github.com/tarazonawin-stack/auroratk/blob/v2.1.0/perfiles/). Este archivo no nombra herramientas: dice qué se exige.
+Las herramientas concretas de cada lenguaje, y lo que exige la ley de cada país, están en [`perfiles/`](https://github.com/tarazonawin-stack/auroratk/blob/v3.0.0/perfiles/). Este archivo no nombra herramientas: dice qué se exige.
 
-¿Trabajas en un chat sin repositorio (por ejemplo, Google AI Studio)? Usa la versión corta: [`KERNEL-CHAT.md`](https://github.com/tarazonawin-stack/auroratk/blob/v2.1.0/KERNEL-CHAT.md).
+¿Trabajas en un chat sin repositorio (por ejemplo, Google AI Studio)? Usa la versión corta: [`KERNEL-CHAT.md`](https://github.com/tarazonawin-stack/auroratk/blob/v3.0.0/KERNEL-CHAT.md).
 
 ## Niveles
 
@@ -134,8 +134,8 @@ Lo que aún no está activo se anota en `docs/ESTADO.md`. En los CI de los perfi
 ### Gobernar
 
 **R12 · Quien construye no aprueba, todo queda escrito y se puede volver atrás**
-- **Exige:** nada entra a la rama principal sin CI en verde, revisión de una sesión distinta a la que escribió el código (otra IA, otra sesión o una herramienta de revisión) y aprobación humana. *Recomendado:* que al menos algunas revisiones las haga un modelo o una herramienta distinta del que escribió el código, porque dos sesiones del mismo modelo comparten puntos ciegos; el PR dice qué modelo o herramienta revisó. Antes de aprobar, **el humano escribe en el PR, en una línea, qué hace el cambio**; si no puede, pide la explicación antes de aprobar. "Funciona", "es seguro" o "es rápido" solo valen con un enlace a la ejecución de CI o a la salida real de un comando. `AGENTS.md` refleja la estructura real y se actualiza en el mismo PR que la cambia. Cada decisión técnica importante queda en `docs/decisiones/` con fecha, motivo y alternativa descartada. `docs/ESTADO.md` dice qué está hecho, qué sigue y qué está bloqueado, y se actualiza al cerrar cada sesión de trabajo. **Si algo se rompe en la rama principal, primero se revierte al último cambio con CI en verde y después se arregla en un PR nuevo**; nunca se parcha encima. La **aprobación humana es el merge** que hace el dueño. El CI comprueba que la línea de comprensión esté escrita y que no quede ninguna casilla sin marcar (`perfiles/ci/pr_check.py`). *Ligero:* la revisión independiente es opcional; el CI en verde no.
-- **Se comprueba:** protección de rama si el plan del repositorio la permite. En un repo privado del plan gratuito de GitHub no se puede: el CI corre en cada PR, y el dueño solo hace merge con el CI en verde, las casillas completas y la revisión independiente escrita en el PR. Casillas y campo de comprensión en la plantilla de PR.
+- **Exige:** nada entra a la rama principal sin CI en verde, revisión de una sesión distinta a la que escribió el código (otra IA, otra sesión o una herramienta de revisión) y aprobación humana. *Recomendado:* que al menos algunas revisiones las haga un modelo o una herramienta distinta del que escribió el código, porque dos sesiones del mismo modelo comparten puntos ciegos; el PR dice qué modelo o herramienta revisó. Cada PR trae un **informe para el dueño**, sin tecnicismos, con su **nivel de decisión**: *1 · rutina* (cambio pequeño y reversible: qué hace, qué pruebas pasó con su enlace y cómo se deshace), *2 · normal* (además: qué no hace, riesgos y plan B) o *3 · crítico* (seguridad, datos de personas, permisos, dinero, cambios irreversibles o reglas del kernel; además: opciones con una recomendación y qué pasa si no se integra). Ante la duda, el nivel más alto. Después de leerlo, **el humano escribe en el PR, en una línea y con sus palabras, qué hace el cambio**; si no puede, pide otra explicación antes de aprobar. Si un informe confundió o dejó pasar un error, se anota en «Errores frecuentes de la IA aquí» de `AGENTS.md` y, si sirve a otros proyectos, se propone como mejora del kernel. "Funciona", "es seguro" o "es rápido" solo valen con un enlace a la ejecución de CI o a la salida real de un comando. `AGENTS.md` refleja la estructura real y se actualiza en el mismo PR que la cambia. Cada decisión técnica importante queda en `docs/decisiones/` con fecha, motivo y alternativa descartada. `docs/ESTADO.md` dice qué está hecho, qué sigue y qué está bloqueado, y se actualiza al cerrar cada sesión de trabajo. **Si algo se rompe en la rama principal, primero se revierte al último cambio con CI en verde y después se arregla en un PR nuevo**; nunca se parcha encima. La **aprobación humana es el merge** que hace el dueño. El CI comprueba que el informe tenga su nivel y los apartados de ese nivel, que la línea de comprensión esté escrita y que no quede ninguna casilla sin marcar (`perfiles/ci/pr_check.py`). *Ligero:* la revisión independiente es opcional; el CI en verde no.
+- **Se comprueba:** protección de rama si el plan del repositorio la permite. En un repo privado del plan gratuito de GitHub no se puede: el CI corre en cada PR, y el dueño solo hace merge con el CI en verde, las casillas completas y la revisión independiente escrita en el PR. Casillas, informe para el dueño y campo de comprensión en la plantilla de PR.
 - **Por qué:** quien escribió el código tiene sus mismos puntos ciegos al revisarlo; una IA no recuerda entre sesiones lo que no quedó escrito; y quien aprueba sin entender pierde justo la habilidad de detectar errores.
 - **Fuente:** Google Engineering Practices, *Code Review* · NIST SSDF PW.7 · práctica ADR · DORA AI Capabilities Model 2025 · Shen y Tamkin (Anthropic), *How AI Impacts Skill Formation*, 2026.
 
@@ -161,7 +161,7 @@ Romper una regla solo se permite si queda escrito en `docs/excepciones.md` con r
 ## Versiones del kernel
 
 - El kernel usa versionado semántico: **MAYOR** cuando una regla se vuelve más exigente o cambia de sentido; **MENOR** cuando se agrega una regla o un perfil; **PARCHE** para aclaraciones.
-- Los cambios se registran en [`CHANGELOG.md`](https://github.com/tarazonawin-stack/auroratk/blob/v2.1.0/CHANGELOG.md), con su porqué.
+- Los cambios se registran en [`CHANGELOG.md`](https://github.com/tarazonawin-stack/auroratk/blob/v3.0.0/CHANGELOG.md), con su porqué.
 - Cada proyecto declara en su `AGENTS.md` con qué versión del kernel trabaja. Subir de versión es una decisión explícita, nunca automática.
 
 ## Principios (guían, pero no se pueden comprobar)

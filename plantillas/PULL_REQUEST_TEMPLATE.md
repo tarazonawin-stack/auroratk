@@ -3,6 +3,20 @@
 
 **Spec:** SPEC-<NNN> | `trivial` · **Criterios · Criteria:** AC-01, AC-02
 
+## Informe para el dueño · Owner's report (R12)
+<Sin tecnicismos. Nivel 1: los 3 primeros apartados; nivel 2: además los 3 siguientes; nivel 3: todos. Ante la duda, el nivel más alto.>
+<No jargon. Level 1: first 3 items; level 2: also the next 3; level 3: all. When in doubt, the higher level.>
+
+**Nivel · Level:** <1 · rutina | 2 · normal | 3 · crítico — 1 · routine | 2 · normal | 3 · critical>
+- **Qué hace · What it does:** <qué cambia y para quién · what changes and for whom>
+- **Pruebas · Tests:** <qué pasó, con enlace · what passed, with a link>
+- **Cómo se deshace · How to undo:** <…>
+- **Qué no hace · What it doesn't do:** <nivel 2+ · level 2+>
+- **Riesgos · Risks:** <nivel 2+ · level 2+>
+- **Plan B:** <si sale mal, qué se hace · if it goes wrong, what we do — nivel 2+ · level 2+>
+- **Opciones y recomendación · Options and recommendation:** <nivel 3 · level 3>
+- **Si no se integra · If not merged:** <nivel 3 · level 3>
+
 ## Lo entiendo · I understand it (R12)
 <El humano escribe aquí, en una línea y con sus palabras, qué hace este cambio. Si no puede, pide la explicación antes de aprobar.>
 <The human writes here, in one line and in their own words, what this change does. If they can't, they ask for an explanation before approving.>
@@ -12,8 +26,8 @@
 - Ejecución de CI · CI run: <enlace · link>
 
 ## Lista del kernel · Kernel checklist
-> Marca cada casilla, o escribe N/A al lado y márcala. El CI falla si queda alguna sin marcar o si "Lo entiendo" está vacío. Haz merge solo con el CI en verde (R12).
-> *Check every box, or write N/A next to it and check it. CI fails if any is left unchecked or "Lo entiendo" is empty. Merge only with green CI (R12).*
+> Marca cada casilla, o escribe N/A al lado y márcala. El CI falla si queda alguna sin marcar, si al informe le falta su nivel o un apartado de ese nivel, o si "Lo entiendo" está vacío. Haz merge solo con el CI en verde (R12).
+> *Check every box, or write N/A next to it and check it. CI fails if any is left unchecked, if the report lacks its level or one of that level's items, or if "Lo entiendo" is empty. Merge only with green CI (R12).*
 
 - [ ] R01 Enlaza su spec (con cómo se podría abusar), es `trivial`, o tiene objetivo / fuera de alcance / cómo se prueba (nivel Ligero)
 - [ ] R02 Una sola idea; ≤ 400 líneas; ningún archivo pasa de 400

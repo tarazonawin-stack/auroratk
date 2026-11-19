@@ -40,7 +40,7 @@ La IA escribe rápido, pero se equivoca con total seguridad. Este kernel existe 
    - El CI de tu perfil, si existe (p. ej. `perfiles/ci/python-django.yml` → `.github/workflows/ci.yml`, y los scripts de `perfiles/ci/` → `scripts/`).
    - Crea `docs/specs/`, `docs/decisiones/` y `docs/excepciones.md` (desde `plantillas/EXCEPCIONES.md`).
 4. **Configura el CI por etapas** con los comandos de tus perfiles (ver *Activación por etapas* en el kernel) y activa la protección de la rama principal si tu plan de GitHub lo permite (en un repo privado gratuito no: haz merge solo con el CI en verde).
-5. **Trabaja así, cada vez:** spec → cambio pequeño con su prueba → CI → revisión independiente → escribes en una línea qué hace → tu aprobación → `docs/ESTADO.md` al día. ¿Dudas con la línea «Lo entiendo»? Lee la [guía](guias/lo-entiendo.md).
+5. **Trabaja así, cada vez:** spec → cambio pequeño con su prueba → CI → revisión independiente → lees el informe para el dueño → escribes en una línea qué hace → tu aprobación → `docs/ESTADO.md` al día. ¿Dudas con la línea «Lo entiendo»? Lee la [guía](guias/lo-entiendo.md).
 
 **¿Sin repositorio?** En un chat como Google AI Studio, pega [`KERNEL-CHAT.md`](KERNEL-CHAT.md) en las instrucciones del sistema.
 
@@ -60,14 +60,14 @@ CHANGELOG.md                 historial de versiones del kernel
 
 ## Estado
 
-**Versión 2.1.0.** Las reglas, los perfiles y las plantillas están completos. Las configuraciones de CI listas para copiar se agregan por perfil a medida que cada uno se usa por primera vez en un proyecto real (el primero: GPEXT, con Python/Django + web).
+**Versión 3.0.0.** Las reglas, los perfiles y las plantillas están completos. Las configuraciones de CI listas para copiar se agregan por perfil a medida que cada uno se usa por primera vez en un proyecto real (el primero: GPEXT, con Python/Django + web).
 
 ## Publicar una versión
 
 1. Anota el cambio en `CHANGELOG.md` y sube la versión en todos los archivos (las pruebas avisan si falta alguno).
 2. Regenera las huellas: `sha256sum KERNEL.md KERNEL.en.md perfiles/*.md > SHA256SUMS`.
 3. Verifica: `python3 -m unittest discover -s tests -v` (lo mismo que corre el CI).
-4. Después del merge, crea la etiqueta **`vX.Y.Z`, sin punto después de la v** (por ejemplo `v2.1.0`): los enlaces del kernel apuntan a ese nombre exacto.
+4. Después del merge, crea la etiqueta **`vX.Y.Z`, sin punto después de la v** (por ejemplo `v3.0.0`): los enlaces del kernel apuntan a ese nombre exacto.
 
 ## Autoría y licencia
 
