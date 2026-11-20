@@ -10,6 +10,7 @@ Usage: python3 risk.py BASE [HEAD]   (prints the risk and the reason for every f
 
 import re
 import subprocess
+import unicodedata
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath
@@ -20,7 +21,11 @@ ROUTINE = ["docs/ESTADO.md", "CHANGELOG.md"] + [f"docs/evidencia/**/*{ext}" for 
 ROUTINE_IMAGES = [f"docs/evidencia/**/*{ext}" for ext in (".png", ".jpg", ".jpeg")]  # binary, still routine
 
 CRITICAL_PATHS = [
-    ".github/**", "scripts/**", "**/Dockerfile", "**/compose*.y*ml", "**/docker-compose*.y*ml",
+    ".github/**", "scripts/**", "**/Dockerfile*", "**/*.dockerfile", "**/compose*.y*ml", "**/docker-compose*.y*ml",
+    "**/pom.xml", "**/build.gradle*", "**/settings.gradle*", "**/go.mod", "**/go.sum", "**/Cargo.toml",
+    "**/Cargo.lock", "**/CMakeLists.txt", "**/*.csproj", "**/Gemfile*", "**/composer.json", "**/composer.lock",
+    "**/.npmrc", "**/.env*", "**/*settings*.py", "**/pytest.ini", "**/.mocharc*", "**/jest.config.*",
+    "**/vitest.config.*", "**/karma.conf.*", "**/noxfile.py",
     "**/pyproject.toml", "**/uv.lock", "**/poetry.lock", "**/requirements*.txt", "**/requirements/**",
     "**/Pipfile*", "**/setup.py", "**/setup.cfg", "**/tox.ini", "**/.coveragerc", "**/conftest.py",
     "**/manage.py", "**/package.json", "**/package-lock.json", "**/pnpm-lock.yaml", "**/yarn.lock",
@@ -33,13 +38,23 @@ CRITICAL_PATHS = [
 # Removing or changing these lines weakens access control: Django profile.
 PERMISSION_WORDS = ["csrf_exempt", ".raw(", "RawSQL", ".extra(", "login_required", "permission_required",
                     "has_perm", "LoginRequiredMixin", "PermissionRequiredMixin", "UserPassesTestMixin",
-                    "IsAuthenticated", "AllowAny"]
+                    "IsAuthenticated", "AllowAny", "staff_member_required", "IsAdminUser", "is_staff",
+                    "user_passes_test", "is_superuser", "is_authenticated", "PermissionDenied",
+                    "DjangoModelPermissions"]
 # Adding these lines opens access or raw SQL: risk 3 too.
 OPENING_WORDS = ["csrf_exempt", ".raw(", "RawSQL", ".extra(", "AllowAny"]
 
 # Added lines containing these raise an alarm (risk 3). An alarm, not a lock.
 ALARM_WORDS = ["eval(", "exec(", "pytest.mark.skip", "skipif", "skip(", "xfail", "shell=True", "verify=False",
-               "|safe", "mark_safe", "os.system(", "pickle.loads(", "yaml.load("]
+               "|safe", "mark_safe", "os.system(", "pickle.loads(", "pickle.load(", "yaml.load(",
+               "yaml.unsafe_load(", "marshal.loads(", "__import__("]
+# Alarms that need a pattern: a truthy shell=, verify= turned off, SQL built from text.
+ALARM_PATTERNS = [
+    (re.compile(r"(?<![\w.])shell\s*=\s*(?!False\b|0\b|None\b)[\w'\"]"), "shell="),
+    (re.compile(r"(?<![\w.])verify\s*=\s*(?:False|0|None)\b"), "verify="),
+    (re.compile(r"\.execute\s*\(\s*(?:[fF][rR]?['\"]|['\"][^'\"]*['\"]\s*[+%]|[A-Za-z_][\w.]*\s*\+|.*\.format\s*\()"),
+     "execute( con texto armado · SQL built from text"),
+]
 
 # Migration operations that delete, rename, change or transform data.
 DESTRUCTIVE_MIGRATION = ["RemoveField", "DeleteModel", "RenameField", "RenameModel", "AlterField",
@@ -48,9 +63,11 @@ DESTRUCTIVE_MIGRATION = ["RemoveField", "DeleteModel", "RenameField", "RenameMod
 
 CODE_SUFFIXES = {".py", ".js", ".mjs", ".ts", ".tsx", ".jsx", ".html", ".jinja", ".j2", ".sh", ".java",
                  ".cpp", ".cc", ".c", ".h", ".hpp", ".go", ".rb", ".php", ".vue", ".svelte", ".cs", ".rs",
-                 ".kt", ".ps1", ".bat", ".sql", ""}  # "" = no extension, such as a script with a shebang
+                 ".kt", ".ps1", ".bat", ".sql", ".cjs", ".mts", ".cts", ".wsgi", ".bash", ".zsh",
+                 ""}  # "" = no extension, such as a script with a shebang; compared in lowercase
 SYMLINK, EXECUTABLE, SUBMODULE = "120000", "100755", "160000"
-TEST_DEFINITION = re.compile(r"^\s*(?:async\s+)?def\s+test|^\s*(?:it|test)\s*\(|@Test\b")
+TEST_DEFINITION = re.compile(r"^\s*(?:async\s+)?def\s+test|^\s*class\s+Test|^\s*(?:it|test)\s*\(|@Test\b")
+TEST_BASE = re.compile(r"\bTestCase\b")  # unittest only runs classes that inherit from TestCase
 
 
 @dataclass
@@ -93,12 +110,22 @@ def contains_word(line: str, word: str) -> bool:
     return re.search(before + body + after, line) is not None
 
 
+def suffix(path: str) -> str:
+    return PurePosixPath(path).suffix.lower()
+
+
+def collected_name(path: str) -> bool:
+    """Named so that test runners still collect it (pytest test_*.py and *_test.py, unittest test*.py, JS)."""
+    name = PurePosixPath(path).name.lower()
+    return ((name.startswith("test") and name.endswith(".py")) or name.endswith("_test.py")
+            or name.endswith((".test.js", ".test.ts", ".spec.ts", ".spec.js", ".test.cjs", ".test.mjs"))
+            or "/__tests__/" in f"/{path}")
+
+
 def is_test_file(path: str) -> bool:
     """A code file in a test folder, or a file named like a test. tests/disabled.txt is not a test."""
-    name, suffix = PurePosixPath(path).name, PurePosixPath(path).suffix
     in_test_folder = matches(path, ["tests/**", "**/tests/**", "test/**", "**/test/**"])
-    return ((in_test_folder and suffix in CODE_SUFFIXES - {""}) or name.startswith("test_")
-            or name.endswith(("_test.py", ".test.js", ".test.ts", ".spec.ts", ".spec.js")))
+    return (in_test_folder and suffix(path) in CODE_SUFFIXES - {""}) or collected_name(path)
 
 
 def load_project_rules(text: str) -> tuple[list[str], list[str]]:
@@ -117,6 +144,9 @@ def file_risk(change: FileChange, critical: list[str], alarms: list[str]) -> tup
     """Risk of one file and why. Every path of a rename counts."""
     paths = [p for p in (change.old_path, change.path) if p]
     modes = (change.old_mode, change.new_mode)
+    # Python reads 'ｅval' (full-width e) as 'eval': search the NFKC form, as the interpreter does.
+    added = [unicodedata.normalize("NFKC", line) for line in change.added]
+    removed = [unicodedata.normalize("NFKC", line) for line in change.removed]
     if SYMLINK in modes:
         return 3, "enlace simbólico · symlink"
     if SUBMODULE in modes:
@@ -126,21 +156,21 @@ def file_risk(change: FileChange, critical: list[str], alarms: list[str]) -> tup
     if any(matches(p, critical) for p in paths):
         return 3, "ruta crítica · critical path"
     if any(is_test_file(p) for p in paths):
-        if change.status == "D" or (change.status == "R" and not is_test_file(change.path)):
+        if change.status == "D" or (change.status == "R" and not collected_name(change.path)):
             return 3, "borra o desactiva pruebas · deletes or disables tests"
-        removed = sum(bool(TEST_DEFINITION.search(line)) for line in change.removed)
-        if removed > sum(bool(TEST_DEFINITION.search(line)) for line in change.added):
-            return 3, "quita pruebas · removes tests"
+        for pattern in (TEST_DEFINITION, TEST_BASE):
+            if sum(bool(pattern.search(line)) for line in removed) > sum(bool(pattern.search(line)) for line in added):
+                return 3, "quita pruebas · removes tests"
     if any(matches(p, ["**/migrations/*.py"]) and not p.endswith("__init__.py") for p in paths):
-        if change.status == "D" or any(contains_word(line, op) for line in change.added
-                                       for op in DESTRUCTIVE_MIGRATION):
+        if change.status == "D" or any(contains_word(line, op) for line in added for op in DESTRUCTIVE_MIGRATION):
             return 3, "migración que borra o cambia datos · destructive migration"
-    if any(PurePosixPath(p).suffix in CODE_SUFFIXES for p in paths):
-        for line in change.removed:
+    if any(suffix(p) in CODE_SUFFIXES for p in paths):
+        for line in removed:
             if any(contains_word(line, w) for w in PERMISSION_WORDS):
                 return 3, f"quita o cambia permisos · removes or changes access control: {line.strip()[:60]}"
-        for line in change.added:
+        for line in added:
             word = next((w for w in OPENING_WORDS + alarms if contains_word(line, w)), None)
+            word = word or next((name for pattern, name in ALARM_PATTERNS if pattern.search(line)), None)
             if word:
                 return 3, f"alarma «{word}» · alarm word"
     if change.binary and not all(matches(p, ROUTINE_IMAGES) for p in paths) \
@@ -160,7 +190,9 @@ def compute(changes: list[FileChange], project_rules: str = "") -> tuple[int, li
 
 
 def git(*args: str) -> str:
-    return subprocess.run(["git", *args], capture_output=True, text=True, check=True).stdout
+    # surrogateescape: a non-UTF-8 byte in a name or a line neither stops the check nor changes the name
+    return subprocess.run(["git", *args], capture_output=True, text=True, errors="surrogateescape",
+                          check=True).stdout
 
 
 def changes_from_git(base: str, head: str = "HEAD") -> list[FileChange]:
@@ -208,7 +240,8 @@ def changes_from_git(base: str, head: str = "HEAD") -> list[FileChange]:
 
 def safe(text: str) -> str:
     """One printable line: a file name from the PR must never start a line in the CI log."""
-    return "".join(f"\\x{ord(c):02x}" if ord(c) < 32 or 127 <= ord(c) < 160 else c for c in text)
+    return "".join(f"\\x{ord(c) & 0xFF:02x}" if ord(c) < 32 or 127 <= ord(c) < 160 or 0xD800 <= ord(c) < 0xE000
+                   else c for c in text)
 
 
 def main(argv: list[str]) -> int:
