@@ -1,6 +1,7 @@
 # AuroraTK Kernel v2.1.0 · CI for the Python / Django profile.
-# Copy to .github/workflows/ci.yml, and size_check.py, pr_check.py and
-# mutation_threshold.py to scripts/. Merge pyproject-django.toml into pyproject.toml.
+# Copy to .github/workflows/ci.yml, and size_check.py and mutation_threshold.py to scripts/.
+# R12 (risk and PR description) runs in its own workflow, pr-description.yml, from the main branch.
+# Merge pyproject-django.toml into pyproject.toml.
 #
 # Staged activation (KERNEL, "Activación por etapas"): set the repository variable
 # KERNEL_STAGE (Settings > Secrets and variables > Actions > Variables) to 1, 2 or 3.
@@ -30,17 +31,6 @@ env:
   STAGE: ${{ fromJSON(vars.KERNEL_STAGE || '1') }}
 
 jobs:
-  pr-description:
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
-      - name: R12 understanding line and checkboxes
-        run: python3 scripts/pr_check.py
-        env:
-          PR_BODY: ${{ github.event.pull_request.body }}
-
   verify:
     if: github.event_name == 'pull_request' || github.event_name == 'push'
     runs-on: ubuntu-latest

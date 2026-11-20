@@ -206,6 +206,11 @@ def changes_from_git(base: str, head: str = "HEAD") -> list[FileChange]:
     return list(changes.values())
 
 
+def safe(text: str) -> str:
+    """One printable line: a file name from the PR must never start a line in the CI log."""
+    return "".join(f"\\x{ord(c):02x}" if ord(c) < 32 or 127 <= ord(c) < 160 else c for c in text)
+
+
 def main(argv: list[str]) -> int:
     if not 2 <= len(argv) <= 3:
         print(__doc__.strip().splitlines()[-1])
@@ -219,7 +224,7 @@ def main(argv: list[str]) -> int:
     print(f"Riesgo {risk}")
     for path, level, why in reasons:
         if level > 1:
-            print(f"  {level}  {path}: {why}")
+            print(f"  {level}  {safe(path)}: {safe(why)}")
     return 0
 
 
