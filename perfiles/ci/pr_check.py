@@ -33,7 +33,7 @@ RISK = re.compile(r"^\s*-?\s*\*\*Riesgo[^*]*?\*\*\s*:?\s*([123])(?!\d)", re.MULT
 UNCHECKED = re.compile(r"^\s*[-*+]\s\[\s\]", re.MULTILINE)
 LEVELS = {"ligero", "estandar", "estricto"}
 REVIEWED = re.compile(r"^\s*[-*+]\s\[[xX]\]\s*R12 Revisado.*$", re.MULTILINE)
-SHA = re.compile(r"\b[0-9a-f]{7,40}\b")
+SHA = re.compile(r"\b[0-9a-f]{12,40}\b")  # 7 characters can be forged cheaply; 12 cannot
 EMPTY_LINE = "Falta decir qué cambia; con pocas palabras basta. No importa la redacción ni la ortografía."
 
 
@@ -122,7 +122,7 @@ def review_problems(body: str, head_sha: str) -> list[str]:
         return []
     shas = SHA.findall(line.group(0))
     if not shas:
-        return ["La casilla de revisión debe decir en qué commit se revisó (SHA)."]
+        return ["La casilla de revisión debe decir en qué commit se revisó (SHA de 12 caracteres o más)."]
     if not any(head_sha.startswith(sha) for sha in shas):
         return [f"Hay cambios nuevos sin revisar: la revisión fue en {shas[-1][:7]} y el PR va en "
                 f"{head_sha[:7]}. Hay que pedirle otra revisión a la IA, no a ti."]

@@ -5,6 +5,7 @@ import io
 import os
 import subprocess
 import unittest
+from pathlib import Path
 from unittest import mock
 
 import helpers
@@ -66,6 +67,36 @@ class RevertTests(unittest.TestCase):
             git("commit", "-qam", f"Revert\n\nThis reverts commit {merge}.")
             self.assertFalse(pr_meta.is_exact_revert("main", "fake"))
 
+    def test_revert_with_other_indentation_is_not_exact(self) -> None:
+        """Re-adding a line with other indentation changes Python's meaning; patch-id ignores it."""
+        with helpers.in_temp_dir():
+            git("init", "-q", "-b", "main")
+            git("config", "user.email", "t@example.invalid")
+            git("config", "user.name", "Test")
+            Path("app.py").write_text("if admin:\n    allow()\ndone()\n")
+            git("add", "-A")
+            git("commit", "-qm", "base")
+            git("checkout", "-qb", "feature")
+            Path("app.py").write_text("if admin:\n    pass\ndone()\n")
+            git("commit", "-qam", "feature")
+            git("checkout", "-q", "main")
+            git("merge", "-q", "--no-ff", "-m", "Merge feature", "feature")
+            merge = git("rev-parse", "HEAD")
+            git("checkout", "-qb", "revert")
+            Path("app.py").write_text("if admin:\n    pass\nallow()\ndone()\n".replace("    pass\n", ""))
+            git("commit", "-qam", f"Revert\n\nThis reverts commit {merge}.")
+            self.assertNotEqual(Path("app.py").read_text(), "if admin:\n    allow()\ndone()\n")
+            self.assertFalse(pr_meta.is_exact_revert("main", "revert"))
+
+    def test_revert_of_an_old_change_is_not_skipped(self) -> None:
+        with helpers.in_temp_dir():
+            merge = merged_main()
+            for i in range(pr_meta.RECENT):
+                git("commit", "-q", "--allow-empty", "-m", f"later {i}")
+            git("checkout", "-qb", "revert")
+            git("revert", "--no-edit", "-m", "1", merge)
+            self.assertFalse(pr_meta.is_exact_revert("main", "revert"))
+
     def test_two_commits_are_not_an_exact_revert(self) -> None:
         with helpers.in_temp_dir():
             merge = merged_main()
@@ -83,6 +114,21 @@ class DependabotTests(unittest.TestCase):
             git(*DEPENDABOT, "commit", "-q", "--allow-empty", "-m", "Bump x")
             self.assertTrue(pr_meta.dependabot_only("main", "bump"))
             git("commit", "-q", "--allow-empty", "-m", "someone else")
+            self.assertFalse(pr_meta.dependabot_only("main", "bump"))
+
+    def test_dependabot_may_only_touch_dependency_files(self) -> None:
+        with helpers.in_temp_dir():
+            merged_main()
+            git("checkout", "-qb", "bump")
+            with open("uv.lock", "w") as f:
+                f.write("x\n")
+            git("add", "-A")
+            git(*DEPENDABOT, "commit", "-qm", "Bump x")
+            self.assertTrue(pr_meta.dependabot_only("main", "bump"))
+            with open("backdoor.py", "w") as f:
+                f.write("x = 1\n")
+            git("add", "-A")
+            git(*DEPENDABOT, "commit", "-qm", "Bump y")
             self.assertFalse(pr_meta.dependabot_only("main", "bump"))
 
     def test_cli_prints_only_0_or_1(self) -> None:
@@ -121,11 +167,16 @@ class PrCheckPartDTests(unittest.TestCase):
         self.assertIn("commits de otra persona", out)
 
     def test_review_must_be_on_the_current_head(self) -> None:
-        reviewed = "abc1234"
+        reviewed = "abc1234def56"
         body = filled(3).replace("<cuál · which>, en el commit <SHA>", f"Sonnet 5.5, en el commit {reviewed}")
-        self.assertEqual(pr_check.problems(body, 3, head_sha=reviewed + "0" * 33), [])
+        self.assertEqual(pr_check.problems(body, 3, head_sha=reviewed + "0" * 28), [])
         found = pr_check.problems(body, 3, head_sha="def5678" + "0" * 33)
         self.assertTrue(any("cambios nuevos sin revisar" in p and "otra revisión a la IA" in p for p in found))
+
+    def test_a_seven_character_sha_is_not_enough(self) -> None:
+        body = filled(3).replace("<cuál · which>, en el commit <SHA>", "Sonnet 5.5, en el commit abc1234")
+        found = pr_check.problems(body, 3, head_sha="abc1234" + "0" * 33)
+        self.assertTrue(any("12 caracteres" in p for p in found))
 
     def test_checked_review_without_a_commit_fails(self) -> None:
         body = filled(3).replace("<cuál · which>, en el commit <SHA>", "Sonnet 5.5")
