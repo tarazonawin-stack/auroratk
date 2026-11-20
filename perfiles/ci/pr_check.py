@@ -4,6 +4,9 @@ Inputs, by environment variable (never pasted into a script):
 - PR_BODY: the PR description.
 - COMPUTED_RISK: the minimum risk that risk.py computed for the diff (1, 2 or 3).
 - KERNEL_LEVEL: ligero, estandar (default) or estricto.
+- HEAD_SHA: the PR head; the checked review line must name it ("Hay cambios nuevos sin revisar").
+- IS_REVERT, DEPENDABOT_OK (from pr_meta.py), PR_AUTHOR and DEPENDABOT_EXCEPTION (the project's
+  written exception for Dependabot, e.g. "EXC-004"; empty means Dependabot PRs are checked as any PR).
 
 What it asks, at the project's Standard level:
 - every PR: "**Riesgo:** N", never lower than COMPUTED_RISK; the technical report; no unchecked box;
@@ -29,6 +32,8 @@ APPROVAL_WORDS = {"ok", "okay", "si", "listo", "acepto", "aprobado", "lo entiend
 RISK = re.compile(r"^\s*-?\s*\*\*Riesgo[^*]*?\*\*\s*:?\s*([123])(?!\d)", re.MULTILINE | re.IGNORECASE)
 UNCHECKED = re.compile(r"^\s*[-*+]\s\[\s\]", re.MULTILINE)
 LEVELS = {"ligero", "estandar", "estricto"}
+REVIEWED = re.compile(r"^\s*[-*+]\s\[[xX]\]\s*R12 Revisado.*$", re.MULTILINE)
+SHA = re.compile(r"\b[0-9a-f]{12,40}\b")  # 7 characters can be forged cheaply; 12 cannot
 EMPTY_LINE = "Falta decir qué cambia; con pocas palabras basta. No importa la redacción ni la ortografía."
 
 
@@ -128,9 +133,23 @@ def owner_says_what_if_it_fails(text: str | None) -> bool:
     return False
 
 
-def problems(body: str, computed: int, level: str = "estandar") -> list[str]:
+def review_problems(body: str, head_sha: str) -> list[str]:
+    """The checked review line must name the commit it reviewed, and that commit must be the PR head."""
+    line = REVIEWED.search(body)
+    if line is None or not head_sha:
+        return []
+    shas = SHA.findall(line.group(0))
+    if not shas:
+        return ["La casilla de revisión debe decir en qué commit se revisó (SHA de 12 caracteres o más)."]
+    if not any(head_sha.startswith(sha) for sha in shas):
+        return [f"Hay cambios nuevos sin revisar: la revisión fue en {shas[-1][:7]} y el PR va en "
+                f"{head_sha[:7]}. Hay que pedirle otra revisión a la IA, no a ti."]
+    return []
+
+
+def problems(body: str, computed: int, level: str = "estandar", head_sha: str = "") -> list[str]:
     """Everything the description still lacks, as friendly messages."""
-    found = []
+    found = review_problems(body, head_sha)
     match = RISK.search(body)
     declared = int(match.group(1)) if match else 0
     if declared == 0:
@@ -171,8 +190,18 @@ def main() -> int:
     if level not in LEVELS:
         print(f"::error::KERNEL_LEVEL desconocido ({level}): usa ligero, estandar o estricto.")
         return 1
-    found = problems(os.environ.get("PR_BODY", ""), int(computed_text), level)
     print(f"Riesgo calculado: {computed_text} · nivel del proyecto: {level}")
+    if os.environ.get("IS_REVERT") == "1":
+        print("Revert exacto de un cambio ya integrado: no se le pide nada al dueño.")
+        return 0
+    if os.environ.get("PR_AUTHOR") == "dependabot[bot]" and os.environ.get("DEPENDABOT_EXCEPTION", "").strip():
+        if os.environ.get("DEPENDABOT_OK") != "1":
+            print("::error::Este PR de Dependabot tiene commits de otra persona: se revisa como cualquier PR.")
+            return 1
+        print(f"PR de Dependabot, cubierto por {plain(os.environ['DEPENDABOT_EXCEPTION']).upper()}: "
+              "todos los commits son de dependabot[bot].")
+        return 0
+    found = problems(os.environ.get("PR_BODY", ""), int(computed_text), level, os.environ.get("HEAD_SHA", ""))
     for problem in found:
         print(f"::error::{problem}")
     if not found:

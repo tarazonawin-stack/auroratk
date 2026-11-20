@@ -55,9 +55,10 @@ class WorkflowShapeTests(unittest.TestCase):
             "actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0",
             "Fetch the PR commits as data (never checked out or run)",
             "R12 · Riesgo calculado (diff completo desde el merge-base)",
+            "R12 · Revert exacto y Dependabot",
             "R12 · Descripción del PR",
         ], "a new step must be reviewed for security first (see the header of the workflow)")
-        self.assertEqual(len(re.findall(r"^        run:", WORKFLOW, re.MULTILINE)), 3)  # step-level runs only
+        self.assertEqual(len(re.findall(r"^        run:", WORKFLOW, re.MULTILINE)), 4)  # step-level runs only
 
     def test_latest_run_wins_and_bash_uses_pipefail(self) -> None:
         self.assertIn("cancel-in-progress: true", WORKFLOW)

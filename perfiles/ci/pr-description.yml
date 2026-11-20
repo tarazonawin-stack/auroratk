@@ -1,7 +1,8 @@
 # AuroraTK Kernel v2.1.0 · R12 by risk. Copy to .github/workflows/pr-description.yml, and
-# risk.py and pr_check.py to scripts/. Project level: repository variable KERNEL_LEVEL
+# risk.py, pr_meta.py and pr_check.py to scripts/. Project level: repository variable KERNEL_LEVEL
 # (ligero, estandar or estricto; default estandar). Extra risk-3 paths and alarm words:
-# .github/riesgo.txt (see risk.py).
+# .github/riesgo.txt (see risk.py). Dependabot PRs skip the owner only with a written exception:
+# repository variable R12_DEPENDABOT_EXCEPTION (e.g. EXC-004), and only if every commit is Dependabot's.
 #
 # Why pull_request_target: the scripts and .github/riesgo.txt must come from the main branch,
 # never from the PR, or a PR could lower its own risk. That is safe ONLY because this job never
@@ -56,8 +57,19 @@ jobs:
           risk="$(head -n 1 "$RUNNER_TEMP/risk.txt" | sed -nE 's/^Riesgo ([123])$/\1/p')"
           test -n "$risk"
           echo "COMPUTED_RISK=$risk" >> "$GITHUB_ENV"
+      - name: R12 · Revert exacto y Dependabot
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+        run: |
+          python3 scripts/pr_meta.py "$BASE_SHA" "$HEAD_SHA" | tee "$RUNNER_TEMP/meta.txt"
+          grep -E '^(IS_REVERT|DEPENDABOT_OK)=[01]$' "$RUNNER_TEMP/meta.txt" >> "$GITHUB_ENV"
       - name: R12 · Descripción del PR
         env:
           PR_BODY: ${{ github.event.pull_request.body }}
           KERNEL_LEVEL: ${{ vars.KERNEL_LEVEL || 'estandar' }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          DEPENDABOT_EXCEPTION: ${{ vars.R12_DEPENDABOT_EXCEPTION }}
         run: python3 scripts/pr_check.py
