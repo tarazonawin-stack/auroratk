@@ -40,7 +40,7 @@ AI writes fast, but it is wrong with full confidence. This kernel exists so that
    - Your profile's CI, if any (e.g. `perfiles/ci/python-django.yml` → `.github/workflows/ci.yml`, and the scripts in `perfiles/ci/` → `scripts/`).
    - Create `docs/specs/`, `docs/decisiones/` and `docs/excepciones.md` (from `plantillas/EXCEPCIONES.md`).
 4. **Set up CI in stages** with your profiles' commands (see *Staged activation* in the kernel) and turn on main-branch protection if your GitHub plan allows it (a free private repo does not: merge only with green CI).
-5. **Work like this, every time:** spec → small change with its test → CI → independent review → you write one line on what it does → your approval → `docs/ESTADO.md` up to date. Unsure about the «Lo entiendo» line? Read the [guide](guias/lo-entiendo.en.md).
+5. **Work like this, every time:** spec → small change with its test → CI → independent review → depending on the risk, you say in your own words what changes → your approval → `docs/ESTADO.md` up to date. Unsure about the «Lo entiendo» line? Read the [guide](guias/lo-entiendo.en.md).
 
 **No repository?** In a chat such as Google AI Studio, paste [`KERNEL-CHAT.en.md`](KERNEL-CHAT.en.md) into the system instructions.
 
