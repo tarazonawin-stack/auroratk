@@ -68,12 +68,30 @@ def written(text: str) -> bool:
     return bool(text) and not text.startswith("<")
 
 
+ITEM = re.compile(r"^(\s*)[-*+]\s*\*\*(.+?)\*\*(.*)$")
+
+
 def items(text: str) -> dict[str, str]:
-    """'- **Label · EN:** value' lines (also with '*' or '+'), keyed by the plain label in Spanish."""
-    found = {}
-    for match in re.finditer(r"^\s*[-*+]\s*\*\*(.+?)\*\*(.*)$", text, re.MULTILINE):
-        label = plain(match.group(1).split("·")[0])
-        found.setdefault(label, match.group(2).strip().lstrip(":").strip())
+    """'- **Label · EN:** value' lines (also with '*' or '+'), keyed by the plain label in Spanish.
+
+    When the value is not on the label's line, it is the text of the more indented lines below it
+    (sub-bullets), up to the next line at the label's indentation or less.
+    """
+    found: dict[str, str] = {}
+    lines = text.splitlines()
+    for i, line in enumerate(lines):
+        match = ITEM.match(line)
+        if match is None:
+            continue
+        indent, value = len(match.group(1)), match.group(3).strip().lstrip(":").strip()
+        if not value:
+            below = []
+            for nxt in lines[i + 1:]:
+                if nxt.strip() and len(nxt) - len(nxt.lstrip()) <= indent:
+                    break
+                below.append(nxt.strip().lstrip("-*+").strip())
+            value = " ".join(b for b in below if b)
+        found.setdefault(plain(match.group(2).split("·")[0]), value)
     return found
 
 
