@@ -148,6 +148,30 @@ class ReviewFindingsTests(unittest.TestCase):
         self.assertIn("KERNEL_LEVEL desconocido", out)
 
 
+class NestedBulletTests(unittest.TestCase):
+    """Third review of #20: a value written as sub-bullets under its label counts."""
+
+    def test_sub_bullets_under_a_label_count(self) -> None:
+        body = filled(2).replace("- **Qué puede salir mal · What can go wrong:** Escrito: https://ci.example/run/1",
+                                 "- **Qué puede salir mal · What can go wrong:**\n  - una cosa\n  - otra")
+        self.assertEqual(problems(body, computed=2), [])
+
+    def test_an_empty_label_with_only_template_below_still_fails(self) -> None:
+        body = filled(2).replace("- **Qué puede salir mal · What can go wrong:** Escrito: https://ci.example/run/1",
+                                 "- **Qué puede salir mal · What can go wrong:**\n  <…>")
+        self.assertTrue(any("Qué puede salir mal" in p for p in problems(body, computed=2)))
+
+    def test_the_next_label_is_not_taken_as_the_value(self) -> None:
+        body = filled(2).replace("- **Qué puede salir mal · What can go wrong:** Escrito: https://ci.example/run/1",
+                                 "- **Qué puede salir mal · What can go wrong:**")
+        self.assertTrue(any("Qué puede salir mal" in p for p in problems(body, computed=2)))
+
+    def test_verified_link_in_a_sub_bullet_counts(self) -> None:
+        body = filled(2).replace("- **Verificado · Verified:** Escrito: https://ci.example/run/1",
+                                 "- **Verificado · Verified:**\n  - pruebas OK: https://ci.example/run/2")
+        self.assertEqual(problems(body, computed=2), [])
+
+
 class TechnicalReportTests(unittest.TestCase):
     def test_every_risk_needs_the_technical_report(self) -> None:
         body = filled(1).replace("- **No verificado · Not verified:** Escrito: https://ci.example/run/1",
