@@ -141,9 +141,10 @@ def problems(body: str, computed: int, level: str = "estandar", head_sha: str = 
                      "Puede subir, nunca bajar.")
     risk = max(declared, computed)
     asks_owner = risk == 3 if level == "ligero" else risk >= 2
-    owner_titles = [t for t in titles(body) if any(t.startswith(s) for s in OWNER_TITLES)]
-    if len(owner_titles) > 1:
-        found.append("Hay más de un título «Con tus palabras» o «Lo entiendo»: deja solo el de la plantilla.")
+    for starts, name in [(OWNER_TITLES, "«Con tus palabras» o «Lo entiendo»"),
+                         ([OWNER_REPORT], "«Informe para el dueño»"), ([TECHNICAL], "«Informe técnico»")]:
+        if sum(any(t.startswith(s) for s in starts) for t in titles(body)) > 1:
+            found.append(f"Hay más de un título {name}: deja solo el de la plantilla.")
     if asks_owner:
         missing = missing_items(section(body, OWNER_REPORT), OWNER_ITEMS)
         if missing:

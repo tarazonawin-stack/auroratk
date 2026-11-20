@@ -19,7 +19,7 @@ Risk 2 and 3 PRs have a section **«Con tus palabras: ¿qué cambia con este PR?
 | **2 · normal** | A new screen | Read the report (at the top, no jargon) and say in a few words what changes |
 | **3 · critical** | Touching permissions, CI or dependencies | The same, plus "If it goes wrong, what would happen?". If unclear, don't merge yet: waiting breaks nothing |
 
-**CI computes the risk** from the files the PR touches. The AI may raise it, never lower it. Don't mix them up: `trivial` means the change needs no spec; the **risk** says how much you need to look.
+**CI computes the risk** from the files and lines the PR changes. The AI may raise it, never lower it. Don't mix them up: `trivial` means the change needs no spec; the **risk** says how much you need to look.
 
 ## Four promises
 
@@ -66,7 +66,7 @@ It can be short, informal and misspelled. What matters is that it's **yours** an
 
 ## Known limits
 
-- CI cannot prove that you wrote the answer: it only rejects empty text, template text and a lone approval word ("ok", "listo", "lo entiendo"…). At the Strict level, who last edited the description can also be checked.
+- CI cannot prove that you wrote the answer: it only rejects empty text, template text and a lone approval word ("ok", "listo", "lo entiendo"…). Checking who last edited the description is left for a future version.
 - On a private repo on GitHub's free plan, a red CI does not block merging: merge only with green CI.
 
 ## If CI fails

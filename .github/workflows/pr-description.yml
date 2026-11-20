@@ -1,0 +1,65 @@
+# AuroraTK Kernel repository: its own R12 check. Generated from perfiles/ci/pr-description.yml with
+# scripts/ -> perfiles/ci/ (a test keeps both identical). Edit the template, then regenerate this copy.
+# AuroraTK Kernel v2.1.0 · R12 by risk. Copy to .github/workflows/pr-description.yml, and
+# risk.py and pr_check.py to perfiles/ci/. Project level: repository variable KERNEL_LEVEL
+# (ligero, estandar or estricto; default estandar). Extra risk-3 paths and alarm words:
+# .github/riesgo.txt (see risk.py).
+#
+# Why pull_request_target: the scripts and .github/riesgo.txt must come from the main branch,
+# never from the PR, or a PR could lower its own risk. That is safe ONLY because this job never
+# checks out, installs or runs anything from the PR: its commits are fetched as data and read
+# with git diff. Never add a step that runs code from the PR, and never paste ${{ }} values
+# into a script: they go through env.
+# Stacked PRs: pull_request_target takes the workflow and scripts from the PR's BASE branch. When
+# the base is a work branch, not main, they come from that branch.
+# Note: on a free private repo, a red check does not block the merge (branch protection is not
+# available); the owner merges only with green CI.
+
+name: PR description
+
+on:
+  pull_request_target:
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:  # only the latest run of a PR counts
+  group: pr-description-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash  # GitHub runs it as bash -eo pipefail
+
+jobs:
+  pr-description:
+    name: R12 · Riesgo y descripción del PR
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          fetch-depth: 0  # main branch: the trusted scripts and risk file, with full history
+      - name: Fetch the PR commits as data (never checked out or run)
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          git fetch --no-tags origin "+refs/pull/${PR_NUMBER}/head:refs/remotes/pr/head"
+          git cat-file -e "${HEAD_SHA}^{commit}"
+      - name: R12 · Riesgo calculado (diff completo desde el merge-base)
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          python3 perfiles/ci/risk.py "$BASE_SHA" "$HEAD_SHA" | tee "$RUNNER_TEMP/risk.txt"
+          risk="$(head -n 1 "$RUNNER_TEMP/risk.txt" | sed -nE 's/^Riesgo ([123])$/\1/p')"
+          test -n "$risk"
+          echo "COMPUTED_RISK=$risk" >> "$GITHUB_ENV"
+      - name: R12 · Descripción del PR
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+          KERNEL_LEVEL: ${{ vars.KERNEL_LEVEL || 'estandar' }}
+        run: python3 perfiles/ci/pr_check.py

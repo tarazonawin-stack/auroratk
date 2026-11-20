@@ -69,6 +69,14 @@ class WorkflowShapeTests(unittest.TestCase):
                          .split("jobs:", 1)[1])
 
 
+class KernelOwnCheckTests(unittest.TestCase):
+    def test_the_kernel_runs_the_template_on_its_own_prs(self) -> None:
+        """The kernel's own workflow is the template with scripts/ -> perfiles/ci/, nothing else."""
+        own = (helpers.ROOT / ".github" / "workflows" / "pr-description.yml").read_text(encoding="utf-8")
+        body = "\n".join(own.splitlines()[2:]) + "\n"
+        self.assertEqual(body, WORKFLOW.replace("scripts/", "perfiles/ci/"))
+
+
 class RiskStepTests(unittest.TestCase):
     """Run the workflow's real risk step against a repository where the PR attacks the check."""
 
