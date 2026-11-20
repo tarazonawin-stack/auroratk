@@ -7,6 +7,13 @@ Formato basado en *Keep a Changelog*; versionado semántico. · *Based on Keep a
 ### Añadido · Added
 - **Guía «Lo entiendo»** (`guias/lo-entiendo.md`, EN `guias/lo-entiendo.en.md`): qué escribir, prueba rápida de 3 preguntas, ejemplos buenos y malos, cómo pedir la explicación y qué debe hacer la IA (puede dar un ejemplo, pero el dueño escribe su frase o la cambia a sus palabras). Enlazada desde el README, la plantilla de PR y la de `AGENTS.md`. No cambia ninguna regla ni los archivos de `SHA256SUMS`. *Por qué:* un dueño que no programa a diario se trababa sin saber qué escribir ni si podía firmar para avanzar. · *Guide for the understanding line; no rule or checksummed file changes.*
 
+## [Sin publicar] · Unreleased
+
+Parte A de 4 de la 3.0.0 (R12 por riesgo). Nada cambia todavía para los proyectos: el CI aún no usa este script (parte B). · *Part A of 4 of 3.0.0. Nothing changes for projects yet: CI does not use this script until part B.*
+
+### Añadido · Added
+- **`perfiles/ci/risk.py`:** calcula el riesgo mínimo de un cambio a partir de sus archivos y líneas, leídos del diff completo desde el merge-base. *Riesgo 1* solo por lista exacta (`docs/ESTADO.md`, `CHANGELOG.md`, `docs/evidencia/**`). *Riesgo 3:* rutas críticas (CI, scripts, dependencias, Docker, kernel, excepciones, instrucciones de la IA, configuración, el propio archivo de riesgo), enlaces simbólicos, archivos que pasan a ejecutables, binarios (salvo `.mo`), borrar pruebas, migraciones que borran o cambian datos, líneas de código borradas o cambiadas que tocan permisos (perfil Django) y palabras de alarma en líneas de código agregadas (palabra completa). *Riesgo 2:* todo lo demás, incluida cualquier ruta desconocida. En un renombre cuentan las dos rutas. El proyecto puede **agregar** rutas y palabras en `.github/riesgo.txt`, nunca quitar las del perfil. 26 pruebas, una con un repositorio git real. · *Minimum risk of a change from its files and lines.*
+
 ## [2.1.0] · 2026-11-19
 
 Versión MENOR: el texto de ninguna regla se vuelve más exigente; se agregan herramientas de perfil y una recomendación. Ojo: el CI de Django gana una comprobación nueva (copia del kernel) que hace fallar a un proyecto con la copia editada; se trata como herramienta de perfil, no como regla más exigente. Si se prefiere leerlo como regla más exigente, la versión correcta sería 3.0.0: decisión del dueño. · *MINOR: no rule text becomes stricter. The Django CI gains a kernel-copy check that fails projects with an edited copy; treated as profile tooling. Read as a stricter rule, it would be 3.0.0: the owner's call.*
