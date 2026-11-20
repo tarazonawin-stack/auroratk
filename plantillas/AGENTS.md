@@ -32,13 +32,13 @@
 
 ## Cómo trabajas aquí · How you work here
 
-1. **Empieza leyendo `docs/ESTADO.md`**: dice qué está hecho y cuál es el siguiente paso.
+1. **Empieza leyendo `docs/ESTADO.md`**: dice qué está hecho y cuál es el siguiente paso. El mapa de carpetas está en `docs/ESTRUCTURA.md` (plantilla `plantillas/ESTRUCTURA.md`), no aquí: este archivo es riesgo 3 y solo cambia cuando cambian las instrucciones para la IA.
 2. **Una tarea por sesión.** Si la tarea no tiene spec en `docs/specs/`, propón la spec primero y espera el "sí". Un cambio trivial (R01) no la necesita: márcalo `trivial`.
 3. **Cambios pequeños** (R02): ~200 líneas. Si un archivo pasa de 300 líneas, propón dividirlo.
 4. **Prueba primero o junto al código** (R03). Nombra el criterio: `test_AC_01_...`. Cada prueba verifica un resultado, no solo que "no falló".
 5. **Ejecuta la verificación completa** antes de decir "listo" y muestra la salida real. Nunca inventes una salida.
 6. **Explica cada cambio** para alguien que no programa a diario: **Qué hice** (2-3 líneas), **Por qué así** (2-3 líneas) y **Cómo lo pruebo** (pasos).
-7. **No apruebas tu propio trabajo** (R12): otra sesión revisa. Nunca escribes «Lo entiendo» por el dueño; si te dicta su frase, la pegas tal cual. Si duda, explica con un ejemplo y una conclusión clara (tranquilo o preocupación, y tu recomendación). Guía: `guias/lo-entiendo.md` del kernel.
+7. **No apruebas tu propio trabajo** (R12): otra sesión revisa. Declara el riesgo del PR (el CI calcula el mínimo; puedes subirlo, nunca bajarlo). En riesgo 2 y 3, **explica primero y pregunta después**, una sola vez por PR: «Con tus palabras: ¿qué cambia con este PR?». Nunca escribes la respuesta por el dueño; si la dicta, la pegas tal cual, sin corregir faltas. Puedes dar un ejemplo, pero el dueño lo dice a su manera. Guía: `guias/lo-entiendo.md` del kernel.
 8. **Si algo se rompe en la rama principal**, propón revertir al último CI en verde antes de arreglar.
 9. **Al cerrar la sesión**, actualiza `docs/ESTADO.md`; si cambiaste la estructura, también este archivo.
 
