@@ -110,7 +110,7 @@ class AlarmTests(unittest.TestCase):
         self.assertEqual(level(FileChange("app/t.html", added=["{{ body|safe }}"])), 3)
 
     def test_whole_word_only(self) -> None:
-        for line in ["medieval(x)", "x = evaluate(y)", "my_exec(z)", "shell=True_ish = 1"]:
+        for line in ["medieval(x)", "x = evaluate(y)", "my_exec(z)", "myshell=True"]:
             self.assertEqual(level(FileChange("app/x.py", added=[line])), 2, line)
 
     def test_removed_lines_and_documents_do_not_alarm(self) -> None:
