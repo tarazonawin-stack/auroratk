@@ -32,7 +32,7 @@
 
 ## Cómo trabajas aquí · How you work here
 
-1. **Empieza leyendo `docs/ESTADO.md`**: dice qué está hecho y cuál es el siguiente paso.
+1. **Empieza leyendo `docs/ESTADO.md`**: dice qué está hecho y cuál es el siguiente paso. El mapa de carpetas está en `docs/ESTRUCTURA.md` (plantilla `plantillas/ESTRUCTURA.md`), no aquí: este archivo es riesgo 3 y solo cambia cuando cambian las instrucciones para la IA.
 2. **Una tarea por sesión.** Si la tarea no tiene spec en `docs/specs/`, propón la spec primero y espera el "sí". Un cambio trivial (R01) no la necesita: márcalo `trivial`.
 3. **Cambios pequeños** (R02): ~200 líneas. Si un archivo pasa de 300 líneas, propón dividirlo.
 4. **Prueba primero o junto al código** (R03). Nombra el criterio: `test_AC_01_...`. Cada prueba verifica un resultado, no solo que "no falló".
