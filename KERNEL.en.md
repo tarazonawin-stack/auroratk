@@ -139,12 +139,12 @@ Whatever is not active yet is noted in `docs/ESTADO.md`. In the profiles' CI, th
 
 | Risk | When (CI computes it) | What the owner is asked (Standard) |
 |---|---|---|
-| **1 · routine** | Only `docs/ESTADO.md`, `CHANGELOG.md` and `docs/evidencia/` | Nothing |
+| **1 · routine** | Only `docs/ESTADO.md`, `CHANGELOG.md` and `docs/evidencia/` (text and images) | Nothing |
 | **2 · normal** | Everything else, including any unknown path | The owner's report (what changes, with an example; what can go wrong; how to undo it and what not; the recommendation) and a few words of their own on what changes |
-| **3 · critical** | CI, scripts, dependencies, configuration, kernel, exceptions, AI instructions, migrations that delete or change data, removed permissions, binaries, executables, alarm words | What risk 2 asks and "If it goes wrong, what would happen?", in their own words. If unclear, it is not merged yet: waiting breaks nothing |
+| **3 · critical** | CI, scripts, dependencies, configuration, kernel, exceptions, AI instructions, migrations that delete or change data, deleting or disabling tests, removed or opened permissions, binaries, new executables, symlinks, submodules, alarm words | What risk 2 asks and "If it goes wrong, what would happen?", in their own words. If unclear, it is not merged yet: waiting breaks nothing |
 
-*Light:* the owner only at risk 3. *Strict:* like Standard, and at risk 3 another model or tool reviews. **Four promises to the owner:** (1) spelling doesn't matter; (2) everything that could change their decision goes at the top, in their part of the PR; (3) if the AI's explanation was wrong, the mistake belongs to the AI and the review, not to them, and is recorded under "Frequent AI mistakes here"; (4) undoing never asks them to write anything.
-- **Why:** whoever wrote the code shares its blind spots when reviewing it; an AI does not remember between sessions what was not written down; and approving without understanding erodes exactly the skill of spotting errors.
+*Light:* the owner only at risk 3. *Strict:* like Standard, and at risk 3 another model or tool reviews (the reviewer attests it in their checkbox; CI cannot check it). **Four promises to the owner:** (1) spelling doesn't matter; (2) everything that could change their decision goes at the top, in their part of the PR; (3) if the AI's explanation was wrong, the mistake belongs to the AI and the review, not to them, and is recorded under "Frequent AI mistakes here"; (4) undoing never asks them to write anything.
+- **Why:** whoever wrote the code shares its blind spots when reviewing it; an AI does not remember between sessions what was not written down; and approving without understanding erodes exactly the skill of spotting errors. At risk 1 nothing is asked of the owner because there the cost of their attention exceeds the risk: routine with no code, and CI and review remain.
 - **Source:** Google Engineering Practices, *Code Review* · NIST SSDF PW.7 · ADR practice · DORA AI Capabilities Model 2025 · Shen and Tamkin (Anthropic), *How AI Impacts Skill Formation*, 2026.
 
 **R13 · AI within limits**

@@ -139,12 +139,12 @@ Lo que aún no está activo se anota en `docs/ESTADO.md`. En los CI de los perfi
 
 | Riesgo | Cuándo (lo calcula el CI) | Qué se le pide al dueño (Estándar) |
 |---|---|---|
-| **1 · rutina** | Solo `docs/ESTADO.md`, `CHANGELOG.md` y `docs/evidencia/` | Nada |
+| **1 · rutina** | Solo `docs/ESTADO.md`, `CHANGELOG.md` y `docs/evidencia/` (texto e imágenes) | Nada |
 | **2 · normal** | Todo lo demás, incluida cualquier ruta desconocida | El informe para el dueño (qué cambia, con un ejemplo; qué puede salir mal; cómo se deshace y qué no; la recomendación) y unas pocas palabras suyas sobre qué cambia |
-| **3 · crítico** | CI, scripts, dependencias, configuración, kernel, excepciones, instrucciones de la IA, migraciones que borran o cambian datos, permisos quitados, binarios, ejecutables, palabras de alarma | Lo del riesgo 2 y «Si sale mal, ¿qué pasaría?», con sus palabras. Si no lo tiene claro, no se integra todavía: esperar no rompe nada |
+| **3 · crítico** | CI, scripts, dependencias, configuración, kernel, excepciones, instrucciones de la IA, migraciones que borran o cambian datos, borrar o desactivar pruebas, permisos quitados o abiertos, binarios, ejecutables nuevos, enlaces simbólicos, submódulos, palabras de alarma | Lo del riesgo 2 y «Si sale mal, ¿qué pasaría?», con sus palabras. Si no lo tiene claro, no se integra todavía: esperar no rompe nada |
 
-*Ligero:* el dueño solo en riesgo 3. *Estricto:* como Estándar, y en riesgo 3 revisa otro modelo o herramienta. **Cuatro promesas al dueño:** (1) las faltas no importan; (2) todo lo que pueda cambiar su decisión va arriba, en su parte del PR; (3) si la explicación de la IA estaba mal, el error es de la IA y de la revisión, no suyo, y se anota en «Errores frecuentes de la IA aquí»; (4) deshacer nunca le pide escribir nada.
-- **Por qué:** quien escribió el código tiene sus mismos puntos ciegos al revisarlo; una IA no recuerda entre sesiones lo que no quedó escrito; y quien aprueba sin entender pierde justo la habilidad de detectar errores.
+*Ligero:* el dueño solo en riesgo 3. *Estricto:* como Estándar, y en riesgo 3 revisa otro modelo o herramienta (lo atestigua el revisor en su casilla; el CI no puede comprobarlo). **Cuatro promesas al dueño:** (1) las faltas no importan; (2) todo lo que pueda cambiar su decisión va arriba, en su parte del PR; (3) si la explicación de la IA estaba mal, el error es de la IA y de la revisión, no suyo, y se anota en «Errores frecuentes de la IA aquí»; (4) deshacer nunca le pide escribir nada.
+- **Por qué:** quien escribió el código tiene sus mismos puntos ciegos al revisarlo; una IA no recuerda entre sesiones lo que no quedó escrito; y quien aprueba sin entender pierde justo la habilidad de detectar errores. En riesgo 1 no se le pide nada al dueño porque ahí el costo de su atención es mayor que el riesgo: rutina sin código, y el CI y la revisión siguen.
 - **Fuente:** Google Engineering Practices, *Code Review* · NIST SSDF PW.7 · práctica ADR · DORA AI Capabilities Model 2025 · Shen y Tamkin (Anthropic), *How AI Impacts Skill Formation*, 2026.
 
 **R13 · IA con límites**

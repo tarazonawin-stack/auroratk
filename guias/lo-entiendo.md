@@ -19,7 +19,7 @@ En los PR de riesgo 2 y 3 hay una sección **«Con tus palabras: ¿qué cambia c
 | **2 · normal** | Una pantalla nueva | Lees el informe (está arriba, sin tecnicismos) y dices en pocas palabras qué cambia |
 | **3 · crítico** | Tocar permisos, el CI o las dependencias | Lo mismo, y además «Si sale mal, ¿qué pasaría?». Si no lo tienes claro, no integres todavía: esperar no rompe nada |
 
-El riesgo **lo calcula el CI** según los archivos que toca el PR. La IA puede subirlo, nunca bajarlo. No confundir: `trivial` significa que el cambio no necesita spec; el **riesgo** dice cuánto tienes que mirar tú.
+El riesgo **lo calcula el CI** según los archivos y las líneas que cambia el PR. La IA puede subirlo, nunca bajarlo. No confundir: `trivial` significa que el cambio no necesita spec; el **riesgo** dice cuánto tienes que mirar tú.
 
 ## Cuatro promesas
 
@@ -66,7 +66,7 @@ Puede ser corta, informal y con faltas. Lo importante es que sea **tuya** y diga
 
 ## Límites conocidos
 
-- El CI no puede probar que la respuesta la escribiste tú: solo rechaza lo vacío, el texto de plantilla y una palabra suelta de aprobación («ok», «listo», «lo entiendo»…). En nivel Estricto se puede, además, comprobar quién editó la descripción por última vez.
+- El CI no puede probar que la respuesta la escribiste tú: solo rechaza lo vacío, el texto de plantilla y una palabra suelta de aprobación («ok», «listo», «lo entiendo»…). Comprobar quién editó la descripción por última vez queda para una versión futura.
 - En un repo privado del plan gratuito, un CI en rojo no impide integrar: integra solo con el CI en verde.
 
 ## Si el CI falla
