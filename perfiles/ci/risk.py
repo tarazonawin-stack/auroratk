@@ -1,4 +1,4 @@
-"""Minimum risk of a change, computed from its files and lines (AuroraTK R12). Standard library only.
+"""Minimum risk of a change, from its files and lines (AuroraTK R12). Standard library only.
 
 Risk 1 (routine) only by exact list; risk 3 (critical) by path, file kind or content; risk 2 is
 everything else, including any unknown path. The PR may declare a higher risk, never a lower one.
@@ -10,69 +10,207 @@ Usage: python3 risk.py BASE [HEAD]   (prints the risk and the reason for every f
 
 import re
 import subprocess
-import unicodedata
 import sys
+import unicodedata
 from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath
 
 RISK_FILE = ".github/riesgo.txt"
 
-ROUTINE = ["docs/ESTADO.md", "CHANGELOG.md"] + [f"docs/evidencia/**/*{ext}" for ext in (".md", ".txt", ".log")]
-ROUTINE_IMAGES = [f"docs/evidencia/**/*{ext}" for ext in (".png", ".jpg", ".jpeg")]  # binary, still routine
+ROUTINE = ["docs/ESTADO.md", "CHANGELOG.md"] + [
+    f"docs/evidencia/**/*{ext}" for ext in (".md", ".txt", ".log")
+]
+ROUTINE_IMAGES = [
+    f"docs/evidencia/**/*{ext}" for ext in (".png", ".jpg", ".jpeg")
+]  # binary, still routine
 
 CRITICAL_PATHS = [
-    ".github/**", "scripts/**", "**/Dockerfile*", "**/*.dockerfile", "**/compose*.y*ml", "**/docker-compose*.y*ml",
-    "**/pom.xml", "**/build.gradle*", "**/settings.gradle*", "**/go.mod", "**/go.sum", "**/Cargo.toml",
-    "**/Cargo.lock", "**/CMakeLists.txt", "**/*.csproj", "**/Gemfile*", "**/composer.json", "**/composer.lock",
-    "**/.npmrc", "**/.env*", "**/*settings*.py", "**/pytest.ini", "**/.mocharc*", "**/jest.config.*",
-    "**/vitest.config.*", "**/karma.conf.*", "**/noxfile.py",
-    "**/pyproject.toml", "**/uv.lock", "**/poetry.lock", "**/requirements*.txt", "**/requirements/**",
-    "**/Pipfile*", "**/setup.py", "**/setup.cfg", "**/tox.ini", "**/.coveragerc", "**/conftest.py",
-    "**/manage.py", "**/package.json", "**/package-lock.json", "**/pnpm-lock.yaml", "**/yarn.lock",
-    "**/Makefile", ".gitmodules", "**/.gitattributes", "CODEOWNERS", "docs/CODEOWNERS", "Jenkinsfile",
-    ".gitlab-ci.yml", "docs/kernel/**", "docs/excepciones.md", "AGENTS.md", "**/AGENTS.md", "CLAUDE.md",
-    "**/CLAUDE.md", ".claude/**", "config/settings*", "**/settings.py", "**/settings/**", ".env.example",
-    "**/wsgi.py", "**/asgi.py", RISK_FILE,
+    ".github/**",
+    "scripts/**",
+    "**/Dockerfile*",
+    "**/*.dockerfile",
+    "**/compose*.y*ml",
+    "**/docker-compose*.y*ml",
+    "**/pom.xml",
+    "**/build.gradle*",
+    "**/settings.gradle*",
+    "**/go.mod",
+    "**/go.sum",
+    "**/Cargo.toml",
+    "**/Cargo.lock",
+    "**/CMakeLists.txt",
+    "**/*.csproj",
+    "**/Gemfile*",
+    "**/composer.json",
+    "**/composer.lock",
+    "**/.npmrc",
+    "**/.env*",
+    "**/*settings*.py",
+    "**/pytest.ini",
+    "**/.mocharc*",
+    "**/jest.config.*",
+    "**/vitest.config.*",
+    "**/karma.conf.*",
+    "**/noxfile.py",
+    "**/pyproject.toml",
+    "**/uv.lock",
+    "**/poetry.lock",
+    "**/requirements*.txt",
+    "**/requirements/**",
+    "**/Pipfile*",
+    "**/setup.py",
+    "**/setup.cfg",
+    "**/tox.ini",
+    "**/.coveragerc",
+    "**/conftest.py",
+    "**/manage.py",
+    "**/package.json",
+    "**/package-lock.json",
+    "**/pnpm-lock.yaml",
+    "**/yarn.lock",
+    "**/Makefile",
+    ".gitmodules",
+    "**/.gitattributes",
+    "CODEOWNERS",
+    "docs/CODEOWNERS",
+    "Jenkinsfile",
+    ".gitlab-ci.yml",
+    "docs/kernel/**",
+    "docs/excepciones.md",
+    "AGENTS.md",
+    "**/AGENTS.md",
+    "CLAUDE.md",
+    "**/CLAUDE.md",
+    ".claude/**",
+    "config/settings*",
+    "**/settings.py",
+    "**/settings/**",
+    ".env.example",
+    "**/wsgi.py",
+    "**/asgi.py",
+    RISK_FILE,
 ]
 
 # Removing or changing these lines weakens access control: Django profile.
-PERMISSION_WORDS = ["csrf_exempt", ".raw(", "RawSQL", ".extra(", "login_required", "permission_required",
-                    "has_perm", "LoginRequiredMixin", "PermissionRequiredMixin", "UserPassesTestMixin",
-                    "IsAuthenticated", "AllowAny", "staff_member_required", "IsAdminUser", "is_staff",
-                    "user_passes_test", "is_superuser", "is_authenticated", "PermissionDenied",
-                    "DjangoModelPermissions"]
+PERMISSION_WORDS = [
+    "csrf_exempt",
+    ".raw(",
+    "RawSQL",
+    ".extra(",
+    "login_required",
+    "permission_required",
+    "has_perm",
+    "LoginRequiredMixin",
+    "PermissionRequiredMixin",
+    "UserPassesTestMixin",
+    "IsAuthenticated",
+    "AllowAny",
+    "staff_member_required",
+    "IsAdminUser",
+    "is_staff",
+    "user_passes_test",
+    "is_superuser",
+    "is_authenticated",
+    "PermissionDenied",
+    "DjangoModelPermissions",
+]
 # Adding these lines opens access or raw SQL: risk 3 too.
 OPENING_WORDS = ["csrf_exempt", ".raw(", "RawSQL", ".extra(", "AllowAny"]
 
 # Added lines containing these raise an alarm (risk 3). An alarm, not a lock.
-ALARM_WORDS = ["eval(", "exec(", "pytest.mark.skip", "skipif", "skip(", "xfail", "shell=True", "verify=False",
-               "|safe", "mark_safe", "os.system(", "pickle.loads(", "pickle.load(", "yaml.load(",
-               "yaml.unsafe_load(", "marshal.loads(", "__import__("]
+ALARM_WORDS = [
+    "eval(",
+    "exec(",
+    "pytest.mark.skip",
+    "skipif",
+    "skip(",
+    "xfail",
+    "shell=True",
+    "verify=False",
+    "|safe",
+    "mark_safe",
+    "os.system(",
+    "pickle.loads(",
+    "pickle.load(",
+    "yaml.load(",
+    "yaml.unsafe_load(",
+    "marshal.loads(",
+    "__import__(",
+]
 # Alarms that need a pattern: a truthy shell=, verify= turned off, SQL built from text.
 ALARM_PATTERNS = [
     (re.compile(r"(?<![\w.])shell\s*=\s*(?!False\b|0\b|None\b)[\w'\"]"), "shell="),
     (re.compile(r"(?<![\w.])verify\s*=\s*(?:False|0|None)\b"), "verify="),
-    (re.compile(r"\.execute\s*\(\s*(?:[fF][rR]?['\"]|['\"][^'\"]*['\"]\s*[+%]|[A-Za-z_][\w.]*\s*\+|.*\.format\s*\()"),
-     "execute( con texto armado · SQL built from text"),
+    (
+        re.compile(
+            r"\.execute\s*\(\s*(?:[fF][rR]?['\"]|['\"][^'\"]*['\"]\s*[+%]|[A-Za-z_][\w.]*\s*\+|.*\.format\s*\()"
+        ),
+        "execute( con texto armado · SQL built from text",
+    ),
 ]
 
 # Migration operations that delete, rename, change or transform data.
-DESTRUCTIVE_MIGRATION = ["RemoveField", "DeleteModel", "RenameField", "RenameModel", "AlterField",
-                         "AlterModelTable", "RunPython", "RunSQL", "RemoveIndex", "RemoveConstraint",
-                         "AlterUniqueTogether"]
+DESTRUCTIVE_MIGRATION = [
+    "RemoveField",
+    "DeleteModel",
+    "RenameField",
+    "RenameModel",
+    "AlterField",
+    "AlterModelTable",
+    "RunPython",
+    "RunSQL",
+    "RemoveIndex",
+    "RemoveConstraint",
+    "AlterUniqueTogether",
+]
 
-CODE_SUFFIXES = {".py", ".js", ".mjs", ".ts", ".tsx", ".jsx", ".html", ".jinja", ".j2", ".sh", ".java",
-                 ".cpp", ".cc", ".c", ".h", ".hpp", ".go", ".rb", ".php", ".vue", ".svelte", ".cs", ".rs",
-                 ".kt", ".ps1", ".bat", ".sql", ".cjs", ".mts", ".cts", ".wsgi", ".bash", ".zsh",
-                 ""}  # "" = no extension, such as a script with a shebang; compared in lowercase
+CODE_SUFFIXES = {
+    ".py",
+    ".js",
+    ".mjs",
+    ".ts",
+    ".tsx",
+    ".jsx",
+    ".html",
+    ".jinja",
+    ".j2",
+    ".sh",
+    ".java",
+    ".cpp",
+    ".cc",
+    ".c",
+    ".h",
+    ".hpp",
+    ".go",
+    ".rb",
+    ".php",
+    ".vue",
+    ".svelte",
+    ".cs",
+    ".rs",
+    ".kt",
+    ".ps1",
+    ".bat",
+    ".sql",
+    ".cjs",
+    ".mts",
+    ".cts",
+    ".wsgi",
+    ".bash",
+    ".zsh",
+    "",
+}  # "" = no extension, such as a script with a shebang; compared in lowercase
 SYMLINK, EXECUTABLE, SUBMODULE = "120000", "100755", "160000"
-TEST_DEFINITION = re.compile(r"^\s*(?:async\s+)?def\s+test|^\s*class\s+Test|^\s*(?:it|test)\s*\(|@Test\b")
+TEST_DEFINITION = re.compile(
+    r"^\s*(?:async\s+)?def\s+test|^\s*class\s+Test|^\s*(?:it|test)\s*\(|@Test\b"
+)
 TEST_BASE = re.compile(r"\bTestCase\b")  # unittest only runs classes that inherit from TestCase
 
 
 @dataclass
 class FileChange:
     """One file of the diff. A rename has both paths; lines are the added and removed text."""
+
     path: str
     status: str = "M"  # A added, M modified, D deleted, R renamed, T type changed
     old_path: str | None = None
@@ -103,10 +241,12 @@ def matches(path: str, patterns: list[str]) -> bool:
 
 
 def contains_word(line: str, word: str) -> bool:
-    """Whole-word search, tolerant of spaces: 'eval (x)', 'shell = True' and '| safe' still count."""
+    """Whole-word search, tolerant of spaces: 'eval (x)', 'shell = True', '| safe' still count."""
     before = r"(?<![A-Za-z0-9_])" if word[0].isalnum() or word[0] == "_" else ""
     after = r"(?![A-Za-z0-9_])" if word[-1].isalnum() or word[-1] == "_" else ""
-    body = re.escape(word).replace(r"\(", r"\s*\(").replace("=", r"\s*=\s*").replace(r"\|", r"\|\s*")
+    body = (
+        re.escape(word).replace(r"\(", r"\s*\(").replace("=", r"\s*=\s*").replace(r"\|", r"\|\s*")
+    )
     return re.search(before + body + after, line) is not None
 
 
@@ -115,73 +255,122 @@ def suffix(path: str) -> str:
 
 
 def collected_name(path: str) -> bool:
-    """Named so that test runners still collect it (pytest test_*.py and *_test.py, unittest test*.py, JS)."""
+    """Named so that test runners still collect it (pytest, unittest test*.py, JS test names)."""
     name = PurePosixPath(path).name.lower()
-    return ((name.startswith("test") and name.endswith(".py")) or name.endswith("_test.py")
-            or name.endswith((".test.js", ".test.ts", ".spec.ts", ".spec.js", ".test.cjs", ".test.mjs"))
-            or "/__tests__/" in f"/{path}")
+    return (
+        (name.startswith("test") and name.endswith(".py"))
+        or name.endswith("_test.py")
+        or name.endswith((".test.js", ".test.ts", ".spec.ts", ".spec.js", ".test.cjs", ".test.mjs"))
+        or "/__tests__/" in f"/{path}"
+    )
 
 
 def is_test_file(path: str) -> bool:
-    """A code file in a test folder, or a file named like a test. tests/disabled.txt is not a test."""
+    """A code file in a test folder, or a file named like a test; tests/disabled.txt is not."""
     in_test_folder = matches(path, ["tests/**", "**/tests/**", "test/**", "**/test/**"])
     return (in_test_folder and suffix(path) in CODE_SUFFIXES - {""}) or collected_name(path)
 
 
 def load_project_rules(text: str) -> tuple[list[str], list[str]]:
-    """Risk file lines: '3 <glob>' adds a critical path, 'alarma <text>' adds an alarm word; others ignored."""
+    """Risk file: '3 <glob>' adds a critical path, 'alarma <text>' an alarm word; others ignored."""
     paths, words = [], []
     for raw in text.splitlines():
         line = raw.strip()
         if line.startswith("3 "):
             paths.append(line[2:].strip())
         elif line.startswith("alarma "):
-            words.append(line[len("alarma "):].strip())
+            words.append(line[len("alarma ") :].strip())
     return paths, words
+
+
+def kind_risk(change: FileChange, paths: list[str], critical: list[str]) -> str | None:
+    """Why the file is risk 3 by its kind or path: symlink, submodule, new executable, critical."""
+    modes = (change.old_mode, change.new_mode)
+    if SYMLINK in modes:
+        return "enlace simbólico · symlink"
+    if SUBMODULE in modes:
+        return "submódulo · submodule"
+    if change.new_mode == EXECUTABLE and change.old_mode != EXECUTABLE:
+        return "ejecutable nuevo · new executable"
+    if any(matches(p, critical) for p in paths):
+        return "ruta crítica · critical path"
+    return None
+
+
+def fewer(pattern: re.Pattern[str], removed: list[str], added: list[str]) -> bool:
+    """More removed lines than added lines match the pattern."""
+    return sum(bool(pattern.search(x)) for x in removed) > sum(
+        bool(pattern.search(x)) for x in added
+    )
+
+
+def tests_and_migrations_risk(
+    change: FileChange, paths: list[str], removed: list[str], added: list[str]
+) -> str | None:
+    """Why the file is risk 3 for deleting or disabling tests, or for a destructive migration."""
+    if any(is_test_file(p) for p in paths):
+        if change.status == "D" or (change.status == "R" and not collected_name(change.path)):
+            return "borra o desactiva pruebas · deletes or disables tests"
+        if fewer(TEST_DEFINITION, removed, added) or fewer(TEST_BASE, removed, added):
+            return "quita pruebas · removes tests"
+    migration = any(
+        matches(p, ["**/migrations/*.py"]) and not p.endswith("__init__.py") for p in paths
+    )
+    if migration and (
+        change.status == "D"
+        or any(contains_word(x, op) for x in added for op in DESTRUCTIVE_MIGRATION)
+    ):
+        return "migración que borra o cambia datos · destructive migration"
+    return None
+
+
+def code_risk(
+    paths: list[str], removed: list[str], added: list[str], alarms: list[str]
+) -> str | None:
+    """Why a code file is risk 3 by its lines: access control removed, or an alarm added."""
+    if not any(suffix(p) in CODE_SUFFIXES for p in paths):
+        return None
+    for line in removed:
+        if any(contains_word(line, w) for w in PERMISSION_WORDS):
+            return (
+                f"quita o cambia permisos · removes or changes access control: {line.strip()[:60]}"
+            )
+    for line in added:
+        word = next((w for w in OPENING_WORDS + alarms if contains_word(line, w)), None)
+        word = word or next(
+            (name for pattern, name in ALARM_PATTERNS if pattern.search(line)), None
+        )
+        if word:
+            return f"alarma «{word}» · alarm word"
+    return None
 
 
 def file_risk(change: FileChange, critical: list[str], alarms: list[str]) -> tuple[int, str]:
     """Risk of one file and why. Every path of a rename counts."""
     paths = [p for p in (change.old_path, change.path) if p]
-    modes = (change.old_mode, change.new_mode)
     # Python reads 'ｅval' (full-width e) as 'eval': search the NFKC form, as the interpreter does.
     added = [unicodedata.normalize("NFKC", line) for line in change.added]
     removed = [unicodedata.normalize("NFKC", line) for line in change.removed]
-    if SYMLINK in modes:
-        return 3, "enlace simbólico · symlink"
-    if SUBMODULE in modes:
-        return 3, "submódulo · submodule"
-    if change.new_mode == EXECUTABLE and change.old_mode != EXECUTABLE:
-        return 3, "ejecutable nuevo · new executable"
-    if any(matches(p, critical) for p in paths):
-        return 3, "ruta crítica · critical path"
-    if any(is_test_file(p) for p in paths):
-        if change.status == "D" or (change.status == "R" and not collected_name(change.path)):
-            return 3, "borra o desactiva pruebas · deletes or disables tests"
-        for pattern in (TEST_DEFINITION, TEST_BASE):
-            if sum(bool(pattern.search(line)) for line in removed) > sum(bool(pattern.search(line)) for line in added):
-                return 3, "quita pruebas · removes tests"
-    if any(matches(p, ["**/migrations/*.py"]) and not p.endswith("__init__.py") for p in paths):
-        if change.status == "D" or any(contains_word(line, op) for line in added for op in DESTRUCTIVE_MIGRATION):
-            return 3, "migración que borra o cambia datos · destructive migration"
-    if any(suffix(p) in CODE_SUFFIXES for p in paths):
-        for line in removed:
-            if any(contains_word(line, w) for w in PERMISSION_WORDS):
-                return 3, f"quita o cambia permisos · removes or changes access control: {line.strip()[:60]}"
-        for line in added:
-            word = next((w for w in OPENING_WORDS + alarms if contains_word(line, w)), None)
-            word = word or next((name for pattern, name in ALARM_PATTERNS if pattern.search(line)), None)
-            if word:
-                return 3, f"alarma «{word}» · alarm word"
-    if change.binary and not all(matches(p, ROUTINE_IMAGES) for p in paths) \
-            and not any(p.endswith(".mo") for p in paths):
+    why = (
+        kind_risk(change, paths, critical)
+        or tests_and_migrations_risk(change, paths, removed, added)
+        or code_risk(paths, removed, added, alarms)
+    )
+    if why:
+        return 3, why
+    binary_ok = all(matches(p, ROUTINE_IMAGES) for p in paths) or any(
+        p.endswith(".mo") for p in paths
+    )
+    if change.binary and not binary_ok:
         return 3, "binario · binary"
     if all(matches(p, ROUTINE + ROUTINE_IMAGES) for p in paths):
         return 1, "rutina · routine"
     return 2, "normal"
 
 
-def compute(changes: list[FileChange], project_rules: str = "") -> tuple[int, list[tuple[str, int, str]]]:
+def compute(
+    changes: list[FileChange], project_rules: str = ""
+) -> tuple[int, list[tuple[str, int, str]]]:
     """Risk of the whole change (the highest of its files) and the reason for each file."""
     extra_paths, extra_words = load_project_rules(project_rules)
     critical, alarms = CRITICAL_PATHS + extra_paths, ALARM_WORDS + extra_words
@@ -190,14 +379,18 @@ def compute(changes: list[FileChange], project_rules: str = "") -> tuple[int, li
 
 
 def git(*args: str) -> str:
-    # surrogateescape: a non-UTF-8 byte in a name or a line neither stops the check nor changes the name
-    return subprocess.run(["git", *args], capture_output=True, text=True, errors="surrogateescape",
-                          check=True).stdout
+    # surrogateescape: a non-UTF-8 byte in a name or line neither stops the check nor alters names
+    return subprocess.run(  # noqa: S603  (fixed git arguments, never a shell)
+        ["git", *args],  # noqa: S607  (git from PATH, as in every CI step)
+        capture_output=True,
+        text=True,
+        errors="surrogateescape",
+        check=True,
+    ).stdout
 
 
-def changes_from_git(base: str, head: str = "HEAD") -> list[FileChange]:
-    """Read the full diff from the merge base with local git: never a paginated list."""
-    span = f"{base}...{head}"
+def files_from_git(span: str) -> dict[str, FileChange]:
+    """Paths, statuses and modes of the diff, from `git diff --raw -z` (exact names)."""
     changes: dict[str, FileChange] = {}
     fields = git("diff", "--raw", "-M", "-z", "--no-abbrev", span).split("\0")
     i = 0
@@ -206,9 +399,19 @@ def changes_from_git(base: str, head: str = "HEAD") -> list[FileChange]:
         renamed = status[0] in "RC"
         old, new = (fields[i + 1], fields[i + 2]) if renamed else (None, fields[i + 1])
         i += 3 if renamed else 2
-        changes[new] = FileChange(new, status[0], old, False,
-                                  "" if set(old_mode) == {"0"} else old_mode,
-                                  "" if set(new_mode) == {"0"} else new_mode)
+        changes[new] = FileChange(
+            new,
+            status[0],
+            old,
+            False,
+            "" if set(old_mode) == {"0"} else old_mode,
+            "" if set(new_mode) == {"0"} else new_mode,
+        )
+    return changes
+
+
+def mark_binaries(span: str, changes: dict[str, FileChange]) -> None:
+    """`git diff --numstat -z` shows '-' as the line count of a binary file."""
     numstat = git("diff", "--numstat", "-M", "-z", span).split("\0")
     i = 0
     while i < len(numstat) - 1:
@@ -220,28 +423,54 @@ def changes_from_git(base: str, head: str = "HEAD") -> list[FileChange]:
             i += 3
         if added == "-" and name in changes:
             changes[name].binary = True
+
+
+def read_lines(span: str, change: FileChange) -> None:
+    """Added and removed lines of one file; headers come before the first @@, content after it."""
+    pathspec = [p for p in (change.old_path, change.path) if p]
+    diff = git(
+        "--literal-pathspecs",
+        "diff",
+        "-U0",
+        "-M",
+        "--no-color",
+        "--no-ext-diff",
+        "--no-textconv",
+        span,
+        "--",
+        *pathspec,
+    )
+    in_hunk = False
+    for line in diff.splitlines():
+        if line.startswith("@@"):
+            in_hunk = True
+        elif line.startswith("diff --git"):
+            in_hunk = False
+        elif in_hunk and line.startswith("+"):
+            change.added.append(line[1:])
+        elif in_hunk and line.startswith("-"):
+            change.removed.append(line[1:])
+
+
+def changes_from_git(base: str, head: str = "HEAD") -> list[FileChange]:
+    """Read the full diff from the merge base with local git: never a paginated list."""
+    span = f"{base}...{head}"
+    changes = files_from_git(span)
+    mark_binaries(span, changes)
     for change in changes.values():
-        if change.binary or SUBMODULE in (change.old_mode, change.new_mode):
-            continue
-        pathspec = [p for p in (change.old_path, change.path) if p]
-        in_hunk = False  # headers come before the first @@; after it every +/- line is content
-        for line in git("--literal-pathspecs", "diff", "-U0", "-M", "--no-color", "--no-ext-diff", "--no-textconv", span, "--",
-                        *pathspec).splitlines():
-            if line.startswith("@@"):
-                in_hunk = True
-            elif line.startswith("diff --git"):
-                in_hunk = False
-            elif in_hunk and line.startswith("+"):
-                change.added.append(line[1:])
-            elif in_hunk and line.startswith("-"):
-                change.removed.append(line[1:])
+        if not change.binary and SUBMODULE not in (change.old_mode, change.new_mode):
+            read_lines(span, change)
     return list(changes.values())
 
 
 def safe(text: str) -> str:
     """One printable line: a file name from the PR must never start a line in the CI log."""
-    return "".join(f"\\x{ord(c) & 0xFF:02x}" if ord(c) < 32 or 127 <= ord(c) < 160 or 0xD800 <= ord(c) < 0xE000
-                   else c for c in text)
+    return "".join(
+        f"\\x{ord(c) & 0xFF:02x}"
+        if ord(c) < 32 or 127 <= ord(c) < 160 or 0xD800 <= ord(c) < 0xE000
+        else c
+        for c in text
+    )
 
 
 def main(argv: list[str]) -> int:

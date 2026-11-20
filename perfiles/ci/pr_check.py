@@ -6,7 +6,7 @@ Inputs, by environment variable (never pasted into a script):
 - KERNEL_LEVEL: ligero, estandar (default) or estricto.
 - HEAD_SHA: the PR head; the checked review line must name it ("Hay cambios nuevos sin revisar").
 - IS_REVERT, DEPENDABOT_OK (from pr_meta.py), PR_AUTHOR and DEPENDABOT_EXCEPTION (the project's
-  written exception for Dependabot, e.g. "EXC-004"; empty means Dependabot PRs are checked as any PR).
+  written exception for Dependabot, e.g. "EXC-004"; empty: Dependabot PRs are checked as any PR).
 
 What it asks, at the project's Standard level:
 - every PR: "**Riesgo:** N", never lower than COMPUTED_RISK; the technical report; no unchecked box;
@@ -27,14 +27,30 @@ OWNER_ITEMS = ["Qué cambia", "Qué puede salir mal", "Cómo se deshace", "Recom
 TECHNICAL_ITEMS = ["Cambios", "Verificado", "No verificado", "Limitaciones"]
 NEEDS_LINK = {"Verificado"}  # "it works" only counts with a link to the CI run or to real output
 IF_IT_FAILS = "si sale mal que pasaria"
-APPROVAL_WORDS = {"ok", "okay", "si", "listo", "acepto", "aprobado", "lo entiendo", "entendido", "vale",
-                  "dale", "de acuerdo", "conforme"}
-RISK = re.compile(r"^\s*-?\s*\*\*Riesgo[^*]*?\*\*\s*:?\s*([123])(?!\d)", re.MULTILINE | re.IGNORECASE)
+APPROVAL_WORDS = {
+    "ok",
+    "okay",
+    "si",
+    "listo",
+    "acepto",
+    "aprobado",
+    "lo entiendo",
+    "entendido",
+    "vale",
+    "dale",
+    "de acuerdo",
+    "conforme",
+}
+RISK = re.compile(
+    r"^\s*-?\s*\*\*Riesgo[^*]*?\*\*\s*:?\s*([123])(?!\d)", re.MULTILINE | re.IGNORECASE
+)
 UNCHECKED = re.compile(r"^\s*[-*+]\s\[\s\]", re.MULTILINE)
 LEVELS = {"ligero", "estandar", "estricto"}
 REVIEWED = re.compile(r"^\s*[-*+]\s\[[xX]\]\s*R12 Revisado.*$", re.MULTILINE)
 SHA = re.compile(r"\b[0-9a-f]{12,40}\b")  # 7 characters can be forged cheaply; 12 cannot
-EMPTY_LINE = "Falta decir qué cambia; con pocas palabras basta. No importa la redacción ni la ortografía."
+EMPTY_LINE = (
+    "Falta decir qué cambia; con pocas palabras basta. No importa la redacción ni la ortografía."
+)
 
 
 def plain(text: str) -> str:
@@ -48,7 +64,7 @@ def sections(body: str) -> dict[str, str]:
     """Text under each '## Title', keyed by its plain title."""
     found: dict[str, str] = {}
     parts = re.split(r"^##(?!#)[ \t]*(.*)$", body.replace("\r\n", "\n"), flags=re.MULTILINE)
-    for title, text in zip(parts[1::2], parts[2::2]):
+    for title, text in zip(parts[1::2], parts[2::2], strict=False):
         text = re.split(r"^\s*(?:-{3,}|\*{3,}|_{3,})\s*$", text, maxsplit=1, flags=re.MULTILINE)[0]
         found.setdefault(plain(title), text)  # a horizontal rule ends the section
     return found
@@ -56,7 +72,10 @@ def sections(body: str) -> dict[str, str]:
 
 def titles(body: str) -> list[str]:
     """Every '## Title' of the body, plain, duplicates included."""
-    return [plain(t) for t in re.findall(r"^##(?!#)[ \t]*(.*)$", body.replace("\r\n", "\n"), re.MULTILINE)]
+    return [
+        plain(t)
+        for t in re.findall(r"^##(?!#)[ \t]*(.*)$", body.replace("\r\n", "\n"), re.MULTILINE)
+    ]
 
 
 def section(body: str, *starts: str) -> str | None:
@@ -74,8 +93,8 @@ def written(text: str) -> bool:
 
 
 def items(text: str) -> dict[str, str]:
-    """'- **Label · EN:** value' lines (also with '*' or '+'), keyed by the plain label in Spanish."""
-    found = {}
+    """'- **Label · EN:** value' lines (also '*' or '+'), keyed by the plain label in Spanish."""
+    found: dict[str, str] = {}
     for match in re.finditer(r"^\s*[-*+]\s*\*\*(.+?)\*\*(.*)$", text, re.MULTILINE):
         label = plain(match.group(1).split("·")[0])
         found.setdefault(label, match.group(2).strip().lstrip(":").strip())
@@ -102,7 +121,12 @@ def owner_says_what_changes(text: str | None) -> bool:
         return False
     for line in text.splitlines():
         said = plain(line)
-        if written(line) and said and not said.startswith(IF_IT_FAILS) and said not in APPROVAL_WORDS:
+        if (
+            written(line)
+            and said
+            and not said.startswith(IF_IT_FAILS)
+            and said not in APPROVAL_WORDS
+        ):
             return True
     return False
 
@@ -116,44 +140,73 @@ def owner_says_what_if_it_fails(text: str | None) -> bool:
 
 
 def review_problems(body: str, head_sha: str) -> list[str]:
-    """The checked review line must name the commit it reviewed, and that commit must be the PR head."""
+    """The checked review line must name the commit it reviewed, and it must be the PR head."""
     line = REVIEWED.search(body)
     if line is None or not head_sha:
         return []
     shas = SHA.findall(line.group(0))
     if not shas:
-        return ["La casilla de revisión debe decir en qué commit se revisó (SHA de 12 caracteres o más)."]
+        return [
+            "La casilla de revisión debe decir en qué commit se revisó "
+            "(SHA de 12 caracteres o más)."
+        ]
     if not any(head_sha.startswith(sha) for sha in shas):
-        return [f"Hay cambios nuevos sin revisar: la revisión fue en {shas[-1][:7]} y el PR va en "
-                f"{head_sha[:7]}. Hay que pedirle otra revisión a la IA, no a ti."]
+        return [
+            f"Hay cambios nuevos sin revisar: la revisión fue en {shas[-1][:7]} y el PR va en "
+            f"{head_sha[:7]}. Hay que pedirle otra revisión a la IA, no a ti."
+        ]
     return []
+
+
+def risk_problems(body: str, computed: int) -> tuple[int, list[str]]:
+    """The declared risk: present and never lower than the computed one. Returns the risk to use."""
+    match = RISK.search(body)
+    declared = int(match.group(1)) if match else 0
+    if declared == 0:
+        return computed, [
+            f"Falta el riesgo: escribe «**Riesgo:** 1, 2 o 3». El CI calculó {computed}."
+        ]
+    if declared < computed:
+        return computed, [
+            f"El riesgo declarado ({declared}) es menor que el calculado ({computed}). "
+            "Puede subir, nunca bajar."
+        ]
+    return declared, []
+
+
+def duplicate_problems(body: str) -> list[str]:
+    """Each section the CI reads may appear only once: a fake one above the template's would win."""
+    found = []
+    for starts, name in [
+        (OWNER_TITLES, "«Con tus palabras» o «Lo entiendo»"),
+        ([OWNER_REPORT], "«Informe para el dueño»"),
+        ([TECHNICAL], "«Informe técnico»"),
+    ]:
+        if sum(any(t.startswith(s) for s in starts) for t in titles(body)) > 1:
+            found.append(f"Hay más de un título {name}: deja solo el de la plantilla.")
+    return found
+
+
+def owner_problems(body: str, risk: int) -> list[str]:
+    """What risk 2 and 3 ask of the owner: the report, their own words and, at 3, «Si sale mal»."""
+    found = []
+    missing = missing_items(section(body, OWNER_REPORT), OWNER_ITEMS)
+    if missing:
+        found.append(f"Al informe para el dueño le falta: {', '.join(missing)}.")
+    owner = section(body, *OWNER_TITLES)
+    if not owner_says_what_changes(owner):
+        found.append(EMPTY_LINE)
+    if risk == 3 and not owner_says_what_if_it_fails(owner):
+        found.append("Riesgo 3: falta la línea «Si sale mal, ¿qué pasaría?: …», con tus palabras.")
+    return found
 
 
 def problems(body: str, computed: int, level: str = "estandar", head_sha: str = "") -> list[str]:
     """Everything the description still lacks, as friendly messages."""
-    found = review_problems(body, head_sha)
-    match = RISK.search(body)
-    declared = int(match.group(1)) if match else 0
-    if declared == 0:
-        found.append(f"Falta el riesgo: escribe «**Riesgo:** 1, 2 o 3». El CI calculó {computed}.")
-    elif declared < computed:
-        found.append(f"El riesgo declarado ({declared}) es menor que el calculado ({computed}). "
-                     "Puede subir, nunca bajar.")
-    risk = max(declared, computed)
-    asks_owner = risk == 3 if level == "ligero" else risk >= 2
-    for starts, name in [(OWNER_TITLES, "«Con tus palabras» o «Lo entiendo»"),
-                         ([OWNER_REPORT], "«Informe para el dueño»"), ([TECHNICAL], "«Informe técnico»")]:
-        if sum(any(t.startswith(s) for s in starts) for t in titles(body)) > 1:
-            found.append(f"Hay más de un título {name}: deja solo el de la plantilla.")
-    if asks_owner:
-        missing = missing_items(section(body, OWNER_REPORT), OWNER_ITEMS)
-        if missing:
-            found.append(f"Al informe para el dueño le falta: {', '.join(missing)}.")
-        owner = section(body, *OWNER_TITLES)
-        if not owner_says_what_changes(owner):
-            found.append(EMPTY_LINE)
-        if risk == 3 and not owner_says_what_if_it_fails(owner):
-            found.append("Riesgo 3: falta la línea «Si sale mal, ¿qué pasaría?: …», con tus palabras.")
+    risk, found = risk_problems(body, computed)
+    found = review_problems(body, head_sha) + found + duplicate_problems(body)
+    if (risk == 3) if level == "ligero" else (risk >= 2):
+        found += owner_problems(body, risk)
     missing = missing_items(section(body, TECHNICAL), TECHNICAL_ITEMS)
     if missing:
         found.append(f"Al informe técnico le falta: {', '.join(missing)}.")
@@ -176,14 +229,24 @@ def main() -> int:
     if os.environ.get("IS_REVERT") == "1":
         print("Revert exacto de un cambio ya integrado: no se le pide nada al dueño.")
         return 0
-    if os.environ.get("PR_AUTHOR") == "dependabot[bot]" and os.environ.get("DEPENDABOT_EXCEPTION", "").strip():
+    if (
+        os.environ.get("PR_AUTHOR") == "dependabot[bot]"
+        and os.environ.get("DEPENDABOT_EXCEPTION", "").strip()
+    ):
         if os.environ.get("DEPENDABOT_OK") != "1":
-            print("::error::Este PR de Dependabot tiene commits de otra persona: se revisa como cualquier PR.")
+            print(
+                "::error::Este PR de Dependabot tiene commits o archivos de otra persona: "
+                "se revisa como cualquier PR."
+            )
             return 1
-        print(f"PR de Dependabot, cubierto por {plain(os.environ['DEPENDABOT_EXCEPTION']).upper()}: "
-              "todos los commits son de dependabot[bot].")
+        print(
+            f"PR de Dependabot, cubierto por {plain(os.environ['DEPENDABOT_EXCEPTION']).upper()}: "
+            "todos los commits son de dependabot[bot]."
+        )
         return 0
-    found = problems(os.environ.get("PR_BODY", ""), int(computed_text), level, os.environ.get("HEAD_SHA", ""))
+    found = problems(
+        os.environ.get("PR_BODY", ""), int(computed_text), level, os.environ.get("HEAD_SHA", "")
+    )
     for problem in found:
         print(f"::error::{problem}")
     if not found:

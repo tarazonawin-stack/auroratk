@@ -143,6 +143,14 @@ class KernelCopyStepTests(unittest.TestCase):
         self.assertNotEqual(self.run_step(lambda c: (c / "SHA256SUMS").unlink()), 0)
 
 
+class ProfileScriptStyleTests(unittest.TestCase):
+    def test_ci_scripts_fit_the_django_profile_line_length(self) -> None:
+        """Projects copy these scripts and lint them with line-length 100 (pyproject-django.toml)."""
+        for path in (ROOT / "perfiles" / "ci").glob("*.py"):
+            for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+                self.assertLessEqual(len(line), 100, f"{path.name}:{number}")
+
+
 class CopyableProfilesTests(unittest.TestCase):
     def test_profiles_have_no_relative_links_that_break_once_copied(self) -> None:
         for path in (ROOT / "perfiles").glob("*.md"):

@@ -164,7 +164,7 @@ class PrCheckPartDTests(unittest.TestCase):
     def test_dependabot_with_someone_elses_commit_fails(self) -> None:
         code, out = run({"PR_AUTHOR": "dependabot[bot]", "DEPENDABOT_OK": "0", "DEPENDABOT_EXCEPTION": "EXC-004"})
         self.assertEqual(code, 1)
-        self.assertIn("commits de otra persona", out)
+        self.assertIn("commits o archivos de otra persona", out)
 
     def test_review_must_be_on_the_current_head(self) -> None:
         reviewed = "abc1234def56"
