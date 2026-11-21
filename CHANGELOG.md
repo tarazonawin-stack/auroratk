@@ -2,6 +2,11 @@
 
 Formato basado en *Keep a Changelog*; versionado semántico. · *Based on Keep a Changelog; semantic versioning.*
 
+## [Sin publicar] · Unreleased
+
+### Corregido · Fixed
+- **README (ES/EN):** el PR #8, integrado después de la 3.0.0, dejó la tabla «Las 15 reglas en palabras simples» sin R16 y frases de antes de R12 por riesgo («escribir en una línea qué hace cada cambio»). Ahora son 16 reglas, R12 dice que tus palabras dependen del riesgo, y una prueba falla si la tabla de un README no lista exactamente las reglas del kernel. Solo cambia el README: los archivos que se copian a `docs/kernel/` no cambian, así que ningún proyecto tiene que volver a copiarlos. · *README rule table missed R16 and described the old R12; fixed, with a test that keeps README tables in step with the kernel. Copied kernel files are unchanged.*
+
 ## [3.0.0] · 2026-11-21
 
 Versión MAYOR: R12 cambia de sentido (lo que se pide al dueño depende del riesgo) y se agrega R16, una exigencia nueva. Se armó en partes (A, A2, A3, B1, B2, C y D), más licencias abiertas y R16. La etiqueta `v3.0.0` se crea después de probarla en GPEXT. · *MAJOR: R12 changes meaning (what the owner is asked depends on risk) and R16 adds a new requirement. The `v3.0.0` tag is created after the GPEXT trial.*

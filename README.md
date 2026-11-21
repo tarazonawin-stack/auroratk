@@ -36,7 +36,7 @@ Cada proyecto declara su nivel en su `AGENTS.md`. Cuando el software pasa a usar
 | **Estándar** | Software que usan otras personas, incluidos datos de trabajadores para uso interno. | Una app interna, un juego publicado, una librería. |
 | **Estricto** | Datos sensibles (salud, documentos de identidad, finanzas), clientes o usuarios externos, o dinero. | Producción con clientes, pagos. |
 
-## Las 15 reglas en palabras simples
+## Las 16 reglas en palabras simples
 
 El detalle (qué exige, cómo se comprueba, por qué y su fuente) está en [KERNEL.md](KERNEL.md).
 
@@ -53,10 +53,11 @@ El detalle (qué exige, cómo se comprueba, por qué y su fuente) está en [KERN
 | R09 | Datos personales con cuidado | Solo lo mínimo, con base legal, derechos de la persona y perfil de país. |
 | R10 | Accesible | Usable con teclado y en celular de 360 px (WCAG 2.2 AA). |
 | R11 | Bilingüe | Ningún texto de la interfaz va fijo en el código; español base e inglés listo. |
-| R12 | Quien construye no aprueba | CI en verde, revisión independiente y tu aprobación; todo queda escrito y se puede volver atrás. |
+| R12 | Quien construye no aprueba | CI en verde, revisión independiente y tu merge; según el riesgo del cambio, dices con tus palabras qué cambia. Todo queda escrito y se puede volver atrás. |
 | R13 | IA con límites | Instrucciones cortas para la IA, permisos mínimos y límite de gasto. |
 | R14 | Registros que avisan | Errores y acciones críticas quedan registrados, sin datos personales, y un error grave genera una alerta. |
 | R15 | Claro para quien lo usa | Estados de carga, vacío y error en cada pantalla, y una persona real valida el flujo principal. |
+| R16 | Desplegar sin miedo y volver atrás | Publica el CI con tu aprobación, se comprueba tras desplegar y volver a la versión anterior está probado. |
 
 ## Cómo se usa en un proyecto nuevo
 
@@ -79,7 +80,7 @@ El detalle (qué exige, cómo se comprueba, por qué y su fuente) está en [KERN
 
 ## Preguntas frecuentes
 
-- **¿Necesito saber programar?** No ser experto, pero sí entender lo bastante para escribir en una línea qué hace cada cambio antes de aprobarlo. La IA explica el porqué de cada decisión.
+- **¿Necesito saber programar?** No ser experto, pero sí entender lo bastante para decir con tus palabras qué cambia en los cambios de riesgo 2 y 3 (los de rutina no te piden nada). La IA explica el porqué de cada decisión.
 - **¿Qué es el CI?** Un comprobador automático que corre en cada cambio y lo bloquea si algo falla.
 - **¿Y si una regla no encaja?** Se puede romper solo con una excepción escrita en `docs/excepciones.md`, con motivo, riesgo, responsable y fecha de vencimiento. R05 y el núcleo de R06 no admiten excepciones.
 - **¿Qué país cubre?** El primer perfil de país es Perú (Ley 29733 y su Reglamento de 2024). Para otro país se crea su perfil antes de producción.
