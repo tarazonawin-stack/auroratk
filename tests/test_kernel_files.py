@@ -83,6 +83,21 @@ class VersionTests(unittest.TestCase):
                 self.assertEqual(ref, tag, f"{name} links to {ref}")
 
 
+RULE_HEADING = re.compile(r"^\*\*(R\d{2}) ·", re.MULTILINE)
+README_RULE_ROW = re.compile(r"^\| (R\d{2}) \|", re.MULTILINE)
+
+
+class ReadmeRulesTests(unittest.TestCase):
+    """The plain-words rule table in each README lists exactly the kernel's rules."""
+
+    def test_readme_tables_list_every_kernel_rule(self) -> None:
+        for kernel, readme, title in [("KERNEL.md", "README.md", "## Las {n} reglas"),
+                                      ("KERNEL.en.md", "README.en.md", "## The {n} rules")]:
+            rules = sorted(RULE_HEADING.findall(read(kernel)))
+            self.assertEqual(sorted(README_RULE_ROW.findall(read(readme))), rules, readme)
+            self.assertIn(title.format(n=len(rules)), read(readme), readme)
+
+
 class WorkflowTests(unittest.TestCase):
     def test_every_action_is_pinned_to_a_full_commit_sha(self) -> None:
         uses = re.compile(r"uses:\s*([^\s#]+)")

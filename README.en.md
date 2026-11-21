@@ -36,7 +36,7 @@ Each project declares its level in its `AGENTS.md`. When the software starts bei
 | **Standard** | Software other people use, including employee data for internal use. | An internal app, a published game, a library. |
 | **Strict** | Sensitive data (health, identity documents, finances), external clients or users, or money. | Production with clients, payments. |
 
-## The 15 rules in plain words
+## The 16 rules in plain words
 
 The detail (what each requires, how it is checked, why, and its source) is in [KERNEL.en.md](KERNEL.en.md).
 
@@ -53,10 +53,11 @@ The detail (what each requires, how it is checked, why, and its source) is in [K
 | R09 | Personal data with care | Only the minimum, with a legal basis, people's rights and a country profile. |
 | R10 | Accessible | Usable with a keyboard and on a 360 px phone (WCAG 2.2 AA). |
 | R11 | Bilingual | No interface text hard-coded; Spanish base, English ready. |
-| R12 | Whoever builds does not approve | Green CI, independent review and your approval; everything written down and reversible. |
+| R12 | Whoever builds does not approve | Green CI, independent review and your merge; depending on the change's risk, you say in your own words what changes. Everything written down and reversible. |
 | R13 | AI with limits | Short instructions for the AI, least-privilege permissions and a spending cap. |
 | R14 | Logs that alert | Errors and critical actions are logged, without personal data, and a serious error raises an alert. |
 | R15 | Clear for the people who use it | Loading, empty and error states on every screen, and a real person validates the main flow. |
+| R16 | Deploy without fear and roll back | CI releases with your approval, a check runs after deploying, and going back to the previous version is tested. |
 
 ## How to use it in a new project
 
@@ -79,7 +80,7 @@ The detail (what each requires, how it is checked, why, and its source) is in [K
 
 ## FAQ
 
-- **Do I need to know how to program?** You do not need to be an expert, but you do need to understand enough to write in one line what each change does before approving it. The AI explains the reason behind each decision.
+- **Do I need to know how to program?** You do not need to be an expert, but you do need to understand enough to say in your own words what changes in risk 2 and 3 changes (routine ones ask nothing of you). The AI explains the reason behind each decision.
 - **What is CI?** An automatic checker that runs on every change and blocks it if anything fails.
 - **What if a rule does not fit?** It can be broken only with a written exception in `docs/excepciones.md`, with reason, risk, owner and expiry date. R05 and the core of R06 allow no exceptions.
 - **Which country does it cover?** The first country profile is Peru (Law 29733 and its 2024 Regulation). For another country, its profile is created before production.
