@@ -46,7 +46,7 @@ If any answer is "I don't know", **ask before answering**. The section exists pr
 | "Update dependencies" | Repeats the title | "Bumps Django to a version that fixes a security bug." |
 | "Fix the bug" | Doesn't say which one | "A ticket can no longer be closed without its materials." |
 
-It can be short, informal and misspelled. What matters is that it's **yours** and says **what changes**. If the AI gives you an example, don't copy it: say it your way.
+It can be short, informal and misspelled. What matters is that it says **what changes** and that you agree with it. The AI gives you 3 examples: you can pick one, adjust it or write your own.
 
 ## How to ask for an explanation
 
@@ -59,7 +59,7 @@ It can be short, informal and misspelled. What matters is that it's **yours** an
 
 - **Explain first and ask afterwards**, once per PR, with an example and a clear conclusion ("you can relax because…" or "this is a concern because…, I recommend…").
 - Paste your answer **as is**, without fixing spelling. If you dictate, transcribe without changing the idea.
-- It may offer **an example** of what is asked, but you say it your way. If you answer "use that one", it asks you to say it in your own words.
+- After explaining, offer **3 example answers**, each with a different focus and all faithful to the change (and another 3 for «Si sale mal, ¿qué pasaría?» when it applies). You pick one, adjust it or write your own: all three are fine. If you pick one, the AI pastes it as is.
 - If the answer doesn't say what changes, ask again in another way, without scolding. If it seems to belong to another PR, say so once.
 - **If a push changes what the PR does**, even without raising the risk, explain and ask again.
 - If it got an explanation wrong, **say so and correct it**.
