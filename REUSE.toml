@@ -1,0 +1,21 @@
+# Licencia por ruta (REUSE 3.3). Si varias anotaciones coinciden, gana la última.
+# License per path (REUSE 3.3). When several annotations match, the last one wins.
+version = 1
+
+[[annotations]]
+path = "**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Jose Alejandro Tarazona"
+SPDX-License-Identifier = "CC-BY-4.0"
+
+[[annotations]]
+path = ["perfiles/ci/**", "tests/**", ".github/**", ".gitignore", "REUSE.toml", "CITATION.cff"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Jose Alejandro Tarazona"
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+path = ["plantillas/**", "ejemplos/**"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Jose Alejandro Tarazona"
+SPDX-License-Identifier = "MIT-0"

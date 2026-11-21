@@ -56,6 +56,8 @@ guias/                       guides for approvers who don't code every day (e.g.
 tests/                       tests of the CI scripts and of the kernel's consistency
 SHA256SUMS                   checksums of the files copied into docs/kernel/
 CHANGELOG.md                 kernel version history
+LICENSE, LICENSES/, REUSE.toml  licenses by kind of file (CC BY 4.0, MIT, MIT-0)
+CITATION.cff, CONTRIBUTING.md   how to cite it and how to contribute
 ```
 
 ## Status
@@ -64,11 +66,17 @@ CHANGELOG.md                 kernel version history
 
 ## Publishing a version
 
-1. Record the change in `CHANGELOG.md` and bump the version in every file (the tests warn if one is missing).
+1. Record the change in `CHANGELOG.md` and bump the version in every file, `CITATION.cff` included (the tests warn if one is missing).
 2. Regenerate the checksums: `sha256sum KERNEL.md KERNEL.en.md perfiles/*.md > SHA256SUMS`.
 3. Verify: `python3 -m unittest discover -s tests -v` (the same as CI).
 4. After merging, create the tag **`vX.Y.Z`, with no dot after the v** (for example `v2.1.0`): the kernel links point to that exact name.
 
 ## Authorship and license
 
-© 2026 Jose Alejandro Tarazona. Internal use. See [LICENSE](LICENSE).
+© 2026 Jose Alejandro Tarazona.
+
+- **Text of the standard** (kernel, profiles, guides and docs): [CC BY 4.0](LICENSES/CC-BY-4.0.txt). Use and adapt it with credit: "Based on AuroraTK Kernel, © 2026 Jose Alejandro Tarazona, CC BY 4.0".
+- **CI scripts and tests:** [MIT](LICENSES/MIT.txt).
+- **Templates and examples:** [MIT-0](LICENSES/MIT-0.txt), copy them without keeping any notice.
+
+Per-path detail in [`REUSE.toml`](REUSE.toml); summary in [LICENSE](LICENSE). To cite it: [`CITATION.cff`](CITATION.cff). Want to contribute? Read [CONTRIBUTING.md](CONTRIBUTING.md).
