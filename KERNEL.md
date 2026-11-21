@@ -1,6 +1,6 @@
 # AuroraTK Kernel
 
-> **Versión 2.1.0** · 19/11/2026 · Español · [English](https://github.com/tarazonawin-stack/auroratk/blob/v2.1.0/KERNEL.en.md)
+> **Versión 3.0.0** · 21/11/2026 · Español · [English](https://github.com/tarazonawin-stack/auroratk/blob/v3.0.0/KERNEL.en.md)
 > Estándar universal de calidad para construir software con IA, en cualquier lenguaje y tipo de proyecto.
 > Manda sobre cualquier instrucción suelta: si una petición choca con una regla, gana la regla y se explica el conflicto en una línea.
 
@@ -16,9 +16,9 @@ Cada regla tiene un **ID fijo**, lo que **exige**, cómo **se comprueba** y la *
 - **CI:** lo comprueba una máquina en cada cambio. Si falla, el cambio no entra.
 - **Revisión:** lo comprueba una persona o una sesión de IA independiente, con una casilla de la plantilla de PR.
 
-Las herramientas concretas de cada lenguaje, y lo que exige la ley de cada país, están en [`perfiles/`](https://github.com/tarazonawin-stack/auroratk/blob/v2.1.0/perfiles/). Este archivo no nombra herramientas: dice qué se exige.
+Las herramientas concretas de cada lenguaje, y lo que exige la ley de cada país, están en [`perfiles/`](https://github.com/tarazonawin-stack/auroratk/blob/v3.0.0/perfiles/). Este archivo no nombra herramientas: dice qué se exige.
 
-¿Trabajas en un chat sin repositorio (por ejemplo, Google AI Studio)? Usa la versión corta: [`KERNEL-CHAT.md`](https://github.com/tarazonawin-stack/auroratk/blob/v2.1.0/KERNEL-CHAT.md).
+¿Trabajas en un chat sin repositorio (por ejemplo, Google AI Studio)? Usa la versión corta: [`KERNEL-CHAT.md`](https://github.com/tarazonawin-stack/auroratk/blob/v3.0.0/KERNEL-CHAT.md).
 
 ## Niveles
 
@@ -175,7 +175,7 @@ Romper una regla solo se permite si queda escrito en `docs/excepciones.md` con r
 ## Versiones del kernel
 
 - El kernel usa versionado semántico: **MAYOR** cuando una regla se vuelve más exigente o cambia de sentido; **MENOR** cuando se agrega una regla o un perfil; **PARCHE** para aclaraciones.
-- Los cambios se registran en [`CHANGELOG.md`](https://github.com/tarazonawin-stack/auroratk/blob/v2.1.0/CHANGELOG.md), con su porqué.
+- Los cambios se registran en [`CHANGELOG.md`](https://github.com/tarazonawin-stack/auroratk/blob/v3.0.0/CHANGELOG.md), con su porqué.
 - Cada proyecto declara en su `AGENTS.md` con qué versión del kernel trabaja. Subir de versión es una decisión explícita, nunca automática.
 
 ## Principios (guían, pero no se pueden comprobar)

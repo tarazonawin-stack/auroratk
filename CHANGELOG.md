@@ -2,9 +2,13 @@
 
 Formato basado en *Keep a Changelog*; versionado semántico. · *Based on Keep a Changelog; semantic versioning.*
 
-## [Sin publicar] · Unreleased
+## [3.0.0] · 2026-11-21
 
-La 3.0.0 (R12 por riesgo) se arma en partes (A, A2, B1, B2, C y D) y no se publica hasta probarla en GPEXT. · *3.0.0 (R12 by risk) is built in parts and is not released until tested on GPEXT.*
+Versión MAYOR: R12 cambia de sentido (lo que se pide al dueño depende del riesgo) y se agrega R16, una exigencia nueva. Se armó en partes (A, A2, A3, B1, B2, C y D), más licencias abiertas y R16. La etiqueta `v3.0.0` se crea después de probarla en GPEXT. · *MAJOR: R12 changes meaning (what the owner is asked depends on risk) and R16 adds a new requirement. The `v3.0.0` tag is created after the GPEXT trial.*
+
+### Decidido · Decided
+- **`risk.py` congelado:** no se agregan palabras de alarma ni rondas de endurecimiento, salvo que alguien muestre una forma real de esquivarlo, con una prueba que falle antes del arreglo. Se descartó pasar las alarmas a Semgrep: Semgrep corre en el CI del proyecto y no en el control que se ejecuta desde la rama principal, así que un PR de riesgo 2 con `eval(` ya no subiría a riesgo 3. · *`risk.py` frozen: no new alarm words or hardening rounds unless a real bypass is shown with a failing test. Moving alarms to Semgrep was rejected because Semgrep runs in the project's CI, not in the main-branch check.*
+- **Abierto, para una versión futura:** tratar los parches de Dependabot con CI en verde como riesgo 1 y los saltos mayores como 2; lo decide el dueño. · *Open: Dependabot patches with green CI as risk 1, major bumps as 2; the owner decides.*
 
 ### Añadido · Added
 - **Licencias abiertas para publicarlo** (`LICENSE`, `LICENSES/`, `REUSE.toml`): el texto del estándar (kernel, perfiles, guías y documentación) pasa a **CC BY 4.0**; los scripts de CI y las pruebas, a **MIT**; las plantillas y los ejemplos, a **MIT-0**, para copiarlos sin arrastrar avisos. Reemplaza «Todos los derechos reservados · uso interno». Se agregan `CITATION.cff` (con una prueba que exige la misma versión que el kernel) y `CONTRIBUTING.md` (perfiles nuevos, cómo proponer una regla, DCO con `git commit -s`). *Por qué:* publicar el kernel para que la comunidad lo pruebe y colabore, conservando la atribución al autor. · *Open licenses for publication: CC BY 4.0 for the standard's text, MIT for CI scripts and tests, MIT-0 for templates; plus CITATION.cff and CONTRIBUTING.md.*
@@ -27,7 +31,6 @@ La 3.0.0 (R12 por riesgo) se arma en partes (A, A2, B1, B2, C y D) y no se publi
 - **Guía** `guias/lo-entiendo.md` y `.en.md`: pasa a «Con tus palabras»; «es para ti», tabla de riesgos, promesas, qué debe hacer la IA (explicar primero, preguntar una vez, volver a preguntar si un push cambia lo que hace el PR) y límites conocidos. Plantilla de `AGENTS.md` y README, al día. · *Guide, AGENTS template and README updated.*
 - **`plantillas/ESTRUCTURA.md`** (nueva): el mapa de carpetas sale de `AGENTS.md`, que es riesgo 3, y la plantilla de `AGENTS.md` la enlaza. *Por qué:* en GPEXT, 7 de los 15 PR de riesgo 3 lo eran por `AGENTS.md`. · *Folder map moves out of AGENTS.md.*
 - **Revertir, cambios sin revisar y Dependabot (parte D):** `perfiles/ci/pr_meta.py` reconoce un **revert exacto** de uno de los 20 últimos cambios de la rama principal: un solo commit, cuyos archivos son byte a byte los que produce el propio `git` al revertir ese cambio (`git merge-tree`; `patch-id` ignoraba los espacios y una sangría distinta pasaba). Ahí no se le pide nada al dueño (promesa 4). La casilla de revisión debe nombrar el commit revisado: si el PR avanzó, el CI dice «Hay cambios nuevos sin revisar» y pide otra revisión a la IA, no al dueño. Un PR de Dependabot se salta al dueño solo si el proyecto tiene una excepción escrita (variable `R12_DEPENDABOT_EXCEPTION`, p. ej. EXC-004) todos los commits son de `dependabot[bot]` y todos los archivos son de dependencias o flujos de CI. La casilla del revisor exige un SHA de 12 caracteres o más. El riesgo se muestra siempre. Límite: el autor de un commit se puede falsificar. · *Exact reverts ask nothing; unreviewed commits are flagged; Dependabot only under a written exception.*
-- **Pendiente para publicar la 3.0.0:** subir el número de versión y los enlaces fijados (hoy los enlaces a archivos nuevos apuntan a `v2.1.0`, donde no existen), y la prueba en GPEXT. Una versión futura puede tratar los parches de Dependabot con CI en verde como riesgo 1 y los saltos mayores como 2; lo decide el dueño. · *Pending before release: version and links, part D and the GPEXT trial.*
 
 ## [2.1.0] · 2026-11-19
 
