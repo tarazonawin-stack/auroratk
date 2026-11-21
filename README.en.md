@@ -12,7 +12,7 @@ AI writes fast, but it is wrong with full confidence. This kernel exists so that
 
 | It is | It isn't |
 |---|---|
-| 15 checkable rules, each with its reason and official source. | An application or a service. |
+| 16 checkable rules, each with its reason and official source. | An application or a service. |
 | Profiles that map the rules to tools per language and project type. | A certification or an audit. |
 | Templates ready to copy into every new project. | A replacement for experienced professionals. |
 | AI-agnostic: works with Claude, other AIs, or people. | Something that forces you to use paid tools. |
@@ -47,7 +47,7 @@ AI writes fast, but it is wrong with full confidence. This kernel exists so that
 ## Layout
 
 ```
-KERNEL.md / KERNEL.en.md     the standard (15 rules, levels, exceptions, versions)
+KERNEL.md / KERNEL.en.md     the standard (16 rules, levels, exceptions, versions)
 KERNEL-CHAT.md / .en.md      short version to paste into a chat with no repository
 perfiles/                    rules → tools per stack, project type and country
 plantillas/                  files to copy into each project

@@ -12,7 +12,7 @@ La IA escribe rápido, pero se equivoca con total seguridad. Este kernel existe 
 
 | Es | No es |
 |---|---|
-| 15 reglas comprobables, con su porqué y su fuente oficial. | Una aplicación ni un servicio. |
+| 16 reglas comprobables, con su porqué y su fuente oficial. | Una aplicación ni un servicio. |
 | Perfiles que traducen las reglas a herramientas por lenguaje y tipo de proyecto. | Una certificación ni una auditoría. |
 | Plantillas listas para copiar a cada proyecto nuevo. | Un reemplazo de profesionales con experiencia. |
 | Agnóstico a la IA: funciona con Claude, otras IAs o personas. | Algo que obligue a usar una herramienta de pago. |
@@ -47,7 +47,7 @@ La IA escribe rápido, pero se equivoca con total seguridad. Este kernel existe 
 ## Estructura
 
 ```
-KERNEL.md / KERNEL.en.md     el estándar (15 reglas, niveles, excepciones, versiones)
+KERNEL.md / KERNEL.en.md     el estándar (16 reglas, niveles, excepciones, versiones)
 KERNEL-CHAT.md / .en.md      versión corta para pegar en un chat sin repositorio
 perfiles/                    reglas → herramientas por stack, tipo de proyecto y país
 plantillas/                  archivos para copiar a cada proyecto

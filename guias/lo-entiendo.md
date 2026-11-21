@@ -73,4 +73,4 @@ Puede ser corta, informal y con faltas. Lo importante es que sea **tuya** y diga
 
 Lee el mensaje: dice qué falta. Por ejemplo, *«Falta decir qué cambia; con pocas palabras basta. No importa la redacción ni la ortografía.»* Edita la descripción del PR y guarda; el control se vuelve a ejecutar solo. Si lo que falta es un informe o el riesgo, pídele a quien hizo el cambio que lo complete: los informes no los escribes tú.
 
-Fuente: regla R12 del [kernel](../KERNEL.md#las-15-reglas).
+Fuente: regla R12 del [kernel](../KERNEL.md#las-16-reglas).
