@@ -74,7 +74,7 @@ The detail (what each requires, how it is checked, why, and its source) is in [K
    - Your profile's CI, if any (e.g. `perfiles/ci/python-django.yml` → `.github/workflows/ci.yml`, and the scripts in `perfiles/ci/` → `scripts/`).
    - Create `docs/specs/`, `docs/decisiones/` and `docs/excepciones.md` (from `plantillas/EXCEPCIONES.md`).
 4. **Set up CI in stages** with your profiles' commands (see *Staged activation* in the kernel) and turn on main-branch protection if your GitHub plan allows it (a free private repo does not: merge only with green CI).
-5. **Work like this, every time:** spec → small change with its test → CI → independent review → depending on the risk, you say in your own words what changes → your approval → `docs/ESTADO.md` up to date. Unsure about «Con tus palabras» (in your own words)? Read the [guide](guias/lo-entiendo.en.md).
+5. **Work like this, every time:** spec → small change with its test → CI → independent review → depending on the risk, you say in your own words what changes → your approval → `docs/ESTADO.md` up to date. Unsure about «Con tus palabras» (in your own words)? Read the [guide](guias/lo-entiendo.en.md). Several AI sessions at once? Read [The office](guias/oficina.en.md).
 
 **No repository?** In a chat such as Google AI Studio, paste [`KERNEL-CHAT.en.md`](KERNEL-CHAT.en.md) into the system instructions.
 
@@ -93,7 +93,8 @@ KERNEL-CHAT.md / .en.md      short version to paste into a chat with no reposito
 perfiles/                    rules → tools per stack, project type and country
 plantillas/                  files to copy into each project
 ejemplos/                    examples of what done right looks like
-guias/                       guides for approvers who don't code every day (e.g. «Con tus palabras», formerly «Lo entiendo»)
+guias/                       guides: «Con tus palabras» (for approvers) and «La oficina» (AI sessions in parallel)
+plantillas/roles/            per-role instructions: analyst, coordinator, specialist, reviewer and progress
 tests/                       tests of the CI scripts and of the kernel's consistency
 SHA256SUMS                   checksums of the files copied into docs/kernel/
 CHANGELOG.md                 kernel version history
