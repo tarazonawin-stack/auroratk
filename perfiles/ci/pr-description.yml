@@ -1,4 +1,4 @@
-# AuroraTK Kernel v2.1.0 · R12 by risk. Copy to .github/workflows/pr-description.yml, and
+# AuroraTK Kernel v3.0.0 · R12 by risk. Copy to .github/workflows/pr-description.yml, and
 # risk.py, pr_meta.py and pr_check.py to scripts/. Project level: repository variable KERNEL_LEVEL
 # (ligero, estandar or estricto; default estandar). Extra risk-3 paths and alarm words:
 # .github/riesgo.txt (see risk.py). Dependabot PRs skip the owner only with a written exception:

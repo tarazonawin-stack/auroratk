@@ -5,7 +5,7 @@
 
 ## Kernel
 
-- **Estándar:** AuroraTK Kernel **v2.1.0** — copia en `docs/kernel/` junto con los perfiles elegidos · *copy in `docs/kernel/` with the chosen profiles*.
+- **Estándar:** AuroraTK Kernel **v3.0.0** — copia en `docs/kernel/` junto con los perfiles elegidos · *copy in `docs/kernel/` with the chosen profiles*.
 - **Nivel:** Ligero | Estándar | Estricto  ← deja uno · *keep one*
 - **Perfiles:** `stack-<…>` + `tipo-<…>`
 - **Países con usuarios (R09) · Countries with users:** `pais-<…>`
