@@ -12,7 +12,7 @@ La IA escribe rápido, pero se equivoca con total seguridad. Este kernel existe 
 
 | Es | No es |
 |---|---|
-| 15 reglas comprobables, con su porqué y su fuente oficial. | Una aplicación ni un servicio. |
+| 16 reglas comprobables, con su porqué y su fuente oficial. | Una aplicación ni un servicio. |
 | Perfiles que traducen las reglas a herramientas por lenguaje y tipo de proyecto. | Una certificación ni una auditoría. |
 | Plantillas listas para copiar a cada proyecto nuevo. | Un reemplazo de profesionales con experiencia. |
 | Agnóstico a la IA: funciona con Claude, otras IAs o personas. | Algo que obligue a usar una herramienta de pago. |
@@ -47,7 +47,7 @@ La IA escribe rápido, pero se equivoca con total seguridad. Este kernel existe 
 ## Estructura
 
 ```
-KERNEL.md / KERNEL.en.md     el estándar (15 reglas, niveles, excepciones, versiones)
+KERNEL.md / KERNEL.en.md     el estándar (16 reglas, niveles, excepciones, versiones)
 KERNEL-CHAT.md / .en.md      versión corta para pegar en un chat sin repositorio
 perfiles/                    reglas → herramientas por stack, tipo de proyecto y país
 plantillas/                  archivos para copiar a cada proyecto
@@ -56,6 +56,8 @@ guias/                       guías para quien aprueba sin programar a diario (p
 tests/                       pruebas de los scripts de CI y de la coherencia del kernel
 SHA256SUMS                   huellas de los archivos que se copian a docs/kernel/
 CHANGELOG.md                 historial de versiones del kernel
+LICENSE, LICENSES/, REUSE.toml  licencias por tipo de archivo (CC BY 4.0, MIT, MIT-0)
+CITATION.cff, CONTRIBUTING.md   cómo citarlo y cómo aportar
 ```
 
 ## Estado
@@ -64,11 +66,17 @@ CHANGELOG.md                 historial de versiones del kernel
 
 ## Publicar una versión
 
-1. Anota el cambio en `CHANGELOG.md` y sube la versión en todos los archivos (las pruebas avisan si falta alguno).
+1. Anota el cambio en `CHANGELOG.md` y sube la versión en todos los archivos, incluido `CITATION.cff` (las pruebas avisan si falta alguno).
 2. Regenera las huellas: `sha256sum KERNEL.md KERNEL.en.md perfiles/*.md > SHA256SUMS`.
 3. Verifica: `python3 -m unittest discover -s tests -v` (lo mismo que corre el CI).
 4. Después del merge, crea la etiqueta **`vX.Y.Z`, sin punto después de la v** (por ejemplo `v2.1.0`): los enlaces del kernel apuntan a ese nombre exacto.
 
 ## Autoría y licencia
 
-© 2026 Jose Alejandro Tarazona. Uso interno. Ver [LICENSE](LICENSE).
+© 2026 Jose Alejandro Tarazona.
+
+- **Texto del estándar** (kernel, perfiles, guías y documentación): [CC BY 4.0](LICENSES/CC-BY-4.0.txt). Úsalo y adáptalo citando: «Basado en AuroraTK Kernel, © 2026 Jose Alejandro Tarazona, CC BY 4.0».
+- **Scripts de CI y pruebas:** [MIT](LICENSES/MIT.txt).
+- **Plantillas y ejemplos:** [MIT-0](LICENSES/MIT-0.txt), cópialos sin conservar ningún aviso.
+
+Detalle por ruta en [`REUSE.toml`](REUSE.toml); resumen en [LICENSE](LICENSE). Para citarlo: [`CITATION.cff`](CITATION.cff). ¿Quieres aportar? Lee [CONTRIBUTING.md](CONTRIBUTING.md).

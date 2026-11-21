@@ -1,4 +1,30 @@
-Copyright © 2026 Jose Alejandro Tarazona. Todos los derechos reservados. · All rights reserved.
+AuroraTK Kernel
+Copyright © 2026 Jose Alejandro Tarazona
 
-Uso interno del autor. Se prohíbe su copia, distribución o uso por terceros sin autorización escrita del autor.
-For the author's internal use. Copying, distribution or third-party use without the author's written permission is prohibited.
+Este repositorio usa tres licencias, según el tipo de archivo (estándar REUSE: el detalle por ruta
+está en REUSE.toml y el texto completo de cada licencia en LICENSES/).
+This repository uses three licenses, by kind of file (REUSE standard: per-path detail in REUSE.toml,
+full text of each license in LICENSES/).
+
+1. Texto del estándar · Text of the standard — CC-BY-4.0 (LICENSES/CC-BY-4.0.txt)
+   KERNEL*.md, perfiles/*.md, guias/, README*, CHANGELOG.md, CONTRIBUTING.md y demás documentación.
+   Puedes usarlo, copiarlo, traducirlo y adaptarlo, incluso con fines comerciales, si citas al autor,
+   enlazas la licencia e indicas si hiciste cambios.
+   You may use, copy, translate and adapt it, commercially too, if you credit the author, link the
+   license and say whether you made changes.
+
+   Atribución sugerida · Suggested attribution:
+   «Basado en AuroraTK Kernel, © 2026 Jose Alejandro Tarazona, CC BY 4.0,
+   https://github.com/tarazonawin-stack/auroratk»
+
+2. Scripts de CI y pruebas · CI scripts and tests — MIT (LICENSES/MIT.txt)
+   perfiles/ci/, tests/, .github/.
+
+3. Plantillas y ejemplos · Templates and examples — MIT-0 (LICENSES/MIT-0.txt)
+   plantillas/, ejemplos/. Cópialos a tu proyecto sin tener que conservar ningún aviso.
+   Copy them into your project without keeping any notice.
+
+El nombre «AuroraTK» identifica a este proyecto. Las licencias cubren el contenido, no el nombre: una
+versión modificada no debe presentarse como el AuroraTK Kernel oficial.
+The name "AuroraTK" identifies this project. The licenses cover the content, not the name: a modified
+version must not be presented as the official AuroraTK Kernel.

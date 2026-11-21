@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "Si usas o adaptas AuroraTK Kernel, cítalo así. · If you use or adapt AuroraTK Kernel, please cite it like this."
+title: "AuroraTK Kernel"
+abstract: "Estándar universal y bilingüe de calidad para construir software con IA: reglas comprobables, perfiles por lenguaje y país, y plantillas. · A universal, bilingual quality standard for building software with AI."
+type: software
+authors:
+  - given-names: "Jose Alejandro"
+    family-names: "Tarazona"
+version: "2.1.0"
+date-released: "2026-11-19"
+license: CC-BY-4.0
+repository-code: "https://github.com/tarazonawin-stack/auroratk"
+keywords:
+  - ai-assisted-development
+  - software-quality
+  - coding-standard
+  - agents-md

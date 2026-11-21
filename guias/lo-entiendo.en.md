@@ -73,4 +73,4 @@ It can be short, informal and misspelled. What matters is that it's **yours** an
 
 Read the message: it says what is missing. For example, *«Falta decir qué cambia; con pocas palabras basta. No importa la redacción ni la ortografía.»* ("Say what changes; a few words are enough. Wording and spelling don't matter.") Edit the PR description and save; the check re-runs on its own. If a report or the risk is missing, ask whoever made the change to fill it in: you don't write the reports.
 
-Source: rule R12 of the [kernel](../KERNEL.en.md#the-15-rules).
+Source: rule R12 of the [kernel](../KERNEL.en.md#the-16-rules).

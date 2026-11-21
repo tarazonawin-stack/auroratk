@@ -37,11 +37,11 @@ Where a rule says nothing per level, it applies equally to all three. **When the
 A new project does not need every CI check on day one. They are switched on in this order, and the declared level is met in full **before the first production release**:
 1. **From the first commit:** R01, R04, R05, R12 and R13; R03 with tests and, from the first business module on, its coverage.
 2. **Before the first usable screen or command:** R02, R06, R07, R08 (migrations, duplicate action and N+1), R09, R10, R11, R14 (logs) and R15 (states and design system).
-3. **Before production:** mutation testing (R03), tested restore (R08), tested alert (R14), validation with a real user (R15) and anything else the level still needs.
+3. **Before production:** mutation testing (R03), tested restore (R08), tested alert (R14), validation with a real user (R15), automatic deployment with tested rollback (R16) and anything else the level still needs.
 
 Whatever is not active yet is noted in `docs/ESTADO.md`. In the profiles' CI, the stage is set with a repository variable (`KERNEL_STAGE`).
 
-## The 15 rules
+## The 16 rules
 
 ### Build
 
@@ -152,6 +152,12 @@ Whatever is not active yet is noted in `docs/ESTADO.md`. In the profiles' CI, th
 - **Checked by:** review; agent permission settings versioned in the repo, `AGENTS.md` size, and a PR template checkbox.
 - **Why:** an over-privileged agent, or one that obeys someone else's text, can do real damage in seconds; and unnecessary agent instructions lower success rates and raise cost.
 - **Source:** OWASP Top 10 for Agentic Applications 2026 · NIST SP 800-218A · Gloaguen et al. (ETH Zurich), *Evaluating AGENTS.md*, 2026.
+
+**R16 · Deploy without fear and roll back**
+- **Requires:** going to production is automatic and repeatable: CI does it from the main branch with green CI, never by hand from a computer, and with human approval (R13). Every deployment is identified by its version or commit and logged with date and outcome. There is a test environment matching production, except for secrets and data, which are made up (R09). After deploying, an automatic check (the app responds and its main flow works) decides whether it stays or rolls back. **Going back to the previous version** is written down and tested, and does not depend on a single person; migrations keep the previous version working (R08, in two steps). For a library or CLI, deploying means publishing a version: it is published from CI, and a broken version is withdrawn or fixed with a patch. *Light:* N/A if it is not deployed; if it is, a versioned script and knowing how to return to the previous version are enough. *Standard:* rollback tested once before the first production release, with dated evidence in `docs/evidencia/`; every deployment and every rollback is logged, to measure how many fail and how long recovery takes. *Strict:* rollback tested before **every** production release, and on critical flows a gradual rollout or a way to switch the new behavior off without deploying (*feature flag*).
+- **Checked by:** CI; versioned deployment workflow with its post-deploy check. Review: rollback evidence and deployment log.
+- **Why:** a change that cannot be undone quickly turns any bug into a long incident, and what is deployed by hand comes out different every time. Measuring failed deployments tells you whether the process works, not just whether it is followed.
+- **Source:** DORA, *four keys* (change failure rate and recovery time) · Google, *Site Reliability Engineering*, ch. 8 *Release Engineering* · The Twelve-Factor App, V *Build, release, run* and X *Dev/prod parity*.
 
 ## Definition of done
 

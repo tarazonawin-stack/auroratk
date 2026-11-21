@@ -37,11 +37,11 @@ Donde una regla no dice nada por nivel, aplica igual en los tres. **Cuando el so
 Un proyecto nuevo no necesita todas las comprobaciones de CI el primer día. Se activan en este orden, y el nivel declarado se cumple completo **antes de la primera salida a producción**:
 1. **Desde el primer commit:** R01, R04, R05, R12 y R13; R03 con pruebas y, desde el primer módulo de negocio, su cobertura.
 2. **Antes de la primera pantalla o comando usable:** R02, R06, R07, R08 (migraciones, acción duplicada y N+1), R09, R10, R11, R14 (registros) y R15 (estados y sistema de diseño).
-3. **Antes de producción:** pruebas de mutación (R03), restauración probada (R08), alerta probada (R14), validación con una persona usuaria real (R15) y todo lo que falte del nivel.
+3. **Antes de producción:** pruebas de mutación (R03), restauración probada (R08), alerta probada (R14), validación con una persona usuaria real (R15), despliegue automático con vuelta atrás probada (R16) y todo lo que falte del nivel.
 
 Lo que aún no está activo se anota en `docs/ESTADO.md`. En los CI de los perfiles, la etapa se elige con una variable del repositorio (`KERNEL_STAGE`).
 
-## Las 15 reglas
+## Las 16 reglas
 
 ### Construir
 
@@ -153,6 +153,12 @@ Lo que aún no está activo se anota en `docs/ESTADO.md`. En los CI de los perfi
 - **Por qué:** un agente con demasiados permisos o que obedece texto ajeno puede causar daño real en segundos; y las instrucciones innecesarias para agentes bajan su tasa de éxito y suben su costo.
 - **Fuente:** OWASP Top 10 for Agentic Applications 2026 · NIST SP 800-218A · Gloaguen et al. (ETH Zurich), *Evaluating AGENTS.md*, 2026.
 
+**R16 · Desplegar sin miedo y volver atrás**
+- **Exige:** salir a producción es automático y repetible: lo hace el CI desde la rama principal con CI en verde, nunca a mano desde una computadora, y con aprobación humana (R13). Cada despliegue se identifica por su versión o commit y queda anotado con fecha y resultado. Existe un entorno de pruebas igual a producción, salvo los secretos y los datos, que son inventados (R09). Después de desplegar, una comprobación automática (la app responde y su flujo principal funciona) decide si se queda o se vuelve atrás. **Volver a la versión anterior** está escrito y probado, y no depende de una sola persona; las migraciones dejan funcionando a la versión anterior (R08, en dos pasos). En una librería o CLI, desplegar es publicar una versión: se publica desde el CI y una versión con error se retira o se corrige con un parche. *Ligero:* N/A si no se despliega; si se despliega, basta un script versionado y saber volver a la versión anterior. *Estándar:* vuelta atrás probada una vez antes de la primera salida a producción, con evidencia fechada en `docs/evidencia/`; cada despliegue y cada vuelta atrás se anotan, para medir cuántos fallan y cuánto se tarda en recuperar. *Estricto:* vuelta atrás probada antes de **cada** salida a producción, y en los flujos críticos un despliegue gradual o una forma de apagar lo nuevo sin desplegar (*feature flag*).
+- **Se comprueba:** CI; flujo de despliegue versionado con su comprobación posterior. Revisión: evidencia de vuelta atrás y registro de despliegues.
+- **Por qué:** un cambio que no se puede deshacer rápido convierte cualquier error en un incidente largo, y lo que se despliega a mano sale distinto cada vez. Medir los despliegues fallidos dice si el proceso funciona, no solo si se cumple.
+- **Fuente:** DORA, *four keys* (tasa de fallos de cambios y tiempo de recuperación) · Google, *Site Reliability Engineering*, cap. 8 *Release Engineering* · The Twelve-Factor App, V *Build, release, run* y X *Dev/prod parity*.
+
 ## Definición de terminado
 
 Un cambio está **terminado** cuando:
@@ -200,7 +206,8 @@ Este kernel no certifica nada ni sustituye una auditoría de seguridad, una revi
 - Veracode, *GenAI Code Security Report* — https://www.veracode.com/
 - Gloaguen et al., *Evaluating AGENTS.md: Are Repository-Level Context Files Helpful for Coding Agents?* — https://arxiv.org/abs/2602.11988
 - Shen y Tamkin, *How AI Impacts Skill Formation* — https://arxiv.org/abs/2601.20245
-- DORA, *State of AI-assisted Software Development* 2025 y *AI Capabilities Model* — https://dora.dev/
+- DORA, *State of AI-assisted Software Development* 2025, *AI Capabilities Model* y *four keys* — https://dora.dev/
+- Google, *Site Reliability Engineering*, cap. 8 *Release Engineering* — https://sre.google/sre-book/release-engineering/
 - Nielsen Norman Group, *10 Usability Heuristics* — https://www.nngroup.com/articles/ten-usability-heuristics/
 - Django, *Database access optimization* — https://docs.djangoproject.com/en/stable/topics/db/optimization/
 - The Twelve-Factor App — https://12factor.net/

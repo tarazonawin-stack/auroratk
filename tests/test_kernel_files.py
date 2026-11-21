@@ -67,6 +67,9 @@ class VersionTests(unittest.TestCase):
         self.assertIn(f"**Versión {version}.**", read("README.md"))
         self.assertIn(f"**Version {version}.**", read("README.en.md"))
 
+    def test_citation_file_carries_the_same_version(self) -> None:
+        self.assertIn(f'version: "{current_version()}"', read("CITATION.cff").splitlines())
+
     def test_every_kernel_mention_uses_the_current_version(self) -> None:
         version = current_version()
         for name in text_files():
