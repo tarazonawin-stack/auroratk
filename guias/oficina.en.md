@@ -48,6 +48,17 @@ Each role has a template in [`plantillas/roles/`](../plantillas/roles/), pasted 
 - **Any other AI or a chat:** open one conversation per role and paste its template.
 - **Permissions (R13):** every session or subagent uses the project's permissions (`.claude/settings.json`, template `plantillas/claude-settings.json`) and never more than the coordinator; each task has its spending cap.
 
+## Short, cheap chats
+
+Every message pays for the whole chat again, and a session waiting for a permission makes no progress. Seen in GPEXT:
+
+1. **Fixed permissions for routine work:** read-only commands and tests are allowed in `.claude/settings.json` (approved by the owner, R13), so no session sits blocked waiting for a click.
+2. **Tasks in files:** each task lives in `docs/tareas/<name>.md` and the message that opens the session only says "read and do `docs/tareas/<name>.md`". It is deleted in the PR that completes it.
+3. **Monitor with little text:** the coordinator or launcher checks each session's short status, never its full history.
+4. **Model per task:** a fast, cheap one to launch and monitor, a mid one to code what already has a spec, the most capable one for specs and critical reviews.
+5. **Close when done:** when the task ends, or the chat grows long, the session leaves what is pending in `docs/ESTADO.md` and is archived; the next one reads only that and its task.
+6. **Questions together:** the owner's decisions go in a single numbered list at the end, with 2–3 options and the recommended one first; meanwhile work goes on with the recommended one, marked "to be confirmed", and the owner answers with numbers.
+
 ## What it does not do
 
 It does not replace the owner: they decide the vision, the order and what gets merged (R12). If the office does not save time compared with working in sequence, go back to a single session: measure sessions, PRs and conflicts per feature.
