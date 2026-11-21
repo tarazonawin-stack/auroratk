@@ -12,9 +12,9 @@ Working in parallel **saves wall-clock time but costs more tokens**: every sessi
 | Role | What it does | How many |
 |---|---|---|
 | **Analyst** | Interviews the owner, writes the vision and the specs with their criteria (R01), proposes level and profiles | 1, at the start of each phase |
-| **Coordinator** | Splits the work, writes the agreements between parts, assigns tasks, decides the merge order. **The only one who edits `docs/ESTADO.md` and `AGENTS.md`** | 1, always |
+| **Coordinator** | Splits the work, writes the agreements between parts, assigns tasks and proposes the merge order. **The only one who edits `docs/ESTADO.md` and `AGENTS.md`**, inside each specialist's PR before merge (R12) | 1, always |
 | **Specialist** | Builds one task in its own branch and PR (R02, R03) | 2 or 3 at a time |
-| **Reviewer** | Reviews the PRs, ideally with another model (R12) | 1 per group of PRs |
+| **Reviewer** | Reviews each PR per R12, ideally with another model; may review a group, noting each PR's commit | 1 per group of PRs |
 | **Progress** | Every so often, summarizes for the owner what was done, what is next and what is blocked | 1 scheduled task |
 
 Each role has a template in [`plantillas/roles/`](../plantillas/roles/), pasted as the instruction when the session opens.
@@ -31,21 +31,22 @@ Each role has a template in [`plantillas/roles/`](../plantillas/roles/), pasted 
 2. **Separate files.** Each task declares which folders it touches; if two overlap, they go one after the other.
 3. **One owner of migrations** per round, or a fixed order to create them (R08).
 4. **Few at a time:** 2 or 3 specialists and a cap on open PRs (e.g. 5). More multiplies cost and conflicts.
-5. **One writer** of `docs/ESTADO.md` and `AGENTS.md`: the coordinator.
+5. **One writer** of `docs/ESTADO.md` and `AGENTS.md`: the coordinator, who pushes those changes to the specialist's PR branch before merge, so they land in the same PR (R12).
 
 ## The flow
 
 1. **Analyst:** interviews the owner (template `analista.md`) and leaves the vision and specs. The owner confirms.
 2. **Coordinator:** merges the agreements and hands out tasks, each with goal, criteria, allowed folders, line cap and spending cap.
 3. **Specialists:** work in parallel; each opens its PR with the kernel's PR template.
-4. **Reviewer:** reviews by group; at risk 3, always.
-5. **Coordinator:** merges in the decided order, updates `docs/ESTADO.md` and opens the next round.
+4. **Reviewer:** reviews each PR per R12 (at Standard, all of them; a written project exception may adjust it).
+5. **Coordinator:** completes `docs/ESTADO.md` and `AGENTS.md` in each PR and proposes the order; **the owner merges** (R12), unless a written exception delegates it. Then opens the next round.
 6. **Progress:** a periodic plain-language report to the owner.
 
 ## Tools
 
 - **Claude Code in the cloud:** the coordinator can create other sessions with their task and branch; subagents can work in an isolated copy of the repository; progress is a scheduled task.
 - **Any other AI or a chat:** open one conversation per role and paste its template.
+- **Permissions (R13):** every session or subagent uses the project's permissions (`.claude/settings.json`, template `plantillas/claude-settings.json`) and never more than the coordinator; each task has its spending cap.
 
 ## What it does not do
 

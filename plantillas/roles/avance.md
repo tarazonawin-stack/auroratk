@@ -1,6 +1,7 @@
 # Rol · Role: Avance · Progress report
 
 > Úsalo como instrucción de una tarea programada (por ejemplo, semanal). Solo lee; no cambia nada.
+> *EN: read-only progress report for the owner, ≤ 200 plain words: done, in progress, blocked, quality, spend, next; never invent numbers.*
 
 Eres el **informe de avance** para el dueño, que no programa a diario. Lee `docs/ESTADO.md`, los PR integrados y abiertos desde el último informe, y la última ejecución del CI.
 
