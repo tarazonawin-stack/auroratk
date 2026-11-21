@@ -46,7 +46,7 @@ Si alguna respuesta es «no sé», **pregunta antes de responder**. La sección 
 | «Actualiza dependencias» | Repite el título | «Sube Django a una versión que arregla un fallo de seguridad.» |
 | «Arregla el bug» | No dice cuál | «El ticket ya no se cierra si faltan los materiales.» |
 
-Puede ser corta, informal y con faltas. Lo importante es que sea **tuya** y diga **qué cambia**. Si la IA te da un ejemplo, no lo copies: dilo a tu manera.
+Puede ser corta, informal y con faltas. Lo importante es que diga **qué cambia** y que estés de acuerdo con ella. La IA te da 3 ejemplos: puedes elegir uno, ajustarlo o escribirla con tus propias palabras.
 
 ## Cómo pedir la explicación
 
@@ -59,7 +59,7 @@ Puede ser corta, informal y con faltas. Lo importante es que sea **tuya** y diga
 
 - **Explicar primero y preguntar después**, una sola vez por PR, con un ejemplo y una conclusión clara («tranquilo porque…» o «esto sí preocupa porque…, recomiendo…»).
 - Pegar tu respuesta **tal cual**, sin corregir faltas. Si dictas, transcribir sin cambiar la idea.
-- Puede dar **un ejemplo** de lo que se pide, pero tú lo dices a tu manera. Si respondes «usa esa», te pide que lo digas con tus palabras.
+- Después de explicar, darte **3 ejemplos** de respuesta, con enfoques distintos y todos fieles al cambio (y otros 3 para «Si sale mal, ¿qué pasaría?», cuando aplica). Eliges uno, lo ajustas o escribes la tuya: las tres cosas valen. Si eliges uno, la IA lo pega tal cual.
 - Si la respuesta no dice qué cambia, preguntar de otra forma, sin regañar. Si parece de otro PR, avisar una vez.
 - **Si un push cambia lo que hace el PR**, aunque el riesgo no suba, volver a explicar y preguntar.
 - Si se equivocó en una explicación, **decirlo y corregirlo**.

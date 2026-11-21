@@ -4,6 +4,9 @@ Formato basado en *Keep a Changelog*; versionado semántico. · *Based on Keep a
 
 ## [Sin publicar] · Unreleased
 
+### Cambiado · Changed
+- **«Con tus palabras»: 3 ejemplos para elegir** (`plantillas/AGENTS.md`, `guias/lo-entiendo.md` y `.en.md`): después de explicar el PR, la IA da 3 ejemplos de respuesta con enfoques distintos, todos fieles al cambio; el dueño elige uno, lo ajusta o escribe la suya. Antes la guía pedía no copiar el ejemplo. No cambia el texto de ninguna regla ni los archivos de `SHA256SUMS`. *Por qué:* decisión del dueño; elegir entre opciones distintas sigue pidiendo leer y entender el cambio, y escribir desde cero lo trababa. · *In your own words: the AI offers 3 example answers to pick, adjust or replace. No rule text or checksummed file changes.*
+
 ### Corregido · Fixed
 - **README (ES/EN):** el PR #8, integrado después de la 3.0.0, dejó la tabla «Las 15 reglas en palabras simples» sin R16 y frases de antes de R12 por riesgo («escribir en una línea qué hace cada cambio»). Ahora son 16 reglas, R12 dice que tus palabras dependen del riesgo, y una prueba falla si la tabla de un README no lista exactamente las reglas del kernel. Solo cambia el README: los archivos que se copian a `docs/kernel/` no cambian, así que ningún proyecto tiene que volver a copiarlos. · *README rule table missed R16 and described the old R12; fixed, with a test that keeps README tables in step with the kernel. Copied kernel files are unchanged.*
 
