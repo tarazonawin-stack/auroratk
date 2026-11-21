@@ -9,8 +9,8 @@
 
 - **Perfiles nuevos:** otros lenguajes (`stack-<nombre>.md`), tipos de proyecto (`tipo-<nombre>.md`) y países (`pais-<nombre>.md`, con fuentes oficiales y fecha de revisión). Copia la tabla de uno existente: cada regla necesita una herramienta o un "N/A" con su motivo.
   *New profiles: other languages, project types and countries (with official sources and a review date). Copy an existing table: every rule needs a tool or an "N/A" with a reason.*
-- **Errores en los scripts de CI** (`perfiles/ci/`), con una prueba que falle antes del arreglo (R03).
-  *Bugs in the CI scripts, with a test that fails before the fix.*
+- **Errores en los scripts de CI** (`perfiles/ci/`), con una prueba que falle antes del arreglo (R03). `risk.py` está **congelado**: no se aceptan palabras de alarma nuevas salvo que muestres una forma real de esquivarlo, con su prueba.
+  *Bugs in the CI scripts, with a test that fails before the fix. `risk.py` is **frozen**: new alarm words only with a real bypass shown by a test.*
 - **Casos reales:** qué pasó al aplicar el kernel en tu proyecto, en un issue.
   *Real cases: what happened when you applied the kernel to your project, in an issue.*
 
