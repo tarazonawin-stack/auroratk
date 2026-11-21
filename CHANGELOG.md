@@ -4,6 +4,9 @@ Formato basado en *Keep a Changelog*; versionado semántico. · *Based on Keep a
 
 ## [Sin publicar] · Unreleased
 
+### Añadido · Added
+- **Guía «La oficina»** (`guias/oficina.md`, EN `guias/oficina.en.md`) y **plantillas de rol** (`plantillas/roles/`: analista con entrevista inicial, coordinador, especialista, revisor y avance): cómo trabajar con varias sesiones de IA a la vez sin romper las reglas (acuerdos primero, división por función completa, archivos separados, un dueño de migraciones, 2–3 a la vez, un solo escritor de `ESTADO.md` y `AGENTS.md`). No cambia ninguna regla ni los archivos de `SHA256SUMS`. *Por qué:* el dueño quiere repartir el trabajo como en una oficina; sin coordinador, el paralelo genera PR que se pisan (visto en GPEXT). · *Office guide and role templates for parallel AI sessions; no rule or checksummed file changes.*
+
 ### Cambiado · Changed
 - **«Con tus palabras»: 3 ejemplos para elegir** (`plantillas/AGENTS.md`, `guias/lo-entiendo.md` y `.en.md`): después de explicar el PR, la IA da 3 ejemplos de respuesta con enfoques distintos, todos fieles al cambio; el dueño elige uno, lo ajusta o escribe la suya. Antes la guía pedía no copiar el ejemplo. No cambia el texto de ninguna regla ni los archivos de `SHA256SUMS`. *Por qué:* decisión del dueño; elegir entre opciones distintas sigue pidiendo leer y entender el cambio, y escribir desde cero lo trababa. · *In your own words: the AI offers 3 example answers to pick, adjust or replace. No rule text or checksummed file changes.*
 

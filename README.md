@@ -74,7 +74,7 @@ El detalle (qué exige, cómo se comprueba, por qué y su fuente) está en [KERN
    - El CI de tu perfil, si existe (p. ej. `perfiles/ci/python-django.yml` → `.github/workflows/ci.yml`, y los scripts de `perfiles/ci/` → `scripts/`).
    - Crea `docs/specs/`, `docs/decisiones/` y `docs/excepciones.md` (desde `plantillas/EXCEPCIONES.md`).
 4. **Configura el CI por etapas** con los comandos de tus perfiles (ver *Activación por etapas* en el kernel) y activa la protección de la rama principal si tu plan de GitHub lo permite (en un repo privado gratuito no: haz merge solo con el CI en verde).
-5. **Trabaja así, cada vez:** spec → cambio pequeño con su prueba → CI → revisión independiente → según el riesgo, dices con tus palabras qué cambia → tu aprobación → `docs/ESTADO.md` al día. ¿Dudas con «Con tus palabras»? Lee la [guía](guias/lo-entiendo.md).
+5. **Trabaja así, cada vez:** spec → cambio pequeño con su prueba → CI → revisión independiente → según el riesgo, dices con tus palabras qué cambia → tu aprobación → `docs/ESTADO.md` al día. ¿Dudas con «Con tus palabras»? Lee la [guía](guias/lo-entiendo.md). ¿Varias sesiones de IA a la vez? Lee [La oficina](guias/oficina.md).
 
 **¿Sin repositorio?** En un chat como Google AI Studio, pega [`KERNEL-CHAT.md`](KERNEL-CHAT.md) en las instrucciones del sistema.
 
@@ -93,7 +93,8 @@ KERNEL-CHAT.md / .en.md      versión corta para pegar en un chat sin repositori
 perfiles/                    reglas → herramientas por stack, tipo de proyecto y país
 plantillas/                  archivos para copiar a cada proyecto
 ejemplos/                    ejemplos de cómo se ve bien hecho
-guias/                       guías para quien aprueba sin programar a diario (p. ej. «Con tus palabras»)
+guias/                       guías: «Con tus palabras» (para quien aprueba) y «La oficina» (sesiones de IA en paralelo)
+plantillas/roles/            instrucciones por rol: analista, coordinador, especialista, revisor y avance
 tests/                       pruebas de los scripts de CI y de la coherencia del kernel
 SHA256SUMS                   huellas de los archivos que se copian a docs/kernel/
 CHANGELOG.md                 historial de versiones del kernel
