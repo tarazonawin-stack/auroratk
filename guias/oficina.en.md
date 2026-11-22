@@ -56,7 +56,7 @@ Every message pays for the whole chat again, and a session waiting for a permiss
 2. **Tasks in files:** each task lives in `docs/tareas/<name>.md` and the message that opens the session only says "read and do `docs/tareas/<name>.md`". It is deleted in the PR that completes it.
 3. **Monitor with little text:** the coordinator or launcher checks each session's short status, never its full history.
 4. **Model per task:** a fast, cheap one to launch and monitor, a mid one to code what already has a spec, the most capable one for specs and critical reviews.
-5. **Close when done:** when the task ends, or the chat grows long, the session leaves what is pending in `docs/ESTADO.md` and is archived; the next one reads only that and its task.
+5. **Close when done:** when the task ends, or the chat grows long, the session leaves what is pending in `docs/ESTADO.md` and is archived; the next one reads only that and its task. Tell the owner in one line when the session grows long (more than ~15 messages or a lot of history) and propose closing it and continuing in a new one with a short handoff text.
 6. **Questions together:** the owner's decisions go in a single numbered list at the end, with 2–3 options and the recommended one first; meanwhile work goes on with the recommended one, marked "to be confirmed", and the owner answers with numbers.
 
 ## What it does not do

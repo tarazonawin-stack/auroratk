@@ -56,7 +56,7 @@ Cada mensaje vuelve a pagar todo el chat, y una sesión parada esperando un perm
 2. **Encargos en archivo:** cada tarea vive en `docs/tareas/<nombre>.md` y el mensaje que abre la sesión solo dice «lee y haz `docs/tareas/<nombre>.md`». Se borra en el PR que la completa.
 3. **Vigilar con poco texto:** el coordinador o el lanzador revisa el estado breve de cada sesión, nunca su historial completo.
 4. **Modelo según la tarea:** uno rápido y barato para lanzar y vigilar, uno intermedio para programar lo que ya tiene spec, el más capaz para specs y revisiones críticas.
-5. **Cerrar al terminar:** al acabar la tarea, o si el chat se alarga, la sesión deja lo pendiente en `docs/ESTADO.md` y se archiva; la siguiente lee solo eso y su encargo.
+5. **Cerrar al terminar:** al acabar la tarea, o si el chat se alarga, la sesión deja lo pendiente en `docs/ESTADO.md` y se archiva; la siguiente lee solo eso y su encargo. Avisa al dueño en una línea cuando la sesión se alargue (más de ~15 mensajes o mucho historial) y propón cerrarla y seguir en una nueva con un texto de traspaso corto.
 6. **Preguntas juntas:** las decisiones del dueño van en una sola lista numerada al final, con 2–3 opciones y la recomendada primero; mientras tanto se sigue con la recomendada, marcada «por confirmar», y el dueño responde con números.
 
 ## Lo que no hace
