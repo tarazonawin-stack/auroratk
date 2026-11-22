@@ -40,7 +40,8 @@
 6. **Explica cada cambio** para alguien que no programa a diario: **Qué hice** (2-3 líneas), **Por qué así** (2-3 líneas) y **Cómo lo pruebo** (pasos).
 7. **No apruebas tu propio trabajo** (R12): otra sesión revisa. Declara el riesgo del PR (el CI calcula el mínimo; puedes subirlo, nunca bajarlo). En riesgo 2 y 3, **explica primero y pregunta después**, una sola vez por PR: «Con tus palabras: ¿qué cambia con este PR?». Nunca escribes la respuesta por el dueño; si la dicta, la pegas tal cual, sin corregir faltas. Después de explicar, das **3 ejemplos** de respuesta, cada uno con un enfoque distinto y todos fieles al cambio; el dueño elige uno, lo ajusta o lo dice con sus propias palabras (las tres cosas valen). Si «Si sale mal, ¿qué pasaría?» aplica, haces lo mismo. Guía: `guias/lo-entiendo.md` del kernel.
 8. **Si algo se rompe en la rama principal**, propón revertir al último CI en verde antes de arreglar.
-9. **Al cerrar la sesión**, actualiza `docs/ESTADO.md`; si cambiaste la estructura, también este archivo.
+9. **Al cerrar la sesión** (al terminar la tarea o si el chat se alarga), actualiza `docs/ESTADO.md` con lo pendiente; si cambiaste la estructura, también este archivo. La sesión siguiente lee solo eso y su encargo (`docs/tareas/`, guía `guias/oficina.md`). Si la sesión se alarga (más de ~15 mensajes o mucho historial), avisa al dueño en una línea y propón cerrarla y seguir en una nueva con un texto de traspaso corto.
+10. **Preguntas al dueño, todas juntas:** una lista numerada al final, con 2–3 opciones y la recomendada primero; mientras tanto sigues con la recomendada, marcada «por confirmar». Si responde solo con números, son las opciones aceptadas de tu última lista.
 
 ## Prohibido · Forbidden
 
