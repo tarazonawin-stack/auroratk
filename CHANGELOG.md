@@ -8,6 +8,12 @@ Formato basado en *Keep a Changelog*; versionado semántico. · *Based on Keep a
 
 Versión MAYOR y **definitiva**: R02 y R13 cambian de sentido (DEC-001). Desde aquí, el kernel está congelado: parches solo con una prueba que falle antes del arreglo, versiones menores solo con perfiles nuevos y una mayor solo ante un problema real de un producto. Incluye lo que estaba «Sin publicar». La etiqueta `v4.0.0` se crea después de probarla en GPEXT. · *MAJOR and **final**: R02 and R13 change meaning. Frozen from here on. Includes the unreleased items. The `v4.0.0` tag is created after the GPEXT trial.*
 
+### Corregido tras la revisión independiente · Fixed after the independent review
+- **`kernel_sync.py check`** solo acepta etiquetas `vX.Y.Z` o `vX.Y.Z-rc.N` de la misma versión, y el CI las descarga como `refs/tags/` (antes, `version refs/pull/1/head` pasaba). También falla con `disableAllHooks` o `defaultMode: bypassPermissions`. `sync` se niega a escribir a través de un enlace simbólico y avisa qué archivos del proyecto reemplazó. · *Only release tags can be pinned; hooks-off and bypass mode fail; no writing through symlinks.*
+- **`size_hook.py`** mide también `merge`, `cherry-pick`, `revert`, `am`, `rebase` y `pull`; ignora el texto que solo menciona «git commit» (`echo`, `--grep`, código entre comillas). Avisa desde el 80 % exacto. · *The hook measures every commit-making git command and ignores quoted text.*
+- **Ejemplo de aislamiento:** sin sesión exige una redirección al login o 401/403 (un 404 o 405 ya no pasa), y funciona con un modelo de usuario que entra con correo. · *Isolation example: anonymous must be redirected to login or get 401/403.*
+- **Textos:** la guía explica cómo agregar el *hook* a un `settings.json` existente y cómo probar con una etiqueta `-rc`; el README alinea la congelación y la etiqueta con DEC-001; la spec anota que `ci.yml` es del proyecto. · *Guide, README and spec aligned.*
+
 ### Decidido · Decided
 - **Congelación** (`KERNEL.md`, *Versiones del kernel*; `docs/decisiones/DEC-001`), con la spec `docs/specs/SPEC-001`. · *Freeze policy.*
 - **Fuera:** los carriles de GPEXT, porque el riesgo 1/2/3 ya hace ese trabajo; `risk.py` no cambia. Sigue abierto tratar Dependabot como riesgo 1. · *Out: GPEXT's lanes; `risk.py` unchanged.*

@@ -7,7 +7,8 @@ KERNEL_DIR is a checkout of the kernel at the pinned version (git ref in `.githu
 - FIXED files are the kernel's own (rules, profiles, CI scripts, the R12 workflow, kernel skills):
   `sync` overwrites them and `check` fails if one is missing or differs, or if docs/kernel/ has extras.
 - TEMPLATES belong to the project once copied: `sync` copies them only when they are missing.
-- `check` also fails if .claude/settings.json lost the size hook or any deny rule of the template.
+- `check` also fails if .claude/settings.json lost the size hook or a deny rule of the template, turns
+  hooks off or bypasses permissions. Local settings (.claude/settings.local.json) are not checked.
 In CI, run `check` with the kernel_sync.py of the fetched kernel, never the project's own copy.
 """
 
@@ -31,7 +32,8 @@ TEMPLATES = {
     "plantillas/DATOS-REALES.md": "docs/datos-reales.md",
 }
 VERSION = re.compile(r"\*\*Versi[oó]n (\d+\.\d+\.\d+)\*\*")
-SAFE_NAME = re.compile(r"^[A-Za-z0-9._/-]+$")
+SAFE_NAME = re.compile(r"^[A-Za-z0-9._-]+$")
+RELEASE_TAG = re.compile(r"^v(\d+\.\d+\.\d+)(?:-[0-9A-Za-z.]+)?$")  # vX.Y.Z or a trial tag like vX.Y.Z-rc.1
 
 
 def fixed_files(kernel: Path) -> dict[str, str]:
@@ -74,13 +76,21 @@ def sync(kernel: Path, ci: str | None, ref: str | None) -> int:
     pin = read_pin()
     ci = ci or pin.get("ci")
     ref = ref or f"v{kernel_version(kernel)}"
-    for name in filter(None, [ci, ref]):
-        if not SAFE_NAME.match(name):
-            raise SystemExit(f"unsafe name: {name!r}")
+    if ci and not SAFE_NAME.match(ci):
+        raise SystemExit(f"unsafe CI profile name: {ci!r}")
+    match = RELEASE_TAG.match(ref)
+    if match is None or match.group(1) != kernel_version(kernel):
+        raise SystemExit(f"--ref must be a release tag of this kernel (v{kernel_version(kernel)} or "
+                         f"v{kernel_version(kernel)}-rc.N), not {ref!r}")
+    for dest in {Path(d) for d in fixed_files(kernel).values()}:
+        if any(part.is_symlink() for part in [dest, *dest.parents]):
+            raise SystemExit(f"refusing to write through a symbolic link: {dest}")
     for kept in Path("docs/kernel").rglob("*") if Path("docs/kernel").is_dir() else []:
         if kept.is_file():
             kept.unlink()  # docs/kernel/ is the kernel's: files of an older version go away
     for src, dest in fixed_files(kernel).items():
+        if Path(dest).is_file() and Path(dest).read_bytes() != (kernel / src).read_bytes():
+            print(f"replaced {dest} with the kernel's version")
         copy(kernel / src, Path(dest))
     templates = dict(TEMPLATES)
     if ci:
@@ -107,6 +117,10 @@ def settings_problems(kernel: Path) -> list[str]:
     problems = [f"{path}: deny rule removed: {rule}"
                 for rule in template["permissions"]["deny"]
                 if rule not in mine.get("permissions", {}).get("deny", [])]
+    if mine.get("disableAllHooks"):
+        problems.append(f"{path}: disableAllHooks turns the R02 size hook off")
+    if mine.get("permissions", {}).get("defaultMode") == "bypassPermissions":
+        problems.append(f"{path}: defaultMode bypassPermissions skips every deny and ask rule (R13)")
     wanted = template["hooks"]["PostToolUse"][0]["hooks"][0]["command"]
     commands = [hook.get("command") for entry in mine.get("hooks", {}).get("PostToolUse", [])
                 if isinstance(entry, dict) and entry.get("matcher") == "Bash"
@@ -121,7 +135,9 @@ def check(kernel: Path) -> int:
     pinned = read_pin().get("version")
     if pinned is None:
         problems.append(f"{PIN_FILE}: missing 'version <ref>' line")
-    elif re.fullmatch(r"v\d+\.\d+\.\d+", pinned) and pinned != f"v{kernel_version(kernel)}":
+    elif (match := RELEASE_TAG.match(pinned)) is None:
+        problems.append(f"{PIN_FILE}: pin a release tag (vX.Y.Z or vX.Y.Z-rc.N), not {pinned!r}")
+    elif match.group(1) != kernel_version(kernel):
         problems.append(f"{PIN_FILE} pins {pinned}, but the kernel given is v{kernel_version(kernel)}")
     files = fixed_files(kernel)
     for src, dest in files.items():
@@ -145,7 +161,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("command", choices=["sync", "check"])
     parser.add_argument("--from", dest="kernel", required=True, type=Path)
     parser.add_argument("--ci", help="CI profile to start from, e.g. python-django")
-    parser.add_argument("--ref", help="git ref to pin instead of vX.Y.Z (e.g. a commit for a trial)")
+    parser.add_argument("--ref", help="tag to pin instead of vX.Y.Z, e.g. vX.Y.Z-rc.1 for a trial")
     args = parser.parse_args(argv)
     if args.command == "sync":
         return sync(args.kernel, args.ci, args.ref)

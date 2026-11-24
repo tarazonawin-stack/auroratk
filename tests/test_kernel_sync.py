@@ -49,11 +49,14 @@ class SyncTests(unittest.TestCase):
                              (ROOT / "perfiles/ci/risk.py").read_bytes())
             self.assertFalse(Path("docs/kernel/perfiles/viejo.md").exists())
 
-    def test_ref_can_pin_a_commit_for_a_trial_and_unsafe_names_are_refused(self) -> None:
+    def test_ref_can_pin_a_trial_tag_and_unsafe_names_are_refused(self) -> None:
+        version = kernel_sync.kernel_version(ROOT)
         with in_temp_dir():
-            run("sync", "--ref", "0123abcd")
-            self.assertEqual(kernel_sync.read_pin()["version"], "0123abcd")
+            run("sync", "--ref", f"v{version}-rc.1")
+            self.assertEqual(kernel_sync.read_pin()["version"], f"v{version}-rc.1")
             self.assertEqual(run("check")[0], 0)
+            with self.assertRaises(SystemExit):
+                run("sync", "--ref", "0123abcd")
             with self.assertRaises(SystemExit):
                 run("sync", "--ref", "v1; rm -rf /")
 
@@ -109,6 +112,66 @@ class CheckTests(unittest.TestCase):
         def pin_old() -> None:
             Path(".github/kernel.txt").write_text("version v1.0.0\n", encoding="utf-8")
         self.assertIn("pins v1.0.0", self.broken(pin_old))
+
+
+class ReviewFixesTests(unittest.TestCase):
+    """Findings of the independent review of 4.0.0: each test failed before its fix."""
+
+    def check_with(self, change: object) -> tuple[int, str]:
+        with in_temp_dir():
+            run("sync")
+            assert callable(change)
+            change()
+            return run("check")
+
+    def test_only_release_tags_can_be_pinned(self) -> None:
+        for ref in ["refs/pull/1/head", "main", "0123abcd" * 5, "v4.0"]:
+            def pin(ref: str = ref) -> None:
+                Path(".github/kernel.txt").write_text(f"version {ref}\n", encoding="utf-8")
+            code, out = self.check_with(pin)
+            self.assertEqual(code, 1, ref)
+            self.assertIn("pin a release tag", out)
+
+    def test_a_release_candidate_tag_of_the_same_version_is_accepted(self) -> None:
+        version = kernel_sync.kernel_version(ROOT)
+        def pin() -> None:
+            Path(".github/kernel.txt").write_text(f"version v{version}-rc.1\n", encoding="utf-8")
+        self.assertEqual(self.check_with(pin)[0], 0)
+
+    def test_disabled_hooks_or_bypass_mode_fail(self) -> None:
+        for key, value in [("disableAllHooks", True), ("permissions.defaultMode", "bypassPermissions")]:
+            def loosen(key: str = key, value: object = value) -> None:
+                path = Path(".claude/settings.json")
+                settings = json.loads(path.read_text(encoding="utf-8"))
+                if key.startswith("permissions."):
+                    settings["permissions"][key.split(".")[1]] = value
+                else:
+                    settings[key] = value
+                path.write_text(json.dumps(settings), encoding="utf-8")
+            code, out = self.check_with(loosen)
+            self.assertEqual(code, 1, key)
+            self.assertIn(key.split(".")[-1], out)
+
+    def test_sync_refuses_a_symlinked_kernel_folder(self) -> None:
+        with in_temp_dir() as folder:
+            outside = folder / "outside"
+            outside.mkdir()
+            (outside / "keep.txt").write_text("mine", encoding="utf-8")
+            Path("project").mkdir()
+            import os
+            os.chdir("project")
+            Path("docs").mkdir()
+            Path("docs/kernel").symlink_to(outside)
+            with self.assertRaises(SystemExit):
+                run("sync")
+            self.assertTrue((outside / "keep.txt").exists())
+
+    def test_sync_says_which_project_files_it_replaced(self) -> None:
+        with in_temp_dir():
+            Path("scripts").mkdir()
+            Path("scripts/size_check.py").write_text("# the project's own\n", encoding="utf-8")
+            out = run("sync")[1]
+            self.assertIn("replaced scripts/size_check.py", out)
 
 
 if __name__ == "__main__":

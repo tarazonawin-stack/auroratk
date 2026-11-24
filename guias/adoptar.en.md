@@ -15,7 +15,8 @@
 5. **Turn on CI in stages** (`KERNEL_STAGE`) and branch protection if your plan allows it.
 6. **Merge it all in one risk-3 PR**, with independent review.
 
-**Trial before the tag:** use `--ref <commit>` in step 2. CI then fetches that exact commit.
+**Trial before the final tag:** the owner creates a trial tag (`v4.0.0-rc.1`), you clone that tag and use `--ref v4.0.0-rc.1` in step 2. CI accepts tags only, not branches or commits.
+**Already have `.claude/settings.json`?** `sync` leaves it alone; add the template's `hooks` block and `deny` rules by hand (`check` tells you what is missing). Nobody checks `.claude/settings.local.json`: don't use it to loosen rules.
 **Stacked PRs:** the hook measures against `origin/main`. If a PR starts from another branch, declare its base: `git config branch.<branch>.kernelbase <base>`.
 
 ## What can be customized and what cannot
@@ -47,7 +48,7 @@ When a project invented its own process, each local piece is swapped for the ker
 |---|---|
 | Green/yellow/red lanes (`scripts/lane.py`) | Remove: `risk.py`'s risk 1/2/3 does that job from the main branch |
 | `scripts/check_size.py` (400 code + 200 docs) | Remove: `size_check.py` measures the same |
-| Hook `.claude/hooks/size-after-commit.sh` | Remove: `size_hook.py` ships in `.claude/settings.json` |
+| Hook `.claude/hooks/size-after-commit.sh` | Remove: `size_hook.py` replaces it; add the template's `hooks` block to your `.claude/settings.json` |
 | Long `AGENTS.md`, or short with detail in skills | Rebuild it from the template; your own skills stay |
 | URL isolation test | Keep it, or start from `ejemplos/test_aislamiento_django.py` |
 | Own semgrep rule (e.g. `scoped(...)`) | Keep it: the kernel doesn't cover it |
