@@ -34,7 +34,7 @@
 
 1. **Empieza leyendo `docs/ESTADO.md`**: dice qué está hecho y cuál es el siguiente paso. El mapa de carpetas está en `docs/ESTRUCTURA.md` (plantilla `plantillas/ESTRUCTURA.md`), no aquí: este archivo es riesgo 3 y solo cambia cuando cambian las instrucciones para la IA.
 2. **Una tarea por sesión.** Si la tarea no tiene spec en `docs/specs/`, propón la spec primero y espera el "sí". Un cambio trivial (R01) no la necesita: márcalo `trivial`.
-3. **Cambios pequeños** (R02): ~200 líneas. Si un archivo pasa de 300 líneas, propón dividirlo.
+3. **Cambios pequeños** (R02): ~200 líneas de código (tope 400) y hasta 200 de documentación. Si un archivo pasa de 300 líneas, propón dividirlo.
 4. **Prueba primero o junto al código** (R03). Nombra el criterio: `test_AC_01_...`. Cada prueba verifica un resultado, no solo que "no falló".
 5. **Ejecuta la verificación completa** antes de decir "listo" y muestra la salida real. Nunca inventes una salida.
 6. **Explica cada cambio** para alguien que no programa a diario: **Qué hice** (2-3 líneas), **Por qué así** (2-3 líneas) y **Cómo lo pruebo** (pasos).

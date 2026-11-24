@@ -14,7 +14,7 @@ Dejar el kernel listo para usarse tal cual en proyectos con datos reales, empeza
 - Adoptar la versión en GPEXT: eso se hace en una sesión aparte. · *Adopting it in GPEXT is a separate session.*
 
 ## Criterios de aceptación · Acceptance criteria
-- **AC-01 (R02):** `size_check.py` cuenta por separado el código y la documentación (`.md`, `.rst`, `.txt`, `.adoc`). Falla si el código pasa de 400 líneas **o** si la documentación pasa de 200. · *Counts code and docs separately and fails above 400 code or 200 doc lines.*
+- **AC-01 (R02):** `size_check.py` cuenta por separado el código y la documentación (`.md`, `.rst`, `.adoc`; un `.txt` como `requirements.txt` cuenta como código). Falla si el código pasa de 400 líneas **o** si la documentación pasa de 200. · *Counts code and docs separately and fails above 400 code or 200 doc lines.*
 - **AC-02 (R02):** `size_hook.py` funciona como *hook* `PostToolUse` de Claude Code. Tras un `git commit`, avisa desde el 80 % de cualquiera de los dos topes y frena a la IA (`decision: block`) al pasarlo. Con cualquier otro comando, o si git falla, no hace nada. · *Claude Code PostToolUse hook: warns from 80 % and blocks over a cap after `git commit`; otherwise silent.*
 - **AC-03 (R02):** `plantillas/claude-settings.json` trae ese *hook*, y el repo del kernel lo usa. · *The settings template ships the hook; the kernel repo uses it.*
 - **AC-04 (R13):** `size_check.py` falla si `AGENTS.md` pasa de 450 palabras. La plantilla cabe con margen; el detalle pasa a skills en `plantillas/skills/`. · *Fails when `AGENTS.md` exceeds 450 words; the template fits; detail moves to skills.*

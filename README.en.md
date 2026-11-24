@@ -43,7 +43,7 @@ The detail (what each requires, how it is checked, why, and its source) is in [K
 | ID | Rule | What it means |
 |---|---|---|
 | R01 | Spec before code | Every change starts from a note with a goal, limits and how it could be abused. |
-| R02 | Small and readable | One change is one idea, up to 400 lines; files warn at 300. |
+| R02 | Small and readable | One change is one idea: up to 400 lines of code and 200 of documentation; files warn at 300. |
 | R03 | Tests that really test | Every criterion has a test that checks the result, not just that it "didn't fail". |
 | R04 | No hidden errors | Swallowing an error is forbidden: it is handled, logged or shown. |
 | R05 | Zero secrets in the repo | Keys and passwords only in environment variables. No exceptions. |

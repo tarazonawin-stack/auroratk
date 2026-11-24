@@ -53,9 +53,9 @@ Lo que aún no está activo se anota en `docs/ESTADO.md`. En los CI de los perfi
 - **Fuente:** NIST SP 800-218 (SSDF) PO.1, PW.1 · OWASP Top 10:2025 A06 *Insecure Design*.
 
 **R02 · Pequeño y legible**
-- **Exige:** un PR es una sola idea, con una meta de ~200 líneas cambiadas y un tope de 400, sin contar archivos generados, de bloqueo ni de terceros (`third_party/` y `LICENSES/`, registrados según R07), ni los archivos de traducción de la interfaz (como `.po` y `.mo`), porque la prueba de paridad ES/EN de R11 los revisa. Archivos de código con **alerta a las 300 líneas** (la IA propone dividirlo) y tope de 400. Funciones de complejidad ciclomática ≤ 10.
-- **Se comprueba:** CI; script de tamaño del cambio y del archivo (`perfiles/ci/size_check.py`, sirve para cualquier lenguaje) y análisis de complejidad.
-- **Por qué:** lo pequeño se entiende, se revisa y se revierte. Pasadas las 400 líneas, la revisión encuentra cada vez menos errores.
+- **Exige:** un PR es una sola idea. El código y la documentación se cuentan **por separado**, y cada tope bloquea por sí solo: código con una meta de ~200 líneas cambiadas y un tope de 400; documentación (`.md`, `.rst`, `.adoc`) con un tope de 200. No se cuentan archivos generados, de bloqueo ni de terceros (`third_party/` y `LICENSES/`, registrados según R07), ni los archivos de traducción de la interfaz (como `.po` y `.mo`), porque la prueba de paridad ES/EN de R11 los revisa. Archivos de código con **alerta a las 300 líneas** (la IA propone dividirlo) y tope de 400. Funciones de complejidad ciclomática ≤ 10.
+- **Se comprueba:** CI; script de tamaño del cambio y del archivo (`perfiles/ci/size_check.py`, sirve para cualquier lenguaje) y análisis de complejidad. Con Claude Code, además, un *hook* lo mide tras cada `git commit`: avisa desde el 80 % y frena a la IA al pasar un tope (`plantillas/claude-settings.json`).
+- **Por qué:** lo pequeño se entiende, se revisa y se revierte. Pasadas las 400 líneas, la revisión encuentra cada vez menos errores; y si se cuentan juntos, un PR de mucha documentación esconde el código que hay que revisar. El tope tiene que actuar mientras se escribe, no solo al final.
 - **Fuente:** Google Engineering Practices, *Small CLs* · SmartBear y Cisco, estudio de revisión de código (200–400 líneas por revisión).
 
 **R03 · Cada regla de negocio tiene una prueba que de verdad prueba**
