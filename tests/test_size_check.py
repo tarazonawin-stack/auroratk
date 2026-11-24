@@ -201,5 +201,39 @@ class FileSizeTests(unittest.TestCase):
             self.assertEqual(size_check.oversized_files(), ([], []))
 
 
+class AgentsWordsTests(unittest.TestCase):
+    """R13 in 4.0.0: AGENTS.md has a 450-word cap checked by CI."""
+
+    def test_agents_over_the_cap_fails(self) -> None:
+        with in_temp_dir():
+            start_repo()
+            Path("AGENTS.md").write_text("palabra " * 451, encoding="utf-8")
+            commit_all()
+            code, out = run_main()
+            self.assertEqual(code, 1)
+            self.assertIn("::error::AGENTS.md: 451 words (cap 450)", out)
+
+    def test_agents_at_the_cap_or_missing_passes(self) -> None:
+        with in_temp_dir():
+            start_repo()
+            self.assertIsNone(size_check.agents_too_long())
+            Path("AGENTS.md").write_text("palabra " * 450, encoding="utf-8")
+            self.assertIsNone(size_check.agents_too_long())
+
+    def test_the_template_leaves_room_for_the_project(self) -> None:
+        from helpers import ROOT
+        words = len((ROOT / "plantillas/AGENTS.md").read_text(encoding="utf-8").split())
+        self.assertLessEqual(words, 375, "the AGENTS template must leave the project ~75 words")
+
+    def test_skill_templates_have_name_and_description(self) -> None:
+        from helpers import ROOT
+        skills = sorted((ROOT / "plantillas/skills").glob("*/SKILL.md"))
+        self.assertEqual([p.parent.name for p in skills], ["cerrar-sesion", "con-tus-palabras"])
+        for path in skills:
+            head = path.read_text(encoding="utf-8").split("---")[1]
+            self.assertIn(f"name: {path.parent.name}", head)
+            self.assertIn("description: ", head)
+
+
 if __name__ == "__main__":
     unittest.main()
