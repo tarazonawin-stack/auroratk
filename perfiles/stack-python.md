@@ -8,6 +8,7 @@
 | R04 Estricto · Strict | `ruff` (lint + format) + `mypy --strict` con `django-stubs` · *with `django-stubs`* | `ruff check . && ruff format --check . && mypy .` |
 | R06 Seguridad · Security | Auth, permisos y CSRF de Django · Django auth, permissions & CSRF | `python manage.py check --deploy --fail-level WARNING` |
 | R07 Dependencias · Dependencies | `uv` (lock) + `pip-audit` | `uv lock --check && pip-audit` |
+| R06 Aislamiento · Isolation | `pytest-django`: toda URL exige login y un id ajeno da el mismo 404 que uno inexistente · *every URL needs login; another user's id gives the same 404 as a missing one* | [`ejemplos/test_aislamiento_django.py`](https://github.com/tarazonawin-stack/auroratk/blob/v3.0.0/ejemplos/test_aislamiento_django.py) en `pytest` |
 | R08 Datos · Data | Migraciones de Django · Django migrations | `python manage.py makemigrations --check --dry-run` |
 | R08 Consultas N+1 · N+1 queries | `select_related` / `prefetch_related` | Pruebas de listas con `assertNumQueries` · *List tests with `assertNumQueries`* |
 | R14 Registros · Logs | `logging` de Python con formato JSON · *Python `logging` with JSON format* | Prueba de que cada acción crítica registra · *Test that each critical action logs* |

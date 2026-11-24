@@ -6,7 +6,7 @@
 - [ ] **Login:** viene del framework (en Django, `django.contrib.auth`); contraseñas con su hasheo por defecto; límite de intentos fallidos. · *Framework login, default hashing, failed-attempt limit.*
 - [ ] **Sesión:** cookies `Secure`, `HttpOnly` y `SameSite`; la sesión se cierra al salir y vence por inactividad. · *Secure cookies; logout and idle timeout.*
 - [ ] **Permisos:** cada vista revisa el permiso en el servidor; cada rol tiene una prueba de lo que **no** puede hacer. · *Server-side checks; negative tests per role.*
-- [ ] **Datos de otro:** nadie ve ni cambia un registro ajeno cambiando un número en la URL. · *No access to others' records by editing an ID.*
+- [ ] **Datos de otro:** nadie ve ni cambia un registro ajeno cambiando un número en la URL; un id ajeno da el mismo 404 que uno inexistente. Prueba de ejemplo (Django): [`ejemplos/test_aislamiento_django.py`](https://github.com/tarazonawin-stack/auroratk/blob/v3.0.0/ejemplos/test_aislamiento_django.py). · *No access to others' records by editing an ID; same 404 as a missing one.*
 - [ ] **Entradas:** todo formulario se valida en el servidor; consultas solo con el ORM o parámetros, nunca armando SQL con texto. · *Server-side validation; ORM or parameters only.*
 - [ ] **Salida:** las plantillas escapan el HTML (sin `|safe` ni `mark_safe` con datos de usuarios). · *Escaped output.*
 - [ ] **CSRF:** activo en todos los formularios. · *CSRF on every form.*

@@ -168,5 +168,14 @@ class CopyableProfilesTests(unittest.TestCase):
                               f"{path.name}: use a pinned absolute link to the kernel repo")
 
 
+class ExamplesTests(unittest.TestCase):
+    def test_python_examples_compile(self) -> None:
+        """The examples cannot run here (no Django), but they must at least be valid Python."""
+        examples = sorted((ROOT / "ejemplos").glob("*.py"))
+        self.assertTrue(examples)
+        for path in examples:
+            compile(path.read_text(encoding="utf-8"), str(path), "exec")
+
+
 if __name__ == "__main__":
     unittest.main()
