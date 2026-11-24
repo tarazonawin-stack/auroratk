@@ -4,6 +4,14 @@ Formato basado en *Keep a Changelog*; versionado semántico. · *Based on Keep a
 
 ## [Sin publicar] · Unreleased
 
+## [4.0.0] · 2026-11-24
+
+Versión MAYOR y **definitiva**: R02 y R13 cambian de sentido (DEC-001). Desde aquí, el kernel está congelado: parches solo con una prueba que falle antes del arreglo, versiones menores solo con perfiles nuevos y una mayor solo ante un problema real de un producto. Incluye lo que estaba «Sin publicar». La etiqueta `v4.0.0` se crea después de probarla en GPEXT. · *MAJOR and **final**: R02 and R13 change meaning. Frozen from here on. Includes the unreleased items. The `v4.0.0` tag is created after the GPEXT trial.*
+
+### Decidido · Decided
+- **Congelación** (`KERNEL.md`, *Versiones del kernel*; `docs/decisiones/DEC-001`), con la spec `docs/specs/SPEC-001`. · *Freeze policy.*
+- **Fuera:** los carriles de GPEXT, porque el riesgo 1/2/3 ya hace ese trabajo; `risk.py` no cambia. Sigue abierto tratar Dependabot como riesgo 1. · *Out: GPEXT's lanes; `risk.py` unchanged.*
+
 ### Más exigente y más flexible · Stricter and more flexible (R02, 4.0.0)
 - **Tope separado de código y documentación** (`perfiles/ci/size_check.py`, R02 en `KERNEL.md` y `.en.md`): ≤ 400 líneas de código y ≤ 200 de documentación (`.md`, `.rst`, `.adoc`), y cada tope bloquea por sí solo. Un PR con 250 líneas de documentación, que antes pasaba, ahora falla; uno con 400 de código y 200 de documentación, que antes fallaba, ahora pasa. *Por qué:* en GPEXT, los PR con mucha documentación escondían el código que había que revisar (SPEC-001, DEC-001). · *Code and docs capped separately (400/200); each cap blocks.*
 

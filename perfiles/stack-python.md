@@ -8,7 +8,7 @@
 | R04 Estricto · Strict | `ruff` (lint + format) + `mypy --strict` con `django-stubs` · *with `django-stubs`* | `ruff check . && ruff format --check . && mypy .` |
 | R06 Seguridad · Security | Auth, permisos y CSRF de Django · Django auth, permissions & CSRF | `python manage.py check --deploy --fail-level WARNING` |
 | R07 Dependencias · Dependencies | `uv` (lock) + `pip-audit` | `uv lock --check && pip-audit` |
-| R06 Aislamiento · Isolation | `pytest-django`: toda URL exige login y un id ajeno da el mismo 404 que uno inexistente · *every URL needs login; another user's id gives the same 404 as a missing one* | [`ejemplos/test_aislamiento_django.py`](https://github.com/tarazonawin-stack/auroratk/blob/v3.0.0/ejemplos/test_aislamiento_django.py) en `pytest` |
+| R06 Aislamiento · Isolation | `pytest-django`: toda URL exige login y un id ajeno da el mismo 404 que uno inexistente · *every URL needs login; another user's id gives the same 404 as a missing one* | [`ejemplos/test_aislamiento_django.py`](https://github.com/tarazonawin-stack/auroratk/blob/v4.0.0/ejemplos/test_aislamiento_django.py) en `pytest` |
 | R08 Datos · Data | Migraciones de Django · Django migrations | `python manage.py makemigrations --check --dry-run` |
 | R08 Consultas N+1 · N+1 queries | `select_related` / `prefetch_related` | Pruebas de listas con `assertNumQueries` · *List tests with `assertNumQueries`* |
 | R14 Registros · Logs | `logging` de Python con formato JSON · *Python `logging` with JSON format* | Prueba de que cada acción crítica registra · *Test that each critical action logs* |
@@ -18,6 +18,6 @@
 **Notas · Notes**
 - Base de datos recomendada: PostgreSQL. *Recommended database: PostgreSQL.*
 - `mutmut` no funciona en Windows: en la PC se usa con WSL (Linux dentro de Windows); en el CI corre en Linux sin problema. *`mutmut` doesn't run on Windows: use WSL locally; CI runs it on Linux.*
-- CI listo para copiar · Ready-to-copy CI: [`ci/python-django.yml`](https://github.com/tarazonawin-stack/auroratk/blob/v3.0.0/perfiles/ci/python-django.yml) + configuración base · *base config* [`ci/pyproject-django.toml`](https://github.com/tarazonawin-stack/auroratk/blob/v3.0.0/perfiles/ci/pyproject-django.toml) + scripts en [`ci/`](https://github.com/tarazonawin-stack/auroratk/tree/v3.0.0/perfiles/ci).
+- CI listo para copiar · Ready-to-copy CI: [`ci/python-django.yml`](https://github.com/tarazonawin-stack/auroratk/blob/v4.0.0/perfiles/ci/python-django.yml) + configuración base · *base config* [`ci/pyproject-django.toml`](https://github.com/tarazonawin-stack/auroratk/blob/v4.0.0/perfiles/ci/pyproject-django.toml) + scripts en [`ci/`](https://github.com/tarazonawin-stack/auroratk/tree/v4.0.0/perfiles/ci).
 - Antes de la etapa 1, crea una primera prueba simple: sin pruebas, `pytest` termina con código 5 y el CI falla. · *Create a first simple test before stage 1.*
 - Prohibido · Forbidden: `except:` vacío, `except Exception: pass` (`ruff` BLE001, S110, E722).
