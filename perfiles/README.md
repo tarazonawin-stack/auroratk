@@ -25,7 +25,7 @@ Un perfil traduce las reglas del kernel a herramientas concretas. Cada proyecto 
 | R05 Secretos · Secrets | `gitleaks` |
 | R06 Análisis de seguridad · Security analysis | `semgrep` |
 | R07 Dependencias · Dependencies | `osv-scanner` + Dependabot ([plantilla](https://github.com/tarazonawin-stack/auroratk/blob/v3.0.0/plantillas/dependabot.yml)) o Renovate |
-| R02 Tamaño · Size | [`ci/size_check.py`](https://github.com/tarazonawin-stack/auroratk/blob/v3.0.0/perfiles/ci/size_check.py) (cualquier lenguaje · *any language*) |
+| R02 Tamaño · Size | [`ci/size_check.py`](https://github.com/tarazonawin-stack/auroratk/blob/v3.0.0/perfiles/ci/size_check.py) (cualquier lenguaje · *any language*) + freno tras cada `git commit` en Claude Code · *brake after every `git commit` in Claude Code*: [`ci/size_hook.py`](https://github.com/tarazonawin-stack/auroratk/blob/v3.0.0/perfiles/ci/size_hook.py) |
 | R06 Lista corta · Short checklist | [`asvs-corto.md`](asvs-corto.md) |
 | R12 Riesgo y descripción del PR · Risk and PR description | [`ci/pr-description.yml`](https://github.com/tarazonawin-stack/auroratk/blob/v3.0.0/perfiles/ci/pr-description.yml) + [`ci/risk.py`](https://github.com/tarazonawin-stack/auroratk/blob/v3.0.0/perfiles/ci/risk.py) + [`ci/pr_check.py`](https://github.com/tarazonawin-stack/auroratk/blob/v3.0.0/perfiles/ci/pr_check.py), ejecutados desde la rama principal · *run from the main branch* |
 | R07 Dependencias nuevas · New dependencies | Comprobar el nombre exacto en el registro oficial (PyPI, npm, Maven Central) antes de instalar · *Check the exact name in the official registry before installing* |

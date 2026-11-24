@@ -1,0 +1,43 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Edit(./.env)",
+      "Edit(./.env.*)",
+      "Read(./secrets/**)",
+      "Bash(cat .env*)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(rm -rf:*)",
+      "Bash(rm -fr:*)"
+    ],
+    "ask": [
+      "Edit(./.github/**)",
+      "Edit(./.claude/**)",
+      "Edit(./AGENTS.md)",
+      "Bash(git push:*)",
+      "Bash(git merge:*)",
+      "Bash(rm:*)",
+      "Bash(uv add:*)",
+      "Bash(pip install:*)",
+      "Bash(npm install:*)",
+      "Bash(docker compose down:*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/perfiles/ci/size_hook.py\"",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}
