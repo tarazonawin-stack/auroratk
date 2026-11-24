@@ -1,6 +1,9 @@
 """Consistency of the kernel files themselves: checksums, versions and links."""
 
+import contextlib
 import hashlib
+import io
+import os
 import re
 import shutil
 import subprocess
@@ -110,55 +113,72 @@ class WorkflowTests(unittest.TestCase):
 
 
 def kernel_copy_step() -> str:
-    """The exact shell command of the kernel-copy step in the Django CI template."""
+    """The shell script of the kernel-copy step in the Django CI template."""
     text = read("perfiles/ci/python-django.yml")
-    match = re.search(r"- name: Kernel copy.*?\n\s+run: (.+)", text, re.DOTALL)
+    match = re.search(r"- name: Kernel copy.*?\n( +)run: \|\n", text, re.DOTALL)
     assert match is not None, "the kernel-copy step is missing from python-django.yml"
-    return match.group(1).splitlines()[0]
+    body = []
+    for line in text[match.end():].splitlines():
+        if len(line) - len(line.lstrip()) <= len(match.group(1)):
+            break  # the block ends where the indentation goes back to the step's level
+        body.append(line.strip())
+    return "\n".join(body)
+
+
+def git_in(folder: Path, *args: str) -> None:
+    subprocess.run(["git", "-C", str(folder), *args], check=True, capture_output=True)
 
 
 class KernelCopyStepTests(unittest.TestCase):
-    """Run the real CI step against good and broken copies of docs/kernel/."""
+    """Run the real CI step: fetch a tagged kernel, then run that kernel's own check."""
 
-    def run_step(self, prepare: object = None) -> int:
+    def run_step(self, damage: object = None) -> subprocess.CompletedProcess[str]:
+        import kernel_sync
         with tempfile.TemporaryDirectory() as folder:
-            copy = Path(folder)
-            for name in kernel_files():
-                (copy / name).parent.mkdir(parents=True, exist_ok=True)
-                shutil.copy(ROOT / name, copy / name)
-            shutil.copy(SUMS, copy / "SHA256SUMS")
-            if callable(prepare):
-                prepare(copy)
-            result = subprocess.run(["bash", "-eo", "pipefail", "-c", kernel_copy_step()],
-                                    cwd=copy, capture_output=True)
-            return result.returncode
+            kernel, project, temp = Path(folder, "kernel"), Path(folder, "project"), Path(folder, "t")
+            tracked = subprocess.run(["git", "-C", str(ROOT), "ls-files", "-co", "--exclude-standard"],
+                                     check=True, capture_output=True, text=True).stdout.splitlines()
+            for name in tracked:
+                if (ROOT / name).is_file():
+                    (kernel / name).parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copy(ROOT / name, kernel / name)
+            git_in(kernel, "init", "-q")
+            git_in(kernel, "add", ".")
+            git_in(kernel, "-c", "user.name=t", "-c", "user.email=t@example.com", "commit", "-qm", "k")
+            git_in(kernel, "tag", f"v{current_version()}")
+            project.mkdir()
+            temp.mkdir()
+            with contextlib.redirect_stdout(io.StringIO()), contextlib.chdir(project):
+                kernel_sync.main(["sync", "--from", str(kernel)])
+                if callable(damage):
+                    damage()
+            env = {**os.environ, "KERNEL_REPO": str(kernel), "RUNNER_TEMP": str(temp)}
+            return subprocess.run(["bash", "-c", kernel_copy_step()], cwd=project, env=env,
+                                  capture_output=True, text=True)
 
     def test_exact_copy_passes(self) -> None:
-        self.assertEqual(self.run_step(), 0)
+        result = self.run_step()
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("Kernel copy OK", result.stdout)
 
-    def test_edited_file_fails(self) -> None:
-        def edit(copy: Path) -> None:
-            with (copy / "KERNEL.en.md").open("a", encoding="utf-8") as f:
-                f.write("edited\n")
-        self.assertNotEqual(self.run_step(edit), 0)
+    def test_edited_script_fails(self) -> None:
+        def edit() -> None:
+            Path("scripts/risk.py").write_text("print(1)\n", encoding="utf-8")
+        result = self.run_step(edit)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("scripts/risk.py", result.stdout)
 
-    def test_missing_profile_fails(self) -> None:
-        self.assertNotEqual(self.run_step(lambda c: (c / "perfiles/pais-peru.md").unlink()), 0)
+    def test_bad_version_line_fails_before_fetching(self) -> None:
+        def pin() -> None:
+            Path(".github/kernel.txt").write_text("version $(touch pwned)\n", encoding="utf-8")
+        result = self.run_step(pin)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("bad version line", result.stdout)
 
-    def test_missing_english_kernel_fails(self) -> None:
-        self.assertNotEqual(self.run_step(lambda c: (c / "KERNEL.en.md").unlink()), 0)
-
-    def test_extra_file_fails(self) -> None:
-        self.assertNotEqual(self.run_step(lambda c: (c / "perfiles/nuevo.md").write_text("x")), 0)
-
-    def test_profiles_in_the_wrong_folder_fail(self) -> None:
-        def flatten(copy: Path) -> None:
-            for path in (copy / "perfiles").glob("*.md"):
-                path.rename(copy / path.name)
-        self.assertNotEqual(self.run_step(flatten), 0)
-
-    def test_missing_checksum_file_fails(self) -> None:
-        self.assertNotEqual(self.run_step(lambda c: (c / "SHA256SUMS").unlink()), 0)
+    def test_step_runs_the_fetched_kernels_script_not_the_projects(self) -> None:
+        step = kernel_copy_step()
+        self.assertIn('python3 -I "$kernel/perfiles/ci/kernel_sync.py" check', step)
+        self.assertNotIn("scripts/kernel_sync.py", step)
 
 
 class CopyableProfilesTests(unittest.TestCase):

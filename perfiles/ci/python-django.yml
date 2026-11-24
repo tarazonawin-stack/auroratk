@@ -1,5 +1,5 @@
 # AuroraTK Kernel v3.0.0 · CI for the Python / Django profile.
-# Copy to .github/workflows/ci.yml, and size_check.py, size_hook.py and mutation_threshold.py to scripts/.
+# kernel_sync.py sync copies this file to .github/workflows/ci.yml (yours after that) and the scripts to scripts/.
 # R12 (risk and PR description) runs in its own workflow, pr-description.yml, from the main branch.
 # Merge pyproject-django.toml into pyproject.toml.
 #
@@ -10,8 +10,9 @@
 # MUTATION_THRESHOLD: 60 (Standard) or 75 (Strict). Mutation runs weekly, not per PR.
 # R07: actions are pinned to a full commit SHA (a tag can be moved to other code);
 # the comment keeps the readable version, and Dependabot (github-actions) updates both.
-# The kernel-copy step needs docs/kernel/ exactly as the kernel README says: KERNEL.md,
-# KERNEL.en.md, SHA256SUMS and every profile in docs/kernel/perfiles/, unedited.
+# Kernel copy: run `kernel_sync.py sync` once (guias/adoptar.md). The step below fetches the kernel
+# at the ref pinned in .github/kernel.txt and runs ITS kernel_sync.py check: edited, missing or extra
+# kernel files, or a weakened .claude/settings.json, fail the build.
 
 name: CI
 
@@ -64,9 +65,19 @@ jobs:
         uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2.3.9
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Kernel copy in docs/kernel unchanged (every file present, unedited, none extra)
-        working-directory: docs/kernel
-        run: sha256sum --check --strict --quiet SHA256SUMS && diff <(cut -c67- SHA256SUMS | sort) <(find . -type f ! -name SHA256SUMS | sed 's|^\./||' | sort)
+      - name: Kernel copy identical to the pinned version (.github/kernel.txt)
+        shell: bash
+        env:
+          KERNEL_REPO: https://github.com/tarazonawin-stack/auroratk
+        run: |
+          set -euo pipefail
+          ref="$(awk '$1 == "version" {print $2}' .github/kernel.txt)"
+          [[ "$ref" =~ ^[A-Za-z0-9._/-]+$ ]] || { echo "::error::bad version line in .github/kernel.txt"; exit 1; }
+          kernel="${RUNNER_TEMP:-/tmp}/auroratk-kernel"
+          rm -rf "$kernel" && git init -q "$kernel"
+          git -C "$kernel" fetch -q --depth 1 "$KERNEL_REPO" "$ref"
+          git -C "$kernel" checkout -q FETCH_HEAD
+          python3 -I "$kernel/perfiles/ci/kernel_sync.py" check --from "$kernel"
       - name: R04 format, lint and types
         run: |
           uv run ruff format --check .
