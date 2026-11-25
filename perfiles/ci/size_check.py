@@ -1,7 +1,8 @@
 """Check change size and file size (AuroraTK R02). Language-agnostic.
 
 Usage: python size_check.py <base-ref>     e.g. python size_check.py origin/main
-- Changed lines in the PR: warning above 200, failure above 400.
+- Changed lines in the PR, counted apart: code (warning above 200, failure above 400) and
+  documentation, .md/.rst/.adoc (failure above 200). Each cap blocks on its own.
 - Code files: warning above 300 lines, failure above 400.
 Lock files, migrations, generated files and third-party files (third_party/, LICENSES/) and UI translation files (.po, .mo) are excluded.
 """
@@ -16,7 +17,8 @@ EXCLUDED_PARTS = {"migrations", "node_modules", "dist", "build", "vendor", "gene
                   "third_party", "LICENSES"}  # vendored files are inventoried under R07
 EXCLUDED_SUFFIXES = {".po", ".mo"}  # UI translations, checked by the R11 parity test
 EXCLUDED_NAMES = {"uv.lock", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "poetry.lock"}
-CHANGE_TARGET, CHANGE_CAP, FILE_WARN, FILE_CAP = 200, 400, 300, 400
+DOC_SUFFIXES = {".md", ".rst", ".adoc"}  # counted against DOC_CAP, not CODE_CAP
+CODE_TARGET, CODE_CAP, DOC_CAP, FILE_WARN, FILE_CAP = 200, 400, 200, 300, 400
 
 
 def is_excluded(path: Path) -> bool:
@@ -31,15 +33,19 @@ def git_lines(*args: str) -> list[str]:
     return result.stdout.splitlines()
 
 
-def changed_lines(base: str) -> int:
-    """Count added plus deleted lines against the merge base, excluding generated files."""
-    total = 0
+def changed_lines(base: str) -> tuple[int, int]:
+    """Return (code, docs): added plus deleted lines against the merge base, excluding generated files."""
+    code = docs = 0
     for line in git_lines("diff", "--numstat", f"{base}...HEAD"):
         added, deleted, name = line.split("\t", 2)
-        if added == "-" or is_excluded(Path(name)):
+        path = Path(name)
+        if added == "-" or is_excluded(path):
             continue
-        total += int(added) + int(deleted)
-    return total
+        if path.suffix.lower() in DOC_SUFFIXES:
+            docs += int(added) + int(deleted)
+        else:
+            code += int(added) + int(deleted)
+    return code, docs
 
 
 def oversized_files() -> tuple[list[str], list[str]]:
@@ -59,16 +65,20 @@ def oversized_files() -> tuple[list[str], list[str]]:
 
 def main() -> int:
     base = sys.argv[1] if len(sys.argv) > 1 else "origin/main"
-    changed = changed_lines(base)
-    print(f"Changed lines: {changed} (target {CHANGE_TARGET}, cap {CHANGE_CAP})")
+    code, docs = changed_lines(base)
+    print(f"Changed lines: code {code} (target {CODE_TARGET}, cap {CODE_CAP}) · docs {docs} (cap {DOC_CAP})")
     warnings, failures = oversized_files()
     for item in warnings:
         print(f"::warning::{item}")
     for item in failures:
         print(f"::error::{item}")
-    if changed > CHANGE_TARGET:
-        print(f"::warning::Change is above the {CHANGE_TARGET}-line target")
-    return 1 if failures or changed > CHANGE_CAP else 0
+    if code > CODE_CAP:
+        print(f"::error::Code is above the {CODE_CAP}-line cap: split the PR")
+    elif code > CODE_TARGET:
+        print(f"::warning::Code is above the {CODE_TARGET}-line target")
+    if docs > DOC_CAP:
+        print(f"::error::Documentation is above the {DOC_CAP}-line cap: split the PR")
+    return 1 if failures or code > CODE_CAP or docs > DOC_CAP else 0
 
 
 if __name__ == "__main__":

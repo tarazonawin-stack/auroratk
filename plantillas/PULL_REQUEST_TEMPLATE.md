@@ -30,7 +30,7 @@ Si sale mal, ¿qué pasaría?: <solo riesgo 3 · risk 3 only>
 > *Check every box, or write N/A next to it and check it. CI fails on an unchecked box, a missing or too-low risk, or anything that risk requires. Merge only with green CI (R12).*
 
 - [ ] R01 Enlaza su spec (con cómo se podría abusar), es `trivial`, o tiene objetivo / fuera de alcance / cómo se prueba (nivel Ligero)
-- [ ] R02 Una sola idea; ≤ 400 líneas; ningún archivo pasa de 400
+- [ ] R02 Una sola idea; ≤ 400 líneas de código y ≤ 200 de documentación; ningún archivo pasa de 400
 - [ ] R03 Cada criterio tiene una prueba que verifica el resultado; los arreglos traen una prueba que fallaba antes
 - [ ] R07 Dependencias nuevas: nombre exacto comprobado en el registro oficial, mantenida y aprobada; o ninguna
 - [ ] R08 Migraciones reversibles y listas sin consultas N+1, o N/A

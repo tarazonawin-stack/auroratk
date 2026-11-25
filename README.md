@@ -43,7 +43,7 @@ El detalle (qué exige, cómo se comprueba, por qué y su fuente) está en [KERN
 | ID | Regla | Qué significa |
 |---|---|---|
 | R01 | Spec antes de código | Todo cambio nace de una nota con objetivo, límites y cómo podría abusarse. |
-| R02 | Pequeño y legible | Un cambio es una idea, de hasta 400 líneas; los archivos avisan a las 300. |
+| R02 | Pequeño y legible | Un cambio es una idea: hasta 400 líneas de código y 200 de documentación; los archivos avisan a las 300. |
 | R03 | Pruebas que prueban | Cada criterio tiene una prueba que verifica el resultado, no solo que "no falló". |
 | R04 | Sin errores ocultos | Prohibido tragarse un error: se maneja, se registra o se muestra. |
 | R05 | Cero secretos en el repo | Claves y contraseñas solo en variables de entorno. Sin excepciones. |
