@@ -5,7 +5,8 @@ JSON on stdin and, only when the command ran `git commit`, measures the branch w
 - from 80 % of a cap: a warning the AI reads (it should plan the split now);
 - over a cap: it stops the AI ("decision": "block") so the change is split before going on.
 It never fails the session: any other command, or git trouble, means silence.
-Base branch: origin/main, or the KERNEL_BASE environment variable.
+Base branch: the KERNEL_BASE environment variable; else, for a stacked PR, the branch's own base
+(`git config branch.<name>.kernelbase <base-branch>`); else origin/main.
 """
 
 import json
@@ -25,6 +26,19 @@ GIT_COMMIT = re.compile(r"(?<![\w-])git\s+(?:[^;&|\n]*?\s)?commit(?![\w-])")
 def message(code: int, docs: int) -> str:
     return (f"Tamaño del PR · PR size (R02): código · code {code}/{size_check.CODE_CAP}, "
             f"documentación · docs {docs}/{size_check.DOC_CAP}.")
+
+
+def base_ref() -> str:
+    """The branch this PR is measured against (see the module docstring)."""
+    if os.environ.get("KERNEL_BASE"):
+        return os.environ["KERNEL_BASE"]
+    try:
+        branch = size_check.git_lines("rev-parse", "--abbrev-ref", "HEAD")[0]
+        configured = subprocess.run(["git", "config", f"branch.{branch}.kernelbase"],
+                                    capture_output=True, text=True).stdout.strip()
+    except (subprocess.CalledProcessError, OSError, IndexError):
+        configured = ""
+    return configured or "origin/main"
 
 
 def decide(code: int, docs: int) -> dict[str, object] | None:
@@ -54,7 +68,7 @@ def main() -> int:
     if isinstance(cwd, str) and Path(cwd).is_dir():
         os.chdir(cwd)
     try:
-        code, docs = size_check.changed_lines(os.environ.get("KERNEL_BASE", "origin/main"))
+        code, docs = size_check.changed_lines(base_ref())
     except (subprocess.CalledProcessError, OSError, ValueError):
         return 0
     output = decide(code, docs)

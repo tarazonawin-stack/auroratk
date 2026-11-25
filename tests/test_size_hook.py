@@ -9,7 +9,7 @@ from pathlib import Path
 from unittest import mock
 
 from helpers import ROOT, in_temp_dir
-from test_size_check import commit_all, start_repo, write_doc, write_lines
+from test_size_check import commit_all, git, start_repo, write_doc, write_lines
 
 import size_hook
 
@@ -90,6 +90,32 @@ class HookTests(unittest.TestCase):
                         mock.patch("sys.stdin", io.StringIO(json.dumps(commit_payload()))):
                     self.assertEqual(size_hook.main(), 0)
                 self.assertEqual(out.getvalue(), "")
+
+
+class StackedBranchTests(unittest.TestCase):
+    """A stacked PR declares its base with `git config branch.<name>.kernelbase <base>`."""
+
+    def test_the_branch_base_is_used_instead_of_main(self) -> None:
+        with in_temp_dir():
+            start_repo()
+            write_lines("app/a.py", 380)
+            commit_all()
+            git("checkout", "-q", "-b", "next")
+            write_lines("app/b.py", 30)
+            commit_all()
+            git("update-ref", "refs/remotes/origin/main", "base")  # main would count all 410 lines
+            git("config", "branch.next.kernelbase", "work")
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out), mock.patch.dict(os.environ, {}, clear=False), \
+                    mock.patch("sys.stdin", io.StringIO(json.dumps(commit_payload()))):
+                os.environ.pop("KERNEL_BASE", None)
+                size_hook.main()
+            self.assertEqual(out.getvalue(), "", "only the 30 lines of this PR count")
+
+    def test_without_config_or_env_it_measures_against_origin_main(self) -> None:
+        with in_temp_dir():
+            start_repo()
+            self.assertEqual(size_hook.base_ref(), "origin/main")
 
 
 class SettingsTests(unittest.TestCase):
