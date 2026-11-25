@@ -28,7 +28,8 @@ Dejar el kernel listo para usarse tal cual en proyectos con datos reales, empeza
 
 ## Abuso · Abuse (R01)
 - **Una IA o una persona edita en el proyecto un script del kernel para aflojarlo.** Lo impide `check`, que corre desde el kernel descargado en el CI y no desde la copia del proyecto; además, `scripts/**` es riesgo 3. · *Editing a kernel script in a project: `check` runs from the fetched kernel, and `scripts/**` is risk 3.*
-- **Quitar el *hook*.** `check` lo exige en `.claude/settings.json`. Límite: un *hook* reduce el riesgo, no es un candado; el CI vuelve a medir el tamaño (R13). · *Removing the hook: `check` requires it; the CI measures again anyway.*
+- **Quitar el *hook*.** `check` lo exige en `.claude/settings.json` y falla con `disableAllHooks` o `bypassPermissions`. Límite: un *hook* reduce el riesgo, no es un candado; `.claude/settings.local.json` no se revisa y el CI vuelve a medir el tamaño (R13). · *Removing the hook: `check` requires it; local settings are not checked.*
+- **Fijar una versión falsa o borrar el paso de `check`.** Solo se aceptan etiquetas `vX.Y.Z` (o `vX.Y.Z-rc.N`) de la misma versión, descargadas como `refs/tags/`. Límite: `ci.yml` es del proyecto y un PR podría borrar el paso; lo frenan el riesgo 3 de `.github/**` y la revisión del dueño. · *Fake pins are refused; deleting the step is caught only by risk 3 and review.*
 
 ## Datos y permisos · Data and permissions
 - **Datos personales · Personal data:** ninguno · *none*. Solo cambian scripts, plantillas y textos · *Scripts, templates and text only.*

@@ -2,7 +2,8 @@
 
 Cópialo a `tests/test_aislamiento.py` y completa las dos tablas de abajo. Usa pytest-django.
 Comprueba tres cosas en TODAS las URL del proyecto, también en las que se agreguen después:
-1. Sin sesión, ninguna URL responde 200 salvo las públicas declaradas.
+1. Sin sesión, toda URL (salvo las públicas declaradas) redirige al login o responde 401/403; un 404
+   o un 405 no cuentan como protegida, porque una vista abierta también puede darlos.
 2. Con sesión, un id ajeno responde exactamente igual (404 y el mismo contenido) que un id que no
    existe: así nadie descubre qué ids existen cambiando un número en la URL (OWASP A01).
 3. Ninguna URL con id queda sin decidir: está en OWNED o en SHARED; si no, la prueba falla.
@@ -16,6 +17,8 @@ from collections.abc import Callable, Iterator
 from typing import Any
 
 import pytest
+from django.conf import settings
+from django.shortcuts import resolve_url
 from django.urls import URLPattern, URLResolver, get_resolver, reverse
 
 # URL públicas, por nombre (con su espacio de nombres). · Public URLs, by name.
@@ -49,6 +52,13 @@ def dummy_kwargs(pattern: URLPattern) -> dict[str, Any]:
             for key, conv in converters.items()}
 
 
+def asks_for_login(response: Any) -> bool:
+    """Redirect to the login page, or 401/403. GET only: test POST-only views in their own tests."""
+    if response.status_code in (401, 403):
+        return True
+    return response.status_code == 302 and response["Location"].startswith(resolve_url(settings.LOGIN_URL))
+
+
 @pytest.mark.django_db
 def test_every_url_needs_login(client: Any) -> None:
     open_urls = []
@@ -56,7 +66,7 @@ def test_every_url_needs_login(client: Any) -> None:
         if name in PUBLIC_URL_NAMES or name.startswith("admin:"):
             continue  # el admin de Django ya exige su propio login · Django admin has its own login
         url = reverse(name, kwargs=dummy_kwargs(pattern))
-        if client.get(url).status_code == 200:
+        if not asks_for_login(client.get(url)):
             open_urls.append(f"{name} ({url})")
     assert open_urls == [], f"Responden sin sesión · Open without login: {open_urls}"
 
@@ -71,8 +81,9 @@ def test_every_url_with_an_id_is_decided() -> None:
 @pytest.mark.django_db
 @pytest.mark.parametrize("name", sorted(OWNED))
 def test_another_users_record_looks_missing(client: Any, django_user_model: Any, name: str) -> None:
-    me = django_user_model.objects.create_user(username="me", password="x-Test-1234")
-    other = django_user_model.objects.create_user(username="other", password="x-Test-1234")
+    field = django_user_model.USERNAME_FIELD  # works with a custom user model that logs in by email
+    me = django_user_model.objects.create_user(**{field: "me@example.com"}, password="x-Test-1234")
+    other = django_user_model.objects.create_user(**{field: "other@example.com"}, password="x-Test-1234")
     theirs = OWNED[name](other)
     client.force_login(me)
     key = next(iter(dummy_kwargs(dict(url_patterns())[name])))

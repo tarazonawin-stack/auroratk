@@ -95,14 +95,14 @@ CITATION.cff, CONTRIBUTING.md   how to cite it and how to contribute
 
 ## Status
 
-**Version 4.0.0.** Frozen: patches only, each with a test that fails first (see *Kernel versions*). Rules, profiles and templates are complete. Ready-to-copy CI configurations are added per profile the first time each one is used in a real project (first up: GPEXT, with Python/Django + web).
+**Version 4.0.0.** Frozen: patches only with a test that fails first, minors only with new profiles, a major only for a real product problem (see *Kernel versions*). Rules, profiles and templates are complete. Ready-to-copy CI configurations are added per profile the first time each one is used in a real project (first up: GPEXT, with Python/Django + web).
 
 ## Publishing a version
 
 1. Check that the change fits the freeze policy (DEC-001). Record the change in `CHANGELOG.md` and bump the version in every file, `CITATION.cff` included (the tests warn if one is missing).
 2. Regenerate the checksums: `sha256sum KERNEL.md KERNEL.en.md perfiles/*.md > SHA256SUMS`.
 3. Verify: `python3 -m unittest discover -s tests -v` (the same as CI).
-4. After merging, create the tag **`vX.Y.Z`, with no dot after the v** (for example `v4.0.0`): the kernel links point to that exact name.
+4. After merging and trying it in a real project (with a trial tag `vX.Y.Z-rc.N`), create the tag **`vX.Y.Z`, with no dot after the v** (for example `v4.0.0`): the kernel links point to that exact name.
 
 ## Authorship and license
 

@@ -1,10 +1,13 @@
-"""Claude Code hook: measure the PR after every `git commit` (AuroraTK R02). Standard library only.
+"""Claude Code hook: measure the PR after every git command that adds commits (AuroraTK R02). Standard library only.
 
 Wire it as a PostToolUse hook on Bash (see plantillas/claude-settings.json). It reads the hook's
-JSON on stdin and, only when the command ran `git commit`, measures the branch with size_check:
+JSON on stdin and, only when a command starts with a git subcommand that adds commits (commit, merge,
+cherry-pick, revert, am, rebase, pull), measures the branch with size_check:
 - from 80 % of a cap: a warning the AI reads (it should plan the split now);
 - over a cap: it stops the AI ("decision": "block") so the change is split before going on.
-It never fails the session: any other command, or git trouble, means silence.
+Known limits (CI measures again anyway): quoted text with a `;`, `&` or `|` before `git commit` can
+warn by mistake, and `/usr/bin/git`, `sudo git`, quoted `-c`/`-C` values or backticks are missed.
+It reads the repository of the hook's cwd (not of `git -C dir`). It never fails the session: any other command, or git trouble, means silence.
 Base branch: the KERNEL_BASE environment variable; else, for a stacked PR, the branch's own base
 (`git config branch.<name>.kernelbase <base-branch>`); else origin/main.
 """
@@ -20,7 +23,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import size_check  # noqa: E402
 
 WARN_SHARE = 0.8
-GIT_COMMIT = re.compile(r"(?<![\w-])git\s+(?:[^;&|\n]*?\s)?commit(?![\w-])")
+# git at the start of a command (not inside quoted text), with global options, then a subcommand
+# that creates commits on the branch.
+GIT_WRITES = re.compile(r"(?:^|[;&|(\n])\s*(?:\w+=\S*\s+)*git(?:\s+(?:-[cC]\s+\S+|--[\w-]+(?:=\S+)?))*"
+                        r"\s+(?:commit|merge|cherry-pick|revert|am|rebase|pull)(?![\w-])")
 
 
 def message(code: int, docs: int) -> str:
@@ -47,7 +53,7 @@ def decide(code: int, docs: int) -> dict[str, object] | None:
         return {"decision": "block",
                 "reason": message(code, docs) + " Pasó el tope: divide el PR antes de seguir. "
                           "· Over the cap: split the PR before going on."}
-    if code > WARN_SHARE * size_check.CODE_CAP or docs > WARN_SHARE * size_check.DOC_CAP:
+    if code >= WARN_SHARE * size_check.CODE_CAP or docs >= WARN_SHARE * size_check.DOC_CAP:
         return {"hookSpecificOutput": {
             "hookEventName": "PostToolUse",
             "additionalContext": message(code, docs) + " Cerca del tope: planea cómo dividirlo. "
@@ -62,7 +68,7 @@ def main() -> int:
         return 0
     tool_input = data.get("tool_input") if isinstance(data, dict) else None
     command = tool_input.get("command", "") if isinstance(tool_input, dict) else ""
-    if not isinstance(command, str) or not GIT_COMMIT.search(command):
+    if not isinstance(command, str) or not GIT_WRITES.search(command):
         return 0
     cwd = data.get("cwd")
     if isinstance(cwd, str) and Path(cwd).is_dir():

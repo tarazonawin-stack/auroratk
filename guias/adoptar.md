@@ -15,7 +15,8 @@
 5. **Activa el CI por etapas** (`KERNEL_STAGE`) y la protección de la rama si tu plan lo permite.
 6. **Integra todo en un PR de riesgo 3**, con revisión independiente.
 
-**Probar antes de la etiqueta:** usa `--ref <commit>` en el paso 2. El CI descarga ese commit exacto.
+**Probar antes de la etiqueta final:** el dueño crea una etiqueta de prueba (`v4.0.0-rc.1`), se clona esa etiqueta y se usa `--ref v4.0.0-rc.1` en el paso 2. El CI solo acepta etiquetas, no ramas ni commits.
+**Si ya tienes `.claude/settings.json`:** `sync` no lo toca; agrega a mano el bloque `hooks` y las reglas `deny` de la plantilla (`check` te dice qué falta). `.claude/settings.local.json` no lo revisa nadie: no lo uses para aflojar reglas.
 **PR apilados:** el *hook* mide contra `origin/main`. Si un PR sale de otra rama, declara su base: `git config branch.<rama>.kernelbase <base>`.
 
 ## Qué se puede personalizar y qué no
@@ -47,7 +48,7 @@ Cuando un proyecto inventó su propio proceso, cada pieza local se cambia por la
 |---|---|
 | Carriles verde/amarillo/rojo (`scripts/lane.py`) | Quitar: el riesgo 1/2/3 de `risk.py` hace ese trabajo desde la rama principal |
 | `scripts/check_size.py` (400 de código + 200 de documentación) | Quitar: `size_check.py` mide lo mismo |
-| *Hook* `.claude/hooks/size-after-commit.sh` | Quitar: `size_hook.py` viene en `.claude/settings.json` |
+| *Hook* `.claude/hooks/size-after-commit.sh` | Quitar: `size_hook.py` lo reemplaza; agrega el bloque `hooks` de la plantilla a tu `.claude/settings.json` |
 | `AGENTS.md` largo, o corto con detalle en skills | Rehacerlo desde la plantilla; las skills propias se quedan |
 | Prueba de aislamiento de URL | Conservarla o partir de `ejemplos/test_aislamiento_django.py` |
 | Regla semgrep propia (p. ej. `scoped(...)`) | Conservarla: el kernel no la cubre |

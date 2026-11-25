@@ -30,7 +30,7 @@ def commit_payload(command: str = 'git commit -m "x"') -> dict[str, object]:
 
 class DecideTests(unittest.TestCase):
     def test_small_change_says_nothing(self) -> None:
-        self.assertIsNone(size_hook.decide(320, 160))
+        self.assertIsNone(size_hook.decide(319, 159))
 
     def test_from_80_percent_of_either_cap_it_warns(self) -> None:
         for code, docs in [(321, 0), (0, 161)]:
@@ -116,6 +116,25 @@ class StackedBranchTests(unittest.TestCase):
         with in_temp_dir():
             start_repo()
             self.assertEqual(size_hook.base_ref(), "origin/main")
+
+
+class ReviewFixesTests(unittest.TestCase):
+    """Findings of the independent review: false positives, evasions and the 80 % edge."""
+
+    def test_text_that_only_mentions_git_commit_is_ignored(self) -> None:
+        for command in ['echo "git commit"', "git log --grep commit", "python -c 'print(\"git commit\")'"]:
+            self.assertIsNone(size_hook.GIT_WRITES.search(command), command)
+
+    def test_commands_that_create_commits_are_measured(self) -> None:
+        for command in ["git commit -m x", "git add . && git commit -qm y", "cd a; git merge b",
+                        "git cherry-pick abc", "git revert HEAD", "git am p.patch", "git rebase main",
+                        "git pull", "git -c user.name=x commit -m y", "(git commit -m z)"]:
+            self.assertIsNotNone(size_hook.GIT_WRITES.search(command), command)
+
+    def test_warning_starts_at_exactly_80_percent(self) -> None:
+        self.assertIsNotNone(size_hook.decide(320, 0))
+        self.assertIsNotNone(size_hook.decide(0, 160))
+        self.assertIsNone(size_hook.decide(319, 159))
 
 
 class SettingsTests(unittest.TestCase):
