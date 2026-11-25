@@ -1,4 +1,4 @@
-# AuroraTK Kernel v3.0.0 · CI for the Python / Django profile.
+# AuroraTK Kernel v4.0.0 · CI for the Python / Django profile.
 # kernel_sync.py sync copies this file to .github/workflows/ci.yml (yours after that) and the scripts to scripts/.
 # R12 (risk and PR description) runs in its own workflow, pr-description.yml, from the main branch.
 # Merge pyproject-django.toml into pyproject.toml.

@@ -1,6 +1,6 @@
 # AuroraTK Kernel
 
-> **Version 3.0.0** · 2026-11-21 · English · [Español](https://github.com/tarazonawin-stack/auroratk/blob/v3.0.0/KERNEL.md)
+> **Version 4.0.0** · 2026-11-24 · English · [Español](https://github.com/tarazonawin-stack/auroratk/blob/v4.0.0/KERNEL.md)
 > A universal quality standard for building software with AI, in any language and any kind of project.
 > It overrides any ad-hoc instruction: if a request conflicts with a rule, the rule wins and the conflict is explained in one line.
 
@@ -16,9 +16,9 @@ Each rule has a **fixed ID**, what it **requires**, how it **is checked**, and t
 - **CI:** a machine checks it on every change. If it fails, the change does not get in.
 - **Review:** a person or an independent AI session checks it, through a checkbox in the PR template.
 
-The concrete tools for each language, and what each country's law requires, live in [`perfiles/`](https://github.com/tarazonawin-stack/auroratk/blob/v3.0.0/perfiles/). This file names no tools: it states what is required.
+The concrete tools for each language, and what each country's law requires, live in [`perfiles/`](https://github.com/tarazonawin-stack/auroratk/blob/v4.0.0/perfiles/). This file names no tools: it states what is required.
 
-Working in a chat with no repository (for example, Google AI Studio)? Use the short version: [`KERNEL-CHAT.en.md`](https://github.com/tarazonawin-stack/auroratk/blob/v3.0.0/KERNEL-CHAT.en.md).
+Working in a chat with no repository (for example, Google AI Studio)? Use the short version: [`KERNEL-CHAT.en.md`](https://github.com/tarazonawin-stack/auroratk/blob/v4.0.0/KERNEL-CHAT.en.md).
 
 ## Levels
 
@@ -175,8 +175,9 @@ Breaking a rule is only allowed if it is recorded in `docs/excepciones.md` with 
 ## Kernel versions
 
 - The kernel uses semantic versioning: **MAJOR** when a rule becomes stricter or changes meaning; **MINOR** when a rule or profile is added; **PATCH** for clarifications.
-- Changes are recorded in [`CHANGELOG.md`](https://github.com/tarazonawin-stack/auroratk/blob/v3.0.0/CHANGELOG.md), with the reason.
-- Each project declares in its `AGENTS.md` which kernel version it follows. Upgrading is an explicit decision, never automatic.
+- Changes are recorded in [`CHANGELOG.md`](https://github.com/tarazonawin-stack/auroratk/blob/v4.0.0/CHANGELOG.md), with the reason.
+- Each project pins its version in `.github/kernel.txt` (with `kernel_sync.py`, see `guias/adoptar.en.md`) and declares it in its `AGENTS.md`. Upgrading is an explicit decision, never automatic.
+- **Frozen since 4.0.0** (DEC-001): a **PATCH** only for a bug shown by a test that fails before the fix; a **MINOR** only for new profiles, with no rule text changed; a **MAJOR** only for a real product problem, written up as a case (what happened, in which project, and why no current rule covers it). No hardening rounds.
 
 ## Principles (they guide, but cannot be checked)
 
@@ -194,4 +195,4 @@ This kernel certifies nothing and does not replace a security audit, a legal rev
 
 ## References
 
-See the [Spanish version](https://github.com/tarazonawin-stack/auroratk/blob/v3.0.0/KERNEL.md#referencias); the list is identical.
+See the [Spanish version](https://github.com/tarazonawin-stack/auroratk/blob/v4.0.0/KERNEL.md#referencias); the list is identical.
