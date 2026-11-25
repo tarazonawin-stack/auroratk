@@ -63,16 +63,7 @@ El detalle (qué exige, cómo se comprueba, por qué y su fuente) está en [KERN
 
 1. **Elige el nivel:** Ligero, Estándar o Estricto (ver [KERNEL.md](KERNEL.md#niveles)).
 2. **Elige tus perfiles** en [`perfiles/`](perfiles/): uno de stack, uno de tipo y uno por cada país donde tendrás usuarios.
-3. **Copia las plantillas** al proyecto:
-   - `plantillas/AGENTS.md` → `AGENTS.md` (raíz), y complétalo.
-   - `plantillas/CLAUDE.md` → `CLAUDE.md` (raíz).
-   - `plantillas/PULL_REQUEST_TEMPLATE.md` → `.github/PULL_REQUEST_TEMPLATE.md`.
-   - `KERNEL.md`, `KERNEL.en.md` y `SHA256SUMS` → `docs/kernel/`, y **todos** los perfiles (`perfiles/*.md`) → `docs/kernel/perfiles/`, para que la IA los vea (los que usa el proyecto se declaran en `AGENTS.md`). Cópialos sin editar y sin agregar nada: el CI del perfil falla si falta, sobra o cambió algún archivo respecto de `SHA256SUMS`.
-   - `plantillas/dependabot.yml` → `.github/dependabot.yml`.
-   - `plantillas/ESTADO.md` → `docs/ESTADO.md`.
-   - `plantillas/claude-settings.json` → `.claude/settings.json` (permisos mínimos del agente, R13).
-   - El CI de tu perfil, si existe (p. ej. `perfiles/ci/python-django.yml` → `.github/workflows/ci.yml`, y los scripts de `perfiles/ci/` → `scripts/`).
-   - Crea `docs/specs/`, `docs/decisiones/` y `docs/excepciones.md` (desde `plantillas/EXCEPCIONES.md`).
+3. **Copia el kernel con un comando** (`perfiles/ci/kernel_sync.py sync`): deja `docs/kernel/`, los scripts, el flujo de R12, las skills y las plantillas que falten, con la versión fijada en `.github/kernel.txt`. El CI comprueba con `check` que nadie edite la copia. Pasos, qué se puede personalizar y cómo migrar desde un proceso propio: [guía «Adoptar»](guias/adoptar.md).
 4. **Configura el CI por etapas** con los comandos de tus perfiles (ver *Activación por etapas* en el kernel) y activa la protección de la rama principal si tu plan de GitHub lo permite (en un repo privado gratuito no: haz merge solo con el CI en verde).
 5. **Trabaja así, cada vez:** spec → cambio pequeño con su prueba → CI → revisión independiente → según el riesgo, dices con tus palabras qué cambia → tu aprobación → `docs/ESTADO.md` al día. ¿Dudas con «Con tus palabras»? Lee la [guía](guias/lo-entiendo.md). ¿Varias sesiones de IA a la vez? Lee [La oficina](guias/oficina.md).
 
@@ -93,7 +84,7 @@ KERNEL-CHAT.md / .en.md      versión corta para pegar en un chat sin repositori
 perfiles/                    reglas → herramientas por stack, tipo de proyecto y país
 plantillas/                  archivos para copiar a cada proyecto
 ejemplos/                    ejemplos de cómo se ve bien hecho
-guias/                       guías: «Con tus palabras» (para quien aprueba) y «La oficina» (sesiones de IA en paralelo)
+guias/                       guías: «Adoptar», «Con tus palabras» (para quien aprueba) y «La oficina» (sesiones en paralelo)
 plantillas/roles/            instrucciones por rol: analista, coordinador, especialista, revisor y avance
 tests/                       pruebas de los scripts de CI y de la coherencia del kernel
 SHA256SUMS                   huellas de los archivos que se copian a docs/kernel/
