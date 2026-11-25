@@ -42,5 +42,5 @@ Si sale mal, ¿qué pasaría?: <solo riesgo 3 · risk 3 only>
 - [ ] R16 Cambios en el despliegue o en migraciones: la versión anterior sigue funcionando y la vuelta atrás está escrita, o N/A
 - [ ] R12 `AGENTS.md`, `docs/decisiones/` y `docs/ESTADO.md` al día
 - [ ] R12 Revisado por una sesión distinta a la que escribió el código (en Estricto y riesgo 3, otro modelo o herramienta): <cuál · which>, en el commit <SHA>; volvió a ejecutar lo «Verificado» y confirma en el PR que el informe técnico es fiel
-- [ ] R13 Sin permisos nuevos para agentes; sin skills ni plugins nuevos sin aprobar; `AGENTS.md` cerca de la meta de 150 líneas
+- [ ] R13 Sin permisos nuevos para agentes; sin skills ni plugins nuevos sin aprobar; `AGENTS.md` ≤ 450 palabras (lo mide el CI)
 - [ ] Excepciones nuevas registradas con fecha, o ninguna · *New exceptions recorded with a date, or none*

@@ -4,6 +4,7 @@ Usage: python size_check.py <base-ref>     e.g. python size_check.py origin/main
 - Changed lines in the PR, counted apart: code (warning above 200, failure above 400) and
   documentation, .md/.rst/.adoc (failure above 200). Each cap blocks on its own.
 - Code files: warning above 300 lines, failure above 400.
+- AGENTS.md at the root: failure above 450 words (R13: instructions for the AI stay short).
 Lock files, migrations, generated files and third-party files (third_party/, LICENSES/) and UI translation files (.po, .mo) are excluded.
 """
 
@@ -19,6 +20,7 @@ EXCLUDED_SUFFIXES = {".po", ".mo"}  # UI translations, checked by the R11 parity
 EXCLUDED_NAMES = {"uv.lock", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "poetry.lock"}
 DOC_SUFFIXES = {".md", ".rst", ".adoc"}  # counted against DOC_CAP, not CODE_CAP
 CODE_TARGET, CODE_CAP, DOC_CAP, FILE_WARN, FILE_CAP = 200, 400, 200, 300, 400
+AGENTS_FILE, AGENTS_WORD_CAP = Path("AGENTS.md"), 450
 
 
 def is_excluded(path: Path) -> bool:
@@ -63,11 +65,24 @@ def oversized_files() -> tuple[list[str], list[str]]:
     return warnings, failures
 
 
+def agents_too_long() -> str | None:
+    """R13: the AI's instruction file stays under the word cap; detail goes to skills."""
+    if not AGENTS_FILE.is_file():
+        return None
+    words = len(AGENTS_FILE.read_text(encoding="utf-8", errors="replace").split())
+    if words > AGENTS_WORD_CAP:
+        return f"{AGENTS_FILE}: {words} words (cap {AGENTS_WORD_CAP}): move detail to .claude/skills/"
+    return None
+
+
 def main() -> int:
     base = sys.argv[1] if len(sys.argv) > 1 else "origin/main"
     code, docs = changed_lines(base)
     print(f"Changed lines: code {code} (target {CODE_TARGET}, cap {CODE_CAP}) · docs {docs} (cap {DOC_CAP})")
     warnings, failures = oversized_files()
+    agents = agents_too_long()
+    if agents:
+        failures.append(agents)
     for item in warnings:
         print(f"::warning::{item}")
     for item in failures:
