@@ -1,9 +1,12 @@
 """Claude Code hook: measure the PR after every git command that adds commits (AuroraTK R02). Standard library only.
 
 Wire it as a PostToolUse hook on Bash (see plantillas/claude-settings.json). It reads the hook's
-JSON on stdin and, only when the command ran `git commit`, measures the branch with size_check:
+JSON on stdin and, only when a command starts with a git subcommand that adds commits (commit, merge,
+cherry-pick, revert, am, rebase, pull), measures the branch with size_check:
 - from 80 % of a cap: a warning the AI reads (it should plan the split now);
 - over a cap: it stops the AI ("decision": "block") so the change is split before going on.
+Known limits (CI measures again anyway): quoted text with a `;`, `&` or `|` before `git commit` can
+warn by mistake, and `/usr/bin/git`, `sudo git`, quoted `-c`/`-C` values or backticks are missed.
 It reads the repository of the hook's cwd (not of `git -C dir`). It never fails the session: any other command, or git trouble, means silence.
 Base branch: the KERNEL_BASE environment variable; else, for a stacked PR, the branch's own base
 (`git config branch.<name>.kernelbase <base-branch>`); else origin/main.

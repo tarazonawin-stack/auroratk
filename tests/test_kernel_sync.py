@@ -174,5 +174,61 @@ class ReviewFixesTests(unittest.TestCase):
             self.assertIn("replaced scripts/size_check.py", out)
 
 
+class SecondReviewTests(unittest.TestCase):
+    """Second independent review of 4.0.0: each test failed before its fix."""
+
+    def outside_link(self, folder: Path, link: str) -> Path:
+        target = folder / "outside" / "target.txt"
+        target.parent.mkdir(exist_ok=True)
+        Path(link).parent.mkdir(parents=True, exist_ok=True)
+        Path(link).symlink_to(target)
+        return target
+
+    def test_sync_refuses_a_symlinked_pin_file(self) -> None:
+        with in_temp_dir() as folder:
+            target = self.outside_link(folder, ".github/kernel.txt")
+            target.write_text("mine", encoding="utf-8")
+            with self.assertRaises(SystemExit):
+                run("sync")
+            self.assertEqual(target.read_text(encoding="utf-8"), "mine")
+
+    def test_sync_refuses_a_broken_symlink_as_template(self) -> None:
+        with in_temp_dir() as folder:
+            target = self.outside_link(folder, "docs/ESTADO.md")
+            with self.assertRaises(SystemExit):
+                run("sync")
+            self.assertFalse(target.exists())
+
+    def test_only_rc_suffixes_are_accepted(self) -> None:
+        version = kernel_sync.kernel_version(ROOT)
+        with in_temp_dir():
+            run("sync")
+            for ref in [f"v{version}-evil", f"v{version}-.", f"v{version}-rc."]:
+                Path(".github/kernel.txt").write_text(f"version {ref}\n", encoding="utf-8")
+                self.assertEqual(run("check")[0], 1, ref)
+            with self.assertRaises(SystemExit):
+                run("sync", "--ref", f"v{version}-anything")
+
+    def test_settings_of_the_wrong_shape_are_reported_not_crashed(self) -> None:
+        for text in ["[]", '{"permissions": "x"}', '{"hooks": "x"}']:
+            with in_temp_dir():
+                run("sync")
+                Path(".claude/settings.json").write_text(text, encoding="utf-8")
+                code, out = run("check")
+                self.assertEqual(code, 1, text)
+                self.assertIn("::error::.claude/settings.json", out)
+
+    def test_a_fixed_file_that_is_a_symlink_fails(self) -> None:
+        with in_temp_dir() as folder:
+            run("sync")
+            copy = folder / "elsewhere.py"
+            copy.write_bytes(Path("scripts/size_hook.py").read_bytes())
+            Path("scripts/size_hook.py").unlink()
+            Path("scripts/size_hook.py").symlink_to(copy)
+            code, out = run("check")
+            self.assertEqual(code, 1)
+            self.assertIn("symbolic link: scripts/size_hook.py", out)
+
+
 if __name__ == "__main__":
     unittest.main()

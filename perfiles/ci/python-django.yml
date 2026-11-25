@@ -72,7 +72,7 @@ jobs:
         run: |
           set -euo pipefail
           ref="$(awk '$1 == "version" {print $2}' .github/kernel.txt)"
-          [[ "$ref" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$ ]] || { echo "::error::bad version line in .github/kernel.txt (a release tag vX.Y.Z)"; exit 1; }
+          [[ "$ref" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-rc\.[0-9]+)?$ ]] || { echo "::error::bad version line in .github/kernel.txt (a release tag vX.Y.Z)"; exit 1; }
           kernel="${RUNNER_TEMP:-/tmp}/auroratk-kernel"
           rm -rf "$kernel" && git init -q "$kernel"
           git -C "$kernel" fetch -q --depth 1 "$KERNEL_REPO" "refs/tags/$ref"
