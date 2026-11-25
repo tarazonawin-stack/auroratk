@@ -25,5 +25,19 @@
       "Bash(npm install:*)",
       "Bash(docker compose down:*)"
     ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/scripts/size_hook.py\"",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
   }
 }
