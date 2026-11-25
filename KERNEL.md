@@ -107,7 +107,7 @@ Lo que aún no está activo se anota en `docs/ESTADO.md`. En los CI de los perfi
 
 **R09 · Datos personales con cuidado**
 - **Exige:** fuera de producción, solo datos inventados. Se guarda lo mínimo, con una finalidad y un plazo de conservación escritos, y una forma de borrarlo al vencer. Acceso por rol. Ningún dato personal en logs. Hay consentimiento u otra base legal según el perfil de país, **en todos los niveles**. La persona puede ver, corregir, exportar y pedir que se borren sus datos; si la ley obliga a conservarlos (por ejemplo, registros de trabajo), se anonimizan en lugar de borrarse. Una filtración de datos tiene un procedimiento escrito para avisar a la autoridad y a los afectados en el plazo de ley. El proyecto declara en `AGENTS.md` los **países** donde tiene usuarios y aplica el perfil de cada uno (`perfiles/pais-*.md`); si un país no tiene perfil, se crea antes de producción. Antes de producción con datos reales, el perfil de país se valida con un abogado.
-- **Se comprueba:** revisión; casilla en la plantilla de PR, perfil de país vigente (con fecha de revisión de menos de 12 meses) y semillas con datos inventados. CI: escáner de secretos.
+- **Se comprueba:** revisión; casilla en la plantilla de PR, perfil de país vigente (con fecha de revisión de menos de 12 meses), semillas con datos inventados y, antes de datos reales, la lista `plantillas/DATOS-REALES.md` completa. Ninguna máquina comprueba esta regla: la revisión es obligatoria.
 - **Por qué:** los datos de las personas no son tuyos; la ley lo exige y la confianza también. Las leyes cambian por país, pero sus principios son los mismos en casi todo el mundo.
 - **Fuente:** ISO/IEC 29100 (marco de privacidad) · Principios de privacidad de la OCDE · OWASP ASVS 5.0 · perfiles de país (Perú: Ley N.º 29733 y D.S. N.º 016-2024-JUS).
 
@@ -164,7 +164,7 @@ Lo que aún no está activo se anota en `docs/ESTADO.md`. En los CI de los perfi
 Un cambio está **terminado** cuando:
 1. su spec existe (o está marcado `trivial`) y cada criterio tiene una prueba que de verdad prueba;
 2. el CI está en verde;
-3. tuvo revisión independiente, y el humano escribió en una línea qué hace y lo aprobó;
+3. tuvo revisión independiente y el humano lo aprobó con su merge, después de dar lo que su riesgo le pide (R12: nada en riesgo 1);
 4. `AGENTS.md`, `docs/decisiones/` y `docs/ESTADO.md` reflejan la realidad;
 5. lo que queda fuera está escrito.
 

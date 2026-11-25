@@ -107,7 +107,7 @@ Whatever is not active yet is noted in `docs/ESTADO.md`. In the profiles' CI, th
 
 **R09 · Personal data handled with care**
 - **Requires:** outside production, only made-up data. Store the minimum, with a written purpose and retention period, and a way to delete it when it expires. Role-based access. No personal data in logs. There is consent or another legal basis per the country profile, **at every level**. People can view, correct, export and request deletion of their data; if the law requires keeping it (e.g. work records), it is anonymized instead of deleted. A data breach has a written procedure to notify the authority and affected people within the legal deadline. The project declares in `AGENTS.md` the **countries** where it has users and applies each one's profile (`perfiles/pais-*.md`); if a country has no profile, one is created before production. Before production with real data, the country profile is validated by a lawyer.
-- **Checked by:** review; checkbox in the PR template, a current country profile (reviewed less than 12 months ago), and seeds with made-up data. CI: secret scanner.
+- **Checked by:** review; checkbox in the PR template, a current country profile (reviewed less than 12 months ago), seeds with made-up data and, before real data, the completed `plantillas/DATOS-REALES.md` checklist. No machine checks this rule: review is mandatory.
 - **Why:** people's data is not yours; the law requires care, and so does trust. Laws differ by country, but their principles are the same almost everywhere.
 - **Source:** ISO/IEC 29100 (privacy framework) · OECD Privacy Principles · OWASP ASVS 5.0 · country profiles (Peru: Law No. 29733 and Supreme Decree No. 016-2024-JUS).
 
@@ -164,7 +164,7 @@ Whatever is not active yet is noted in `docs/ESTADO.md`. In the profiles' CI, th
 A change is **done** when:
 1. its spec exists (or it is tagged `trivial`) and every criterion has a test that really tests;
 2. CI is green;
-3. it had independent review, and the human wrote one line on what it does and approved it;
+3. it had independent review and the human approved it by merging, after giving what its risk asks (R12: nothing at risk 1);
 4. `AGENTS.md`, `docs/decisiones/` and `docs/ESTADO.md` reflect reality;
 5. what is out of scope is written down.
 
