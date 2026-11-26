@@ -4,9 +4,9 @@ Formato basado en *Keep a Changelog*; versionado semántico. · *Based on Keep a
 
 ## [Sin publicar] · Unreleased
 
-## [4.0.0] · 2026-11-24
+## [4.0.0] · 2026-11-26
 
-Versión MAYOR y **definitiva**: R02 y R13 cambian de sentido (DEC-001). Desde aquí, el kernel está congelado: parches solo con una prueba que falle antes del arreglo, versiones menores solo con perfiles nuevos y una mayor solo ante un problema real de un producto. Incluye lo que estaba «Sin publicar». La etiqueta `v4.0.0` se crea después de probarla en GPEXT. · *MAJOR and **final**: R02 and R13 change meaning. Frozen from here on. Includes the unreleased items. The `v4.0.0` tag is created after the GPEXT trial.*
+Versión MAYOR y **definitiva**: R02 y R13 cambian de sentido (DEC-001). Desde aquí, el kernel está congelado: parches solo con una prueba que falle antes del arreglo, versiones menores solo con perfiles nuevos y una mayor solo ante un problema real de un producto. Incluye lo que estaba «Sin publicar». Probada en GPEXT con la etiqueta `v4.0.0-rc.1` (2026-11-26); los errores que encontró se corrigieron antes de crear la etiqueta `v4.0.0` (abajo, «rc.2»). · *MAJOR and **final**: R02 and R13 change meaning. Frozen from here on. Includes the unreleased items. Tried in GPEXT with `v4.0.0-rc.1`; the bugs it found were fixed before tagging `v4.0.0`.*
 
 ### Corregido tras la prueba en GPEXT (rc.2) · Fixed after the GPEXT trial (SPEC-002)
 - **Adoptar el kernel ya no rompe R02:** `size_check.py` no cuenta la copia del kernel (`docs/kernel/` y los archivos que `kernel_sync.py` mantiene idénticos). En GPEXT, adoptar sumaba ~1650 líneas y el PR nunca podía quedar en verde. Una prueba mantiene la lista igual a la de `kernel_sync.py`. · *The kernel copy no longer counts toward R02.*
