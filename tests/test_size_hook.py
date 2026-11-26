@@ -155,7 +155,8 @@ class SettingsTests(unittest.TestCase):
         """4.0.0-rc.2: on a branch from before adoption the hook must not stop the AI (exit 2)."""
         import subprocess
         with in_temp_dir() as folder:
-            result = subprocess.run(["bash", "-c", TEMPLATE_COMMAND], input="{}", text=True,
+            command = self.hook_commands("plantillas/claude-settings.json")[0]  # the template's real command
+            result = subprocess.run(["bash", "-c", command], input="{}", text=True,
                                     capture_output=True, env={**os.environ, "CLAUDE_PROJECT_DIR": str(folder)})
             self.assertEqual(result.returncode, 0, result.stderr)
 
