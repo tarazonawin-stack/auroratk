@@ -103,6 +103,7 @@ CITATION.cff, CONTRIBUTING.md   cómo citarlo y cómo aportar
 2. Regenera las huellas: `sha256sum KERNEL.md KERNEL.en.md perfiles/*.md > SHA256SUMS`.
 3. Verifica: `python3 -m unittest discover -s tests -v` (lo mismo que corre el CI).
 4. Después del merge y de probarla en un proyecto real (con una etiqueta de prueba `vX.Y.Z-rc.N`), crea la etiqueta **`vX.Y.Z`, sin punto después de la v** (por ejemplo `v4.0.0`): los enlaces del kernel apuntan a ese nombre exacto.
+5. **Una etiqueta publicada no se mueve ni se borra:** los proyectos la fijan en `.github/kernel.txt`. Un arreglo posterior es otra versión (`v4.0.1`), con su prueba que falla antes (DEC-001). La de `v4.0.0` se recreó una vez, minutos después de crearla y antes de que ningún proyecto la usara; no se repite.
 
 ## Autoría y licencia
 

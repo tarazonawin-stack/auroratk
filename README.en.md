@@ -103,6 +103,7 @@ CITATION.cff, CONTRIBUTING.md   how to cite it and how to contribute
 2. Regenerate the checksums: `sha256sum KERNEL.md KERNEL.en.md perfiles/*.md > SHA256SUMS`.
 3. Verify: `python3 -m unittest discover -s tests -v` (the same as CI).
 4. After merging and trying it in a real project (with a trial tag `vX.Y.Z-rc.N`), create the tag **`vX.Y.Z`, with no dot after the v** (for example `v4.0.0`): the kernel links point to that exact name.
+5. **A published tag is never moved or deleted:** projects pin it in `.github/kernel.txt`. A later fix is a new version (`v4.0.1`), with a test that fails first (DEC-001). `v4.0.0` was recreated once, minutes after it was created and before any project used it; that is not repeated.
 
 ## Authorship and license
 
