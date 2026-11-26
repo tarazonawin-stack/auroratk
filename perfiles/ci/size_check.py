@@ -31,6 +31,9 @@ KERNEL_COPY |= {".github/workflows/pr-description.yml", ".claude/skills/con-tus-
 
 
 def is_kernel_copy(path: Path) -> bool:
+    """Only in a project that adopted the kernel (.github/kernel.txt): in the kernel's own repo they count."""
+    if not Path(".github/kernel.txt").is_file():
+        return False
     return path.as_posix() in KERNEL_COPY or path.as_posix().startswith("docs/kernel/")
 
 

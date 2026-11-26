@@ -241,6 +241,9 @@ class KernelCopyTests(unittest.TestCase):
     def test_the_kernel_copy_does_not_count(self) -> None:
         with in_temp_dir():
             start_repo()
+            write_doc(".github/kernel.txt", 1)  # the project adopted the kernel (kernel_sync.py sync)
+            commit_all()
+            git("branch", "-f", "base")
             write_doc("docs/kernel/KERNEL.md", 300)
             write_lines("scripts/risk.py", 300)
             write_doc(".claude/skills/con-tus-palabras/SKILL.md", 50)
@@ -252,10 +255,24 @@ class KernelCopyTests(unittest.TestCase):
     def test_the_list_matches_kernel_sync(self) -> None:
         import kernel_sync
         from helpers import ROOT
-        for dest in kernel_sync.fixed_files(ROOT).values():
-            self.assertTrue(size_check.is_kernel_copy(Path(dest)), dest)
-        self.assertFalse(size_check.is_kernel_copy(Path("scripts/deploy.py")))
-        self.assertFalse(size_check.is_kernel_copy(Path(".claude/skills/mia/SKILL.md")))
+        outside_docs = {d for d in kernel_sync.fixed_files(ROOT).values() if not d.startswith("docs/kernel/")}
+        self.assertEqual(size_check.KERNEL_COPY, outside_docs)
+        with in_temp_dir():
+            Path(".github").mkdir()
+            Path(".github/kernel.txt").write_text("version v4.0.0\n", encoding="utf-8")
+            for dest in kernel_sync.fixed_files(ROOT).values():
+                self.assertTrue(size_check.is_kernel_copy(Path(dest)), dest)
+            self.assertFalse(size_check.is_kernel_copy(Path("scripts/deploy.py")))
+            self.assertFalse(size_check.is_kernel_copy(Path(".claude/skills/mia/SKILL.md")))
+
+    def test_without_kernel_txt_nothing_is_a_kernel_copy(self) -> None:
+        """In the kernel's own repo (no .github/kernel.txt) its workflow and scripts still count."""
+        with in_temp_dir():
+            start_repo()
+            write_lines(".github/workflows/pr-description.yml", 30)
+            write_lines("scripts/risk.py", 20)
+            commit_all()
+            self.assertEqual(size_check.changed_lines("base"), (50, 0))
 
 
 if __name__ == "__main__":
