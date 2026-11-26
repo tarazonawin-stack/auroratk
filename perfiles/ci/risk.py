@@ -2,7 +2,7 @@
 
 Risk 1 (routine) only by exact list; risk 3 (critical) by path, file kind or content; risk 2 is
 everything else, including any unknown path. The PR may declare a higher risk, never a lower one.
-A project may ADD risk-3 paths and alarm words in a risk file; it can never remove the defaults,
+A project may ADD risk-3 paths, alarm words and removal guards ('quitar <text>') in a risk file; it can never remove the defaults,
 and changing that file is itself risk 3.
 
 Usage: python3 risk.py BASE [HEAD]   (prints the risk and the reason for every file above 1)
@@ -68,6 +68,7 @@ CODE_SUFFIXES = {".py", ".js", ".mjs", ".ts", ".tsx", ".jsx", ".html", ".jinja",
 SYMLINK, EXECUTABLE, SUBMODULE = "120000", "100755", "160000"
 TEST_DEFINITION = re.compile(r"^\s*(?:async\s+)?def\s+test|^\s*class\s+Test|^\s*(?:it|test)\s*\(|@Test\b")
 TEST_BASE = re.compile(r"\bTestCase\b")  # unittest only runs classes that inherit from TestCase
+ASSERTION = re.compile(r"(?<![A-Za-z0-9_])assert")  # assert, self.assertEqual, assertThat (GPEXT trial)
 
 
 @dataclass
@@ -128,19 +129,20 @@ def is_test_file(path: str) -> bool:
     return (in_test_folder and suffix(path) in CODE_SUFFIXES - {""}) or collected_name(path)
 
 
-def load_project_rules(text: str) -> tuple[list[str], list[str]]:
-    """Risk file lines: '3 <glob>' adds a critical path, 'alarma <text>' adds an alarm word; others ignored."""
-    paths, words = [], []
+def load_project_rules(text: str) -> tuple[list[str], list[str], list[str]]:
+    """Risk file lines: '3 <glob>' adds a critical path, 'alarma <text>' an alarm word on added code lines,
+    'quitar <text>' a guard whose removal from a code line is critical; others are ignored."""
+    paths, words, guards = [], [], []
     for raw in text.splitlines():
         line = raw.strip()
-        if line.startswith("3 "):
-            paths.append(line[2:].strip())
-        elif line.startswith("alarma "):
-            words.append(line[len("alarma "):].strip())
-    return paths, words
+        for prefix, target in (("3 ", paths), ("alarma ", words), ("quitar ", guards)):
+            if line.startswith(prefix) and line[len(prefix):].strip():
+                target.append(line[len(prefix):].strip())
+    return paths, words, guards
 
 
-def file_risk(change: FileChange, critical: list[str], alarms: list[str]) -> tuple[int, str]:
+def file_risk(change: FileChange, critical: list[str], alarms: list[str],
+              guards: list[str] | None = None) -> tuple[int, str]:
     """Risk of one file and why. Every path of a rename counts."""
     paths = [p for p in (change.old_path, change.path) if p]
     modes = (change.old_mode, change.new_mode)
@@ -158,7 +160,7 @@ def file_risk(change: FileChange, critical: list[str], alarms: list[str]) -> tup
     if any(is_test_file(p) for p in paths):
         if change.status == "D" or (change.status == "R" and not collected_name(change.path)):
             return 3, "borra o desactiva pruebas · deletes or disables tests"
-        for pattern in (TEST_DEFINITION, TEST_BASE):
+        for pattern in (TEST_DEFINITION, TEST_BASE, ASSERTION):
             if sum(bool(pattern.search(line)) for line in removed) > sum(bool(pattern.search(line)) for line in added):
                 return 3, "quita pruebas · removes tests"
     if any(matches(p, ["**/migrations/*.py"]) and not p.endswith("__init__.py") for p in paths):
@@ -168,6 +170,9 @@ def file_risk(change: FileChange, critical: list[str], alarms: list[str]) -> tup
         for line in removed:
             if any(contains_word(line, w) for w in PERMISSION_WORDS):
                 return 3, f"quita o cambia permisos · removes or changes access control: {line.strip()[:60]}"
+            guard = next((g for g in guards or [] if contains_word(line, g)), None)
+            if guard:
+                return 3, f"quita «{guard}» · removes a project guard"
         for line in added:
             word = next((w for w in OPENING_WORDS + alarms if contains_word(line, w)), None)
             word = word or next((name for pattern, name in ALARM_PATTERNS if pattern.search(line)), None)
@@ -183,9 +188,9 @@ def file_risk(change: FileChange, critical: list[str], alarms: list[str]) -> tup
 
 def compute(changes: list[FileChange], project_rules: str = "") -> tuple[int, list[tuple[str, int, str]]]:
     """Risk of the whole change (the highest of its files) and the reason for each file."""
-    extra_paths, extra_words = load_project_rules(project_rules)
+    extra_paths, extra_words, guards = load_project_rules(project_rules)
     critical, alarms = CRITICAL_PATHS + extra_paths, ALARM_WORDS + extra_words
-    reasons = [(c.path, *file_risk(c, critical, alarms)) for c in changes]
+    reasons = [(c.path, *file_risk(c, critical, alarms, guards)) for c in changes]
     return max((r for _, r, _ in reasons), default=1), reasons
 
 

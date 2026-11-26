@@ -25,7 +25,7 @@
 |---|---|
 | `docs/kernel/**` (reglas y perfiles) | `AGENTS.md`, dentro del tope de 450 palabras |
 | `scripts/` del kernel: `risk.py`, `pr_check.py`, `pr_meta.py`, `size_check.py`, `size_hook.py`, `mutation_threshold.py`, `kernel_sync.py` | `.github/workflows/ci.yml`: se **agregan** pasos; los del nivel no se quitan |
-| `.github/workflows/pr-description.yml` (R12) | `.github/riesgo.txt`: solo **agregar** rutas y palabras de riesgo 3 |
+| `.github/workflows/pr-description.yml` (R12) | `.github/riesgo.txt`: solo **agregar** casos de riesgo 3: rutas (`3 <ruta>`), palabras nuevas (`alarma <texto>`) y protecciones que no se pueden quitar (`quitar <texto>`, p. ej. `quitar scoped(`) |
 | Skills del kernel en `.claude/skills/` | Skills propias, en otras carpetas de `.claude/skills/` |
 | El *hook* de tamaño y las reglas `deny` de `.claude/settings.json` | Reglas `allow`, `ask` y más `deny` en ese mismo archivo |
 | | Reglas de análisis propias (p. ej. `.semgrep/`), pruebas, `docs/` |

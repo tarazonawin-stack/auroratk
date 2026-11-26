@@ -25,7 +25,7 @@
 |---|---|
 | `docs/kernel/**` (rules and profiles) | `AGENTS.md`, within the 450-word cap |
 | Kernel `scripts/`: `risk.py`, `pr_check.py`, `pr_meta.py`, `size_check.py`, `size_hook.py`, `mutation_threshold.py`, `kernel_sync.py` | `.github/workflows/ci.yml`: **add** steps; the level's steps stay |
-| `.github/workflows/pr-description.yml` (R12) | `.github/riesgo.txt`: only **add** risk-3 paths and words |
+| `.github/workflows/pr-description.yml` (R12) | `.github/riesgo.txt`: only **add** risk-3 cases: paths (`3 <path>`), new words (`alarma <text>`) and guards that cannot be removed (`quitar <text>`, e.g. `quitar scoped(`) |
 | Kernel skills in `.claude/skills/` | Your own skills, in other folders of `.claude/skills/` |
 | The size hook and the `deny` rules in `.claude/settings.json` | `allow`, `ask` and extra `deny` rules in that same file |
 | | Your own analysis rules (e.g. `.semgrep/`), tests, `docs/` |

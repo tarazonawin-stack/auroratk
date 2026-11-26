@@ -235,5 +235,28 @@ class AgentsWordsTests(unittest.TestCase):
             self.assertIn("description: ", head)
 
 
+class KernelCopyTests(unittest.TestCase):
+    """4.0.0-rc.2 (SPEC-002, GPEXT trial): adopting the kernel must not break R02 by itself."""
+
+    def test_the_kernel_copy_does_not_count(self) -> None:
+        with in_temp_dir():
+            start_repo()
+            write_doc("docs/kernel/KERNEL.md", 300)
+            write_lines("scripts/risk.py", 300)
+            write_doc(".claude/skills/con-tus-palabras/SKILL.md", 50)
+            write_lines(".github/workflows/pr-description.yml", 80)
+            write_lines("scripts/own_tool.py", 7)  # the project's own script still counts
+            commit_all()
+            self.assertEqual(size_check.changed_lines("base"), (7, 0))
+
+    def test_the_list_matches_kernel_sync(self) -> None:
+        import kernel_sync
+        from helpers import ROOT
+        for dest in kernel_sync.fixed_files(ROOT).values():
+            self.assertTrue(size_check.is_kernel_copy(Path(dest)), dest)
+        self.assertFalse(size_check.is_kernel_copy(Path("scripts/deploy.py")))
+        self.assertFalse(size_check.is_kernel_copy(Path(".claude/skills/mia/SKILL.md")))
+
+
 if __name__ == "__main__":
     unittest.main()
