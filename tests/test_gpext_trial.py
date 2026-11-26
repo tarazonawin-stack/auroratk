@@ -1,6 +1,6 @@
 """Failing cases found while adopting v4.0.0-rc.1 in GPEXT (2026-11-26), for the 4.0.1 patch.
 
-Both tests fail on v4.0.0-rc.1 on purpose (DEC-001: a patch needs a test that fails before the fix).
+All tests fail on v4.0.0-rc.1 on purpose (DEC-001: a patch needs a test that fails before the fix).
 """
 
 import contextlib
@@ -13,6 +13,7 @@ from pathlib import Path
 from helpers import CI_DIR, ROOT, in_temp_dir
 
 import kernel_sync
+import risk
 import size_check
 
 
@@ -58,6 +59,23 @@ class GpextTrialTests(unittest.TestCase):
                       for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1)
                       if len(line) > limit]
         self.assertEqual(long_lines, [])
+
+    def test_removing_asserts_from_a_test_is_risk_3(self) -> None:
+        """R12: weakening a test is risk 3. GPEXT's lanes marked it red; risk.py gives 2."""
+        change = risk.FileChange("tests/test_totals.py",
+                                 added=["def test_total():", "    pass"],
+                                 removed=["def test_total():", "    assert total == 3"])
+        self.assertEqual(risk.file_risk(change, risk.CRITICAL_PATHS, risk.ALARM_WORDS)[0], 3)
+
+    def test_a_project_can_make_removing_its_access_guard_risk_3(self) -> None:
+        """A project's own access guard (GPEXT: scoped(...)) must count like login_required.
+
+        `.github/riesgo.txt` only adds alarms on ADDED lines, so removing the guard stays risk 2.
+        """
+        paths, words = risk.load_project_rules("alarma scoped(\n")
+        change = risk.FileChange("tickets/views.py", added=["    qs = Ticket.objects.all()"],
+                                 removed=["    qs = scoped(Ticket.objects, request.user)"])
+        self.assertEqual(risk.file_risk(change, risk.CRITICAL_PATHS + paths, risk.ALARM_WORDS + words)[0], 3)
 
 
 if __name__ == "__main__":
