@@ -1,5 +1,6 @@
 # Riesgo del repositorio del kernel (R12): lo que un proyecto copia es el control mismo.
-# Solo se pueden AGREGAR rutas de riesgo 3 ("3 <glob>") y palabras de alarma ("alarma <texto>").
+# Solo se pueden AGREGAR rutas de riesgo 3 ("3 <glob>"), palabras de alarma ("alarma <texto>")
+# y protecciones cuya eliminación es riesgo 3 ("quitar <texto>").
 3 KERNEL*.md
 3 KERNEL-CHAT*.md
 3 SHA256SUMS
