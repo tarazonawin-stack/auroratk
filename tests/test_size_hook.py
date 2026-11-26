@@ -13,6 +13,9 @@ from test_size_check import commit_all, git, start_repo, write_doc, write_lines
 
 import size_hook
 
+TEMPLATE_COMMAND = ('[ ! -f "$CLAUDE_PROJECT_DIR/scripts/size_hook.py" ] || '
+                    'python3 "$CLAUDE_PROJECT_DIR/scripts/size_hook.py"')
+
 
 def run_hook(payload: object) -> str:
     out = io.StringIO()
@@ -146,11 +149,19 @@ class SettingsTests(unittest.TestCase):
                 if entry["matcher"] == "Bash" for hook in entry["hooks"] if hook["type"] == "command"]
 
     def test_template_runs_the_copied_script(self) -> None:
-        self.assertIn('python3 "$CLAUDE_PROJECT_DIR/scripts/size_hook.py"',
-                      self.hook_commands("plantillas/claude-settings.json"))
+        self.assertIn(TEMPLATE_COMMAND, self.hook_commands("plantillas/claude-settings.json"))
+
+    def test_a_missing_script_is_silent_not_a_block(self) -> None:
+        """4.0.0-rc.2: on a branch from before adoption the hook must not stop the AI (exit 2)."""
+        import subprocess
+        with in_temp_dir() as folder:
+            result = subprocess.run(["bash", "-c", TEMPLATE_COMMAND], input="{}", text=True,
+                                    capture_output=True, env={**os.environ, "CLAUDE_PROJECT_DIR": str(folder)})
+            self.assertEqual(result.returncode, 0, result.stderr)
 
     def test_kernel_repo_runs_its_own_script(self) -> None:
-        self.assertIn('python3 "$CLAUDE_PROJECT_DIR/perfiles/ci/size_hook.py"',
+        self.assertIn('[ ! -f "$CLAUDE_PROJECT_DIR/perfiles/ci/size_hook.py" ] || '
+                      'python3 "$CLAUDE_PROJECT_DIR/perfiles/ci/size_hook.py"',
                       self.hook_commands(".claude/settings.json"))
 
     def test_kernel_repo_keeps_every_deny_rule_of_the_template(self) -> None:

@@ -5,7 +5,8 @@ Usage: python size_check.py <base-ref>     e.g. python size_check.py origin/main
   documentation, .md/.rst/.adoc (failure above 200). Each cap blocks on its own.
 - Code files: warning above 300 lines, failure above 400.
 - AGENTS.md at the root: failure above 450 words (R13: instructions for the AI stay short).
-Lock files, migrations, generated files and third-party files (third_party/, LICENSES/) and UI translation files (.po, .mo) are excluded.
+Lock files, migrations, generated files and third-party files (third_party/, LICENSES/), UI translation files
+(.po, .mo) and the kernel copy (docs/kernel/ and the files kernel_sync.py keeps identical) are excluded.
 """
 
 import subprocess
@@ -21,12 +22,22 @@ EXCLUDED_NAMES = {"uv.lock", "package-lock.json", "pnpm-lock.yaml", "yarn.lock",
 DOC_SUFFIXES = {".md", ".rst", ".adoc"}  # counted against DOC_CAP, not CODE_CAP
 CODE_TARGET, CODE_CAP, DOC_CAP, FILE_WARN, FILE_CAP = 200, 400, 200, 300, 400
 AGENTS_FILE, AGENTS_WORD_CAP = Path("AGENTS.md"), 450
+# The kernel copy: kernel_sync.py check keeps these byte for byte equal to the pinned kernel (R12),
+# so they are not the project's code. Keep in step with kernel_sync.fixed_files (a test checks it).
+KERNEL_COPY = {f"scripts/{name}" for name in ["risk.py", "pr_check.py", "pr_meta.py", "size_check.py",
+                                              "size_hook.py", "mutation_threshold.py", "kernel_sync.py"]}
+KERNEL_COPY |= {".github/workflows/pr-description.yml", ".claude/skills/con-tus-palabras/SKILL.md",
+                ".claude/skills/cerrar-sesion/SKILL.md"}
+
+
+def is_kernel_copy(path: Path) -> bool:
+    return path.as_posix() in KERNEL_COPY or path.as_posix().startswith("docs/kernel/")
 
 
 def is_excluded(path: Path) -> bool:
     """Skip lock files, migrations and generated folders."""
     return (path.name in EXCLUDED_NAMES or path.suffix in EXCLUDED_SUFFIXES
-            or bool(EXCLUDED_PARTS & set(path.parts)))
+            or bool(EXCLUDED_PARTS & set(path.parts)) or is_kernel_copy(path))
 
 
 def git_lines(*args: str) -> list[str]:

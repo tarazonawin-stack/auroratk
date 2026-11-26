@@ -15,9 +15,13 @@ dev = [
 ]
 
 # R02 complexity + R04 strict lint (BLE001, S110 and E722 forbid swallowed errors)
+# The kernel copy (docs/kernel/ and the kernel's scripts) is tested in the kernel and kept identical by
+# kernel_sync.py check: the project does not lint, type-check or measure it (no exception needed).
 [tool.ruff]
 line-length = 100
-extend-exclude = ["mutants"]
+extend-exclude = ["mutants",
+    "docs/kernel/", "scripts/risk.py", "scripts/pr_check.py", "scripts/pr_meta.py", "scripts/size_check.py",
+    "scripts/size_hook.py", "scripts/mutation_threshold.py", "scripts/kernel_sync.py"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "S", "BLE", "C90", "UP"]
@@ -34,7 +38,7 @@ max-complexity = 10
 [tool.mypy]
 strict = true
 plugins = ["mypy_django_plugin.main"]
-exclude = ["migrations/", "mutants/"]
+exclude = ["migrations/", "mutants/", "^docs/kernel/", "^scripts/(risk|pr_check|pr_meta|size_check|size_hook|mutation_threshold|kernel_sync)\\.py$"]
 
 [tool.django-stubs]
 django_settings_module = "config.settings"
@@ -46,7 +50,9 @@ python_files = ["test_*.py"]
 
 [tool.coverage.run]
 source = ["."]
-omit = ["*/migrations/*", "manage.py", "config/*", "mutants/*"]
+omit = ["*/migrations/*", "manage.py", "config/*", "mutants/*", "docs/kernel/*", "scripts/risk.py",
+    "scripts/pr_check.py", "scripts/pr_meta.py", "scripts/size_check.py", "scripts/size_hook.py",
+    "scripts/mutation_threshold.py", "scripts/kernel_sync.py"]
 
 # R03 mutation testing: paths_to_mutate are the business modules declared in AGENTS.md
 [tool.mutmut]

@@ -197,5 +197,23 @@ class ExamplesTests(unittest.TestCase):
             compile(path.read_text(encoding="utf-8"), str(path), "exec")
 
 
+class DjangoBaseConfigTests(unittest.TestCase):
+    """4.0.0-rc.2 (SPEC-002): the kernel copy is not linted, type-checked or measured by the project."""
+
+    def test_kernel_copy_is_excluded_from_ruff_mypy_and_coverage(self) -> None:
+        import tomllib
+        config = tomllib.loads(read("perfiles/ci/pyproject-django.toml"))
+        import fnmatch
+        import kernel_sync
+        wanted = [d for d in kernel_sync.fixed_files(ROOT).values() if d.endswith(".py")] + ["docs/kernel/KERNEL.md"]
+        ruff = config["tool"]["ruff"]["extend-exclude"]
+        mypy = config["tool"]["mypy"]["exclude"]
+        omit = config["tool"]["coverage"]["run"]["omit"]
+        for path in wanted:
+            self.assertTrue(any(path == e or path.startswith(e) for e in ruff), f"ruff must skip {path}")
+            self.assertTrue(any(re.search(e, path) for e in mypy), f"mypy must skip {path}")
+            self.assertTrue(any(fnmatch.fnmatch(path, e) for e in omit), f"coverage must skip {path}")
+
+
 if __name__ == "__main__":
     unittest.main()
