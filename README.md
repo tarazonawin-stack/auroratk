@@ -95,7 +95,7 @@ CITATION.cff, CONTRIBUTING.md   cómo citarlo y cómo aportar
 
 ## Estado
 
-**Versión 4.0.0.** Congelada: parches solo con una prueba que falle antes, versiones menores solo con perfiles nuevos y una mayor solo ante un problema real (ver *Versiones del kernel*). Las reglas, los perfiles y las plantillas están completos. Las configuraciones de CI listas para copiar se agregan por perfil a medida que cada uno se usa por primera vez en un proyecto real (el primero: GPEXT, con Python/Django + web).
+**Versión 4.0.0.** Publicada el 2026-11-26 (etiqueta `v4.0.0`) tras probarla en GPEXT: la etiqueta de prueba `v4.0.0-rc.1` encontró cuatro errores del kernel, corregidos con pruebas antes de publicar (SPEC-002). Congelada: parches solo con una prueba que falle antes, versiones menores solo con perfiles nuevos y una mayor solo ante un problema real (ver *Versiones del kernel*). Las reglas, los perfiles y las plantillas están completos. Las configuraciones de CI listas para copiar se agregan por perfil a medida que cada uno se usa por primera vez en un proyecto real (el primero: GPEXT, con Python/Django + web).
 
 ## Publicar una versión
 

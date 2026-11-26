@@ -95,7 +95,7 @@ CITATION.cff, CONTRIBUTING.md   how to cite it and how to contribute
 
 ## Status
 
-**Version 4.0.0.** Frozen: patches only with a test that fails first, minors only with new profiles, a major only for a real product problem (see *Kernel versions*). Rules, profiles and templates are complete. Ready-to-copy CI configurations are added per profile the first time each one is used in a real project (first up: GPEXT, with Python/Django + web).
+**Version 4.0.0.** Released 2026-11-26 (tag `v4.0.0`) after a trial in GPEXT: the `v4.0.0-rc.1` trial tag found four kernel bugs, fixed with tests before release (SPEC-002). Frozen: patches only with a test that fails first, minors only with new profiles, a major only for a real product problem (see *Kernel versions*). Rules, profiles and templates are complete. Ready-to-copy CI configurations are added per profile the first time each one is used in a real project (first up: GPEXT, with Python/Django + web).
 
 ## Publishing a version
 
