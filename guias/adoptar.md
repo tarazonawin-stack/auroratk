@@ -6,7 +6,7 @@
 ## Cómo adoptar (proyecto nuevo o existente)
 
 1. **Descarga el kernel en la versión que vas a usar**, fuera de tu proyecto:
-   `git clone --depth 1 --branch v4.0.0 https://github.com/tarazonawin-stack/auroratk ../auroratk`
+   `git clone --depth 1 --branch v4.0.1 https://github.com/tarazonawin-stack/auroratk ../auroratk`
 2. **Copia el kernel al proyecto**, desde la carpeta del proyecto:
    `python3 ../auroratk/perfiles/ci/kernel_sync.py sync --from ../auroratk --ci python-django`
    Escribe `docs/kernel/`, `scripts/`, el flujo de R12, las skills y `.github/kernel.txt` con la versión. Las plantillas (`AGENTS.md`, `ci.yml`, `.claude/settings.json`…) se crean solo si faltan.

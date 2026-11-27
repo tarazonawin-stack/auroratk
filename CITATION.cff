@@ -6,8 +6,8 @@ type: software
 authors:
   - given-names: "Jose Alejandro"
     family-names: "Tarazona"
-version: "4.0.0"
-date-released: "2026-11-24"
+version: "4.0.1"
+date-released: "2026-11-27"
 license: CC-BY-4.0
 repository-code: "https://github.com/tarazonawin-stack/auroratk"
 keywords:

@@ -4,12 +4,20 @@ Formato basado en *Keep a Changelog*; versionado semántico. · *Based on Keep a
 
 ## [Sin publicar] · Unreleased
 
+## [4.0.1] · 2026-11-27
+
+Parche (DEC-001): un error demostrado con pruebas que fallan antes del arreglo. Nada cambia para un proyecto que adoptó el kernel. · *Patch: a bug shown by failing tests. Nothing changes for adopting projects.*
+
+### Corregido · Fixed
+- **La copia del kernel solo se descuenta de R02 en un proyecto que lo adoptó** (existe `.github/kernel.txt`). En el propio repo del kernel esos archivos son trabajo propio y cuentan; en 4.0.0 `size_check.py` los descontaba también ahí. · *The kernel-copy exclusion applies only in adopting projects; in the kernel's own repo everything counts.*
+- **Pruebas más estrictas:** la lista de la copia debe ser igual a la de `kernel_sync.py`, y la prueba del *hook* usa el comando real de `plantillas/claude-settings.json`. · *Stricter tests: the list must equal kernel_sync's, and the hook test runs the template's real command.*
+
 ## [4.0.0] · 2026-11-24
 
 Versión MAYOR y **definitiva**: R02 y R13 cambian de sentido (DEC-001). Desde aquí, el kernel está congelado: parches solo con una prueba que falle antes del arreglo, versiones menores solo con perfiles nuevos y una mayor solo ante un problema real de un producto. Incluye lo que estaba «Sin publicar». La etiqueta `v4.0.0` se crea después de probarla en GPEXT. · *MAJOR and **final**: R02 and R13 change meaning. Frozen from here on. Includes the unreleased items. The `v4.0.0` tag is created after the GPEXT trial.*
 
 ### Corregido tras la prueba en GPEXT (rc.2) · Fixed after the GPEXT trial (SPEC-002)
-- **Adoptar el kernel ya no rompe R02:** `size_check.py` no cuenta la copia del kernel (`docs/kernel/` y los archivos que `kernel_sync.py` mantiene idénticos). En GPEXT, adoptar sumaba ~1650 líneas y el PR nunca podía quedar en verde. Solo aplica en un proyecto que adoptó el kernel (existe `.github/kernel.txt`); en el repo del kernel todo cuenta. Una prueba exige que la lista sea igual a la de `kernel_sync.py`. · *The kernel copy no longer counts toward R02.*
+- **Adoptar el kernel ya no rompe R02:** `size_check.py` no cuenta la copia del kernel (`docs/kernel/` y los archivos que `kernel_sync.py` mantiene idénticos). En GPEXT, adoptar sumaba ~1650 líneas y el PR nunca podía quedar en verde. Una prueba mantiene la lista igual a la de `kernel_sync.py`. · *The kernel copy no longer counts toward R02.*
 - **`pyproject-django.toml` deja fuera de `ruff`, `mypy` y la cobertura la copia del kernel**: se prueba en el kernel y `check` la mantiene idéntica. GPEXT necesitó una excepción (EXC-008) solo por eso; ya no hace falta. · *Kernel copy excluded from the project's lint, types and coverage.*
 - **El *hook* de tamaño no frena si falta su script** (una rama de antes de adoptar): antes, Python salía con código 2 y Claude Code lo leía como un freno. · *A missing hook script is a no-op, not a block.*
 - **`risk.py`: dos formas reales de esquivarlo, probadas en GPEXT** (la congelación permite tocarlo así: un bypass real con una prueba que fallaba antes). Quitar líneas con `assert` de una prueba (más de las que se agregan) ahora es riesgo 3, igual que quitar funciones de prueba. Y `.github/riesgo.txt` acepta `quitar <texto>`: quitar de una línea de código una protección propia del proyecto (en GPEXT, `quitar scoped(`) es riesgo 3. Ninguna palabra de alarma nueva. · *risk.py: removing asserts from a test is risk 3; projects can protect their own guards with `quitar <text>`.*

@@ -1,4 +1,4 @@
-# AuroraTK Kernel · chat version (v4.0.0)
+# AuroraTK Kernel · chat version (v4.0.1)
 
 > Paste this into the system instructions of a chat with no repository (Google AI Studio, another assistant). It summarizes the [full kernel](KERNEL.en.md); if they conflict, the kernel wins.
 

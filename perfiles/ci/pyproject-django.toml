@@ -1,4 +1,4 @@
-# AuroraTK Kernel v4.0.0 · Base configuration for the Python / Django profile.
+# AuroraTK Kernel v4.0.1 · Base configuration for the Python / Django profile.
 # Merge these sections into your project's pyproject.toml.
 # Replace "config" with your Django project package and "tickets" with your business apps.
 
