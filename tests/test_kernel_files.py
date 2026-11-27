@@ -132,7 +132,7 @@ def git_in(folder: Path, *args: str) -> None:
 class KernelCopyStepTests(unittest.TestCase):
     """Run the real CI step: fetch a tagged kernel, then run that kernel's own check."""
 
-    def run_step(self, damage: object = None) -> subprocess.CompletedProcess[str]:
+    def run_step(self, damage: object = None, pin: str = "") -> subprocess.CompletedProcess[str]:
         import kernel_sync
         with tempfile.TemporaryDirectory() as folder:
             kernel, project, temp = Path(folder, "kernel"), Path(folder, "project"), Path(folder, "t")
@@ -146,10 +146,17 @@ class KernelCopyStepTests(unittest.TestCase):
             git_in(kernel, "add", ".")
             git_in(kernel, "-c", "user.name=t", "-c", "user.email=t@example.com", "commit", "-qm", "k")
             git_in(kernel, "tag", f"v{current_version()}")
+            if pin == "pull-request":  # a commit only on refs/pull/*, as GitHub serves a PR or a fork
+                git_in(kernel, "-c", "user.name=t", "-c", "user.email=t@example.com",
+                       "commit", "-q", "--allow-empty", "-m", "looser")
+                git_in(kernel, "update-ref", "refs/pull/1/head", "HEAD")
+                git_in(kernel, "reset", "-q", "HEAD~1")
             project.mkdir()
             temp.mkdir()
             with contextlib.redirect_stdout(io.StringIO()), contextlib.chdir(project):
-                kernel_sync.main(["sync", "--from", str(kernel)])
+                ref = subprocess.run(["git", "-C", str(kernel), "rev-parse", "refs/pull/1/head"
+                                      if pin == "pull-request" else "HEAD"], capture_output=True, text=True).stdout.strip()
+                kernel_sync.main(["sync", "--from", str(kernel), *(["--ref", ref] if pin else [])])
                 if callable(damage):
                     damage()
             env = {**os.environ, "KERNEL_REPO": str(kernel), "RUNNER_TEMP": str(temp)}
@@ -174,6 +181,13 @@ class KernelCopyStepTests(unittest.TestCase):
         result = self.run_step(pin)
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("bad version line", result.stdout)
+
+    def test_commit_on_a_kernel_branch_passes_and_one_only_on_a_pull_request_fails(self) -> None:
+        result = self.run_step(pin="branch")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        result = self.run_step(pin="pull-request")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("is not on a kernel branch or tag", result.stdout)
 
     def test_step_runs_the_fetched_kernels_script_not_the_projects(self) -> None:
         step = kernel_copy_step()

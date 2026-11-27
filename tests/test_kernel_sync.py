@@ -51,11 +51,12 @@ class SyncTests(unittest.TestCase):
 
     def test_ref_can_pin_a_commit_for_a_trial_and_unsafe_names_are_refused(self) -> None:
         with in_temp_dir():
-            run("sync", "--ref", "0123abcd")
-            self.assertEqual(kernel_sync.read_pin()["version"], "0123abcd")
+            run("sync", "--ref", "0123abcd" * 5)
+            self.assertEqual(kernel_sync.read_pin()["version"], "0123abcd" * 5)
             self.assertEqual(run("check")[0], 0)
-            with self.assertRaises(SystemExit):
-                run("sync", "--ref", "v1; rm -rf /")
+            for bad in ["v1; rm -rf /", "refs/pull/1/head", "main", "0123abcd"]:
+                with self.assertRaises(SystemExit):
+                    run("sync", "--ref", bad)
 
 
 class CheckTests(unittest.TestCase):
@@ -109,6 +110,28 @@ class CheckTests(unittest.TestCase):
         def pin_old() -> None:
             Path(".github/kernel.txt").write_text("version v1.0.0\n", encoding="utf-8")
         self.assertIn("pins v1.0.0", self.broken(pin_old))
+
+    def test_pin_must_be_a_tag_or_a_full_commit(self) -> None:
+        # A pull request ref or a branch would let CI run a weakened kernel_sync.py.
+        for pin in ["refs/pull/1/head", "main", "0123abcd"]:
+            def pin_ref(pin: str = pin) -> None:
+                Path(".github/kernel.txt").write_text(f"version {pin}\n", encoding="utf-8")
+            self.assertIn("must be a release tag", self.broken(pin_ref))
+
+    def test_hooks_switched_off_fail(self) -> None:
+        def switch_off() -> None:
+            path = Path(".claude/settings.json")
+            settings = json.loads(path.read_text(encoding="utf-8"))
+            settings["disableAllHooks"] = True
+            path.write_text(json.dumps(settings), encoding="utf-8")
+        self.assertIn("settings.json: disableAllHooks", self.broken(switch_off))
+        local = Path(".claude/settings.local.json")
+        out = self.broken(lambda: local.write_text('{"disableAllHooks": true}', encoding="utf-8"))
+        self.assertIn("settings.local.json: disableAllHooks", out)
+
+    def test_settings_that_are_not_an_object_fail(self) -> None:
+        out = self.broken(lambda: Path(".claude/settings.json").write_text("[]", encoding="utf-8"))
+        self.assertIn("not a JSON object", out)
 
 
 if __name__ == "__main__":

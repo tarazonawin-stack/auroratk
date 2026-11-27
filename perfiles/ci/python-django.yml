@@ -72,11 +72,15 @@ jobs:
         run: |
           set -euo pipefail
           ref="$(awk '$1 == "version" {print $2}' .github/kernel.txt)"
-          [[ "$ref" =~ ^[A-Za-z0-9._/-]+$ ]] || { echo "::error::bad version line in .github/kernel.txt"; exit 1; }
+          # Only a release tag or a full commit; the commit must be on a kernel branch or tag, so a
+          # pull request ref or a fork's commit (GitHub serves both from this URL) never runs here.
+          [[ "$ref" =~ ^(v[0-9]+\.[0-9]+\.[0-9]+|[0-9a-f]{40})$ ]] || { echo "::error::bad version line in .github/kernel.txt (pin vX.Y.Z or a full commit)"; exit 1; }
+          rev="$ref" && [[ "$ref" == v* ]] && rev="refs/tags/$ref"
           kernel="${RUNNER_TEMP:-/tmp}/auroratk-kernel"
           rm -rf "$kernel" && git init -q "$kernel"
-          git -C "$kernel" fetch -q --depth 1 "$KERNEL_REPO" "$ref"
-          git -C "$kernel" checkout -q FETCH_HEAD
+          git -C "$kernel" fetch -q --filter=blob:none "$KERNEL_REPO" '+refs/heads/*:refs/remotes/kernel/*' '+refs/tags/*:refs/tags/*'
+          [[ -n "$(git -C "$kernel" for-each-ref --contains "$rev" refs/remotes/kernel refs/tags)" ]] || { echo "::error::$ref is not on a kernel branch or tag"; exit 1; }
+          git -C "$kernel" -c advice.detachedHead=false checkout -q "$rev"
           python3 -I "$kernel/perfiles/ci/kernel_sync.py" check --from "$kernel"
       - name: R04 format, lint and types
         run: |
