@@ -4,6 +4,14 @@ Formato basado en *Keep a Changelog*; versionado semántico. · *Based on Keep a
 
 ## [Sin publicar] · Unreleased
 
+## [4.0.1] · 2026-11-27
+
+Parche (DEC-001): un error demostrado con pruebas que fallan antes del arreglo. Nada cambia para un proyecto que adoptó el kernel. · *Patch: a bug shown by failing tests. Nothing changes for adopting projects.*
+
+### Corregido · Fixed
+- **La copia del kernel solo se descuenta de R02 en un proyecto que lo adoptó** (existe `.github/kernel.txt`). En el propio repo del kernel esos archivos son trabajo propio y cuentan; en 4.0.0 `size_check.py` los descontaba también ahí. · *The kernel-copy exclusion applies only in adopting projects; in the kernel's own repo everything counts.*
+- **Pruebas más estrictas:** la lista de la copia debe ser igual a la de `kernel_sync.py`, y la prueba del *hook* usa el comando real de `plantillas/claude-settings.json`. · *Stricter tests: the list must equal kernel_sync's, and the hook test runs the template's real command.*
+
 ## [4.0.0] · 2026-11-24
 
 Versión MAYOR y **definitiva**: R02 y R13 cambian de sentido (DEC-001). Desde aquí, el kernel está congelado: parches solo con una prueba que falle antes del arreglo, versiones menores solo con perfiles nuevos y una mayor solo ante un problema real de un producto. Incluye lo que estaba «Sin publicar». La etiqueta `v4.0.0` se crea después de probarla en GPEXT. · *MAJOR and **final**: R02 and R13 change meaning. Frozen from here on. Includes the unreleased items. The `v4.0.0` tag is created after the GPEXT trial.*

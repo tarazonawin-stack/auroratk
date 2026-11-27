@@ -3,7 +3,7 @@
 > Instrucciones para agentes de IA: solo lo que no se deduce del código. Tope: 450 palabras (R13, lo mide el CI). El detalle va en `.claude/skills/`.
 
 ## Kernel
-- **Estándar:** AuroraTK Kernel **v4.0.0**, copia fija en `docs/kernel/` (`.github/kernel.txt`). No la edites.
+- **Estándar:** AuroraTK Kernel **v4.0.1**, copia fija en `docs/kernel/` (`.github/kernel.txt`). No la edites.
 - **Nivel:** Ligero | Estándar | Estricto  ← deja uno
 - **Perfiles:** `stack-<…>` + `tipo-<…>` · **Países (R09):** `pais-<…>`
 - **Módulos de negocio (R03):** <carpetas>
